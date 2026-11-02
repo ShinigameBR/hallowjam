@@ -6,7 +6,7 @@ const INVENTORY_BAR := preload("res://scripts/game/inventory_bar.gd")
 const DIALOG_BOX := preload("res://scripts/game/dialog_box.gd")
 const BOOK_PANEL := preload("res://scripts/game/book_panel.gd")
 const CIRCLE_PANEL := preload("res://scripts/game/circle_panel.gd")
-const KEYPAD_PANEL := preload("res://scripts/game/keypad_panel.gd")
+const COFRE_ZOOM := preload("res://scenes/components/cofre_zoom.tscn")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
 const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
 const PAUSE_MENU := preload("res://scripts/game/pause_menu.gd")
@@ -27,7 +27,7 @@ var _selection_label: Label
 var _dialog: Control
 var _book: Control
 var _circle: Control
-var _keypad: Control
+var _cofre: Control
 var _diary: Control
 var _monster_result: Control
 var _pause: Control
@@ -221,10 +221,10 @@ func _build_overlays() -> void:
 	_circle.summon_requested.connect(_on_summon_requested)
 	_circle.closed.connect(func() -> void: _clear_overlay(_circle))
 
-	_keypad = KEYPAD_PANEL.new()
-	add_child(_keypad)
-	_keypad.solved.connect(_on_safe_solved)
-	_keypad.closed.connect(func() -> void: _clear_overlay(_keypad))
+	_cofre = COFRE_ZOOM.instantiate()
+	add_child(_cofre)
+	_cofre.solved.connect(_on_safe_solved)
+	_cofre.closed.connect(func() -> void: _clear_overlay(_cofre))
 
 	_diary = DIARY_PANEL.new()
 	add_child(_diary)
@@ -423,7 +423,7 @@ func _on_monster_result_finished(victory: bool) -> void:
 func _on_safe_solved() -> void:
 	_refresh_objective()
 	await get_tree().create_timer(0.22).timeout
-	_say("O cofre abre com um estalo. Dentro, um rubi vermelho.")
+	_say("Você tira o rubi do baú e fecha a tampa do cofre. A pedra pulsa, quente, na palma da mão.")
 
 
 # ================================================================== ENDING
@@ -512,8 +512,8 @@ func _on_panel_requested(panel_id: String) -> void:
 			_open_overlay(_book)
 		"circle":
 			_open_overlay(_circle)
-		"keypad":
-			_open_overlay(_keypad)
+		"cofre":
+			_open_overlay(_cofre)
 		"diary":
 			_open_overlay(_diary)
 		_:
@@ -537,15 +537,13 @@ func _on_action(action_id: String, _source: Node = null) -> void:
 
 
 func _action_safe() -> void:
-	if GameState.selected_item != "":
-		_say("Não há fechadura para forçar. Há um teclado.")
-	elif GameState.has_flag("safe_open"):
-		if GameState.has_item("ruby"):
-			_say("O cofre está aberto. O rubi ainda está com você.")
-		else:
-			_say("O cofre está vazio.")
+	# Depois de aberto, qualquer clique (com ou sem item) dá a mesma resposta.
+	if GameState.has_flag("safe_open"):
+		_say("O cofre já foi aberto. Não há mais nada para fazer aqui.")
+	elif GameState.selected_item != "":
+		_say("Não há fechadura para forçar. Só os números coloridos do baú.")
 	else:
-		_open_overlay(_keypad)
+		_open_overlay(_cofre)
 
 
 func _action_dig() -> void:
@@ -611,7 +609,7 @@ func _refresh_objective() -> void:
 	elif not GameState.has_flag("picked_lavender_revived"):
 		text = "Colha a lavanda revivida."
 	elif not GameState.has_flag("ruby_taken"):
-		text = "Abra o cofre da estante: a ordem das cores e as quantidades estão nos livros."
+		text = "Abra o cofre da estante."
 	else:
 		text = "Invoque o Carmesim: coloque a lavanda revivida e o rubi no círculo."
 	GameState.set_objective(text)

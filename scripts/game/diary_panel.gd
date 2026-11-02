@@ -31,7 +31,6 @@ func _build() -> void:
 	_page_line(page, "Terceira noite. O círculo não me obedece porque eu tenho medo. Ele sente isso.")
 	_page_line(page, "O Beija-Flor Carmesim atende a duas coisas: algo vermelho e um aroma floral. Não vem por força: vem por cheiro.")
 	_page_line(page, "A lavanda do lado direito morreu há anos. A poção violeta ainda pode trazê-la de volta.")
-	_page_line(page, "A ordem das cores abre o cofre: azul, vermelho, verde, amarelo. As quantidades estão nos livros da estante.")
 	_page_line(page, "Se eu não voltar, que alguém termine o que eu comecei.")
 
 	var signature := UI.label("— E.", "Small")

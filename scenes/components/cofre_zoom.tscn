@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://2gjxhhvbkc05"]
+
+[ext_resource type="Script" uid="uid://ds105rlhviypa" path="res://scripts/game/cofre_zoom.gd" id="1_0dv2u"]
+[ext_resource type="Texture2D" uid="uid://cyox1272tmbto" path="res://assets/backgrounds/bau.jpeg" id="1_y2ujl"]
+[ext_resource type="Texture2D" uid="uid://dy4ccm2wtihf2" path="res://assets/props/rubi.png" id="3_5hrry"]
+
+[node name="CofreZoom" type="Control" unique_id=1606805025]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0dv2u")
+metadata/_edit_use_anchors_ = true
+
+[node name="Fundo" type="TextureRect" parent="." unique_id=1840349474]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_y2ujl")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Vermelho" type="Button" parent="Fundo" unique_id=1054814576]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.20600002
+anchor_top = 0.34600002
+anchor_right = 0.238
+anchor_bottom = 0.476
+offset_left = 0.3199768
+offset_top = -0.120010376
+offset_right = 0.35998535
+offset_bottom = 2.2799988
+focus_mode = 0
+text = "0"
+flat = true
+
+[node name="Azul" type="Button" parent="Fundo" unique_id=1093493258]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.263
+anchor_top = 0.34600002
+anchor_right = 0.294
+anchor_bottom = 0.476
+offset_left = 0.35998535
+offset_top = -0.120010376
+offset_right = 1.6799927
+offset_bottom = 2.2799988
+focus_mode = 0
+text = "0"
+flat = true
+
+[node name="Amarelo" type="Button" parent="Fundo" unique_id=899103485]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.316
+anchor_top = 0.34600002
+anchor_right = 0.349
+anchor_bottom = 0.476
+offset_left = 0.519989
+offset_top = -0.120010376
+offset_right = -0.7200012
+offset_bottom = 2.2799988
+focus_mode = 0
+text = "0"
+flat = true
+
+[node name="Verde" type="Button" parent="Fundo" unique_id=1860789623]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36100003
+anchor_top = 0.34600002
+anchor_right = 0.39200002
+anchor_bottom = 0.476
+offset_left = -0.08004761
+offset_top = -0.120010376
+offset_right = 0.23999023
+offset_bottom = 2.2799988
+focus_mode = 0
+text = "0"
+flat = true
+
+[node name="Rubi" type="Button" parent="Fundo" unique_id=764312675]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.268
+anchor_top = 0.63100004
+anchor_right = 0.29900002
+anchor_bottom = 0.693
+offset_left = -0.040008545
+offset_top = -0.32003784
+offset_right = 0.27996826
+offset_bottom = 0.039978027
+focus_mode = 0
+flat = true
+expand_icon = true
+
+[node name="rubi" type="Sprite2D" parent="Fundo/Rubi" unique_id=405512357]
+position = Vector2(19, 23)
+texture = ExtResource("3_5hrry")

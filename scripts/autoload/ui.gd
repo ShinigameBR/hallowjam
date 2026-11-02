@@ -171,18 +171,6 @@ func _build_theme() -> Theme:
 	t.set_stylebox("pressed", "SlotButton", _style(Color(ACCENT, 0.13), 9, ACCENT, 1, 4))
 	t.set_stylebox("focus", "SlotButton", _style(Color.TRANSPARENT, 9, Color(ACCENT, 0.9), 1, 4))
 
-	# Keypad key.
-	t.set_type_variation("KeypadButton", "Button")
-	t.set_font("font", "KeypadButton", font_medium)
-	t.set_font_size("font_size", "KeypadButton", 20)
-	t.set_color("font_color", "KeypadButton", TEXT)
-	t.set_color("font_hover_color", "KeypadButton", ACCENT)
-	t.set_color("font_pressed_color", "KeypadButton", ACCENT)
-	t.set_stylebox("normal", "KeypadButton", _style(Color(1, 1, 1, 0.03), 7, Color(1, 1, 1, 0.08), 1, 10))
-	t.set_stylebox("hover", "KeypadButton", _style(Color(ACCENT, 0.08), 7, Color(ACCENT, 0.5), 1, 10))
-	t.set_stylebox("pressed", "KeypadButton", _style(Color(ACCENT, 0.16), 7, ACCENT, 1, 10))
-	t.set_stylebox("focus", "KeypadButton", _style(Color.TRANSPARENT, 7, Color(ACCENT, 0.9), 1, 10))
-
 	# ---------------------------------------------------------------- panels
 	var panel := _style(Color(SURFACE, 0.97), 14, Color(1, 1, 1, 0.08), 1, 24)
 	panel.shadow_color = Color(0, 0, 0, 0.45)
@@ -202,9 +190,6 @@ func _build_theme() -> Theme:
 
 	t.set_type_variation("PagePanel", "PanelContainer")
 	t.set_stylebox("panel", "PagePanel", _style(Color("#101722"), 10, Color(ACCENT, 0.16), 1, 20))
-
-	t.set_type_variation("KeypadPanel", "PanelContainer")
-	t.set_stylebox("panel", "KeypadPanel", _style(Color("#0a0f17"), 10, Color(1, 1, 1, 0.08), 1, 14))
 
 	# ---------------------------------------------------------------- sliders
 	var slider_track := _style(Color(1, 1, 1, 0.16), 4, Color(1, 1, 1, 0.08), 1, 0)

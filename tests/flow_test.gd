@@ -114,14 +114,15 @@ func _run() -> void:
 	GameState.clear_selection()
 	await _interact("safe")
 	await _wait(0.35)
-	var keypad: Control = _game.get("_keypad")
-	_check(keypad.visible, "safe opens the keypad")
-	for digit in ["3", "1", "4", "2"]:
-		keypad.call("_press_digit", digit)
-	keypad.call("_submit")
+	var cofre: Control = _game.get("_cofre")
+	_check(cofre.visible, "safe opens the chest zoom")
+	for color_name in ["Vermelho", "Vermelho", "Azul", "Amarelo", "Amarelo", "Verde"]:
+		cofre.call("_on_number_pressed", color_name)
+	await _wait(0.6)
+	cofre.call("_take_ruby")
 	await _wait(0.6)
 	await _finish_dialog()
-	_check(GameState.has_flag("safe_open"), "code 3142 opens the safe")
+	_check(GameState.has_flag("safe_open"), "red 2, blue 1, yellow 2, green 1 opens the safe")
 	_check(GameState.has_item("ruby"), "safe contains the ruby")
 	_check(GameState.has_flag("ruby_taken"), "taking the ruby sets ruby_taken")
 
@@ -310,7 +311,6 @@ func _check(condition: bool, message: String) -> void:
 func _audit_overlays() -> void:
 	for entry in [
 		["_book", "book"],
-		["_keypad", "keypad"],
 		["_diary", "diary"],
 		["_circle", "circle"],
 		["_pause", "pause"],
