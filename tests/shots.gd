@@ -34,13 +34,16 @@ func _capture_menu() -> void:
 
 func _capture_game() -> void:
 	GameState.start_new_game()
-	for id in ["mushroom", "feather", "music_box", "knife", "candle", "tranq", "rod", "meat", "water", "diary"]:
+	for id in ["bucket", "screwdriver", "potion", "lavender_revived", "ruby", "rod", "oyster", "bait", "suitcase", "fish", "sapphire", "pearl"]:
 		GameState.add_item(id)
-	GameState.set_flag("basement_lit", true)
-	GameState.set_flag("creature_tranquilized", true)
-	GameState.set_flag("meat_taken", true)
+	GameState.set_flag("book_read", true)
+	GameState.set_flag("door_clue_seen", true)
+	GameState.set_flag("front_door_open", true)
+	GameState.set_flag("lavender_revived", true)
 	GameState.set_flag("safe_open", true)
-	GameState.set_flag("summoned_green", true)
+	GameState.set_flag("ruby_taken", true)
+	GameState.set_flag("summoned_carmesim", true)
+	GameState.set_flag("fish_caught", true)
 	GameState.set_flag("intro_done", true)
 
 	var game: Control = load("res://scenes/game.tscn").instantiate()
@@ -53,19 +56,19 @@ func _capture_game() -> void:
 	await _shot_panel(game, "_keypad", "08_keypad")
 	await _shot_panel(game, "_pause", "09_pause")
 
-	game.call("_apply_room", "kitchen")
+	game.call("_apply_room", "main_left")
 	await _frames(2)
-	await _shot("10_room_kitchen")
-	game.call("_apply_room", "basement")
+	await _shot("10_room_left")
+	game.call("_apply_room", "main_right")
 	await _frames(2)
-	await _shot("11_room_basement")
+	await _shot("11_room_right")
 	game.call("_apply_room", "outside")
 	await _frames(2)
-	await _shot("12_room_outside")
+	await _shot("12_room_dock")
 
 	var result: Control = load("res://scripts/game/monster_result_panel.gd").new()
 	add_child(result)
-	result.call("show_result", "verde")
+	result.call("show_result", "carmesim")
 	await _wait(0.4)
 	await _shot("13_monster_result")
 	result.queue_free()

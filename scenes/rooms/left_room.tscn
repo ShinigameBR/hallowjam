@@ -1,0 +1,152 @@
+[gd_scene format=3 uid="uid://b8munkmqh80u5"]
+
+[ext_resource type="Texture2D" uid="uid://dhnwfjm0kv2ti" path="res://assets/backgrounds/sala_esquerda.jpeg" id="bg"]
+[ext_resource type="Texture2D" uid="uid://ld56mfyk01hs" path="res://assets/props/balde.png" id="bucket_tex"]
+[ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
+[ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
+[ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
+[ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
+
+[node name="LeftRoom" type="Control" unique_id=806773449]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("room")
+room_id = "main_left"
+display_name = "LADO ESQUERDO"
+
+[node name="Background" type="TextureRect" parent="." unique_id=928985326]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Interactables" type="Control" parent="." unique_id=1038475910]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Bucket" type="TextureRect" parent="Interactables" unique_id=1948386462]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.69500005
+anchor_top = 0.272
+anchor_right = 0.80500007
+anchor_bottom = 0.55200005
+offset_left = -0.60009766
+offset_top = 0.1599884
+offset_right = -0.60009766
+offset_bottom = 0.15997314
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("bucket_tex")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("pickup")
+item_id = "bucket"
+description = "Um balde de madeira, vazio. Serve para carregar água do mar."
+interaction_id = "bucket"
+label = "Balde"
+
+[node name="Screwdriver" type="Control" parent="Interactables" unique_id=1382803942]
+layout_mode = 1
+anchor_left = 0.54
+anchor_top = 0.48100004
+anchor_right = 0.62
+anchor_bottom = 0.551
+offset_left = -0.2000122
+offset_top = -0.32003784
+offset_right = -0.2000122
+offset_bottom = -0.32000732
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("pickup")
+item_id = "screwdriver"
+description = "Uma chave de fenda velha, mas ainda firme. Dá para abrir coisas teimosas."
+interaction_id = "screwdriver"
+label = "Chave de fenda"
+always_show_label = true
+
+[node name="BackDoor" type="Control" parent="Interactables" unique_id=1673865155]
+layout_mode = 1
+anchor_left = 0.92800003
+anchor_top = 0.007
+anchor_right = 1.0
+anchor_bottom = 0.99300003
+offset_left = 0.15991211
+offset_top = -0.03999996
+offset_bottom = 0.039978027
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("door")
+target_room_id = "main"
+spawn_point = "main_left"
+interaction_id = "left_back"
+label = "Voltar à sala"
+
+[node name="Crates" type="Control" parent="Interactables" unique_id=1023940634]
+visible = false
+layout_mode = 1
+anchor_left = 0.7
+anchor_top = 0.58
+anchor_right = 0.84
+anchor_bottom = 0.74
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+message = "Caixas vazias, cobertas de sal. Alguém guardou ferramentas aqui um dia."
+interaction_id = "left_crates"
+label = "Caixas"
+
+[node name="AtticDoor" type="Control" parent="Interactables" unique_id=674560023]
+layout_mode = 1
+anchor_left = 0.19500001
+anchor_top = 0.312
+anchor_right = 0.37800002
+anchor_bottom = 0.72900003
+offset_left = 0.3999939
+offset_top = 0.3600006
+offset_right = 0.15997314
+offset_bottom = 0.11999512
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+message = "A porta do sótão se abre para um escuro quente."
+ignore_selected_item = true
+action_id = "attic"
+required_flag = "carmesim_fed"
+blocked_message = "A porta do sótão está selada. Algo do outro lado a mantém fechada."
+interaction_id = "attic_door"
+label = "Porta do sótão"
+
+[node name="Spawn_default" type="Control" parent="." unique_id=1282982282]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 648.0
+offset_bottom = 368.0
+mouse_filter = 2
+
+[node name="Spawn_main_left" type="Control" parent="." unique_id=1222842248]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 1120.0
+offset_top = 400.0
+offset_right = 1128.0
+offset_bottom = 408.0
+mouse_filter = 2

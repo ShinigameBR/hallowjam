@@ -1,6 +1,6 @@
 extends "res://scripts/game/overlay.gd"
 ## Strongbox keypad. The order is printed on the frame; the counts live on
-## the bookshelf. Correct code: 3 1 4 2.
+## the bookshelf. Correct code: 3 1 4 2 (blue, red, green, yellow).
 
 signal solved
 
@@ -117,11 +117,11 @@ func _submit() -> void:
 		return
 	if _entry == CODE:
 		GameState.set_flag("safe_open", true)
-		if not GameState.has_item("diary"):
-			GameState.add_item("diary")
-		GameState.set_flag("diary_found", true)
+		if not GameState.has_item("ruby"):
+			GameState.add_item("ruby")
+		GameState.set_flag("ruby_taken", true)
 		GameState.save_game()
-		_status.text = "O cofre cede."
+		_status.text = "O cofre cede. Dentro, um rubi vermelho."
 		solved.emit()
 		close()
 		return

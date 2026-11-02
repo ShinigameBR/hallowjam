@@ -95,7 +95,7 @@ func handle_cancel() -> bool:
 func _room_name(room: String) -> String:
 	match room:
 		"main": return "Sala principal"
-		"kitchen": return "Cozinha"
-		"basement": return "Porão"
+		"main_left": return "Lado esquerdo"
+		"main_right": return "Lado direito"
 		"outside": return "Cais"
 		_: return room

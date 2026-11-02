@@ -2,7 +2,6 @@ extends Control
 ## Vertical-slice controller: rooms, hotspots, inventory use, the ritual and
 ## every panel in between. All persistent state lives in GameState.
 
-const HOTSPOT := preload("res://scripts/game/hotspot.gd")
 const INVENTORY_BAR := preload("res://scripts/game/inventory_bar.gd")
 const DIALOG_BOX := preload("res://scripts/game/dialog_box.gd")
 const BOOK_PANEL := preload("res://scripts/game/book_panel.gd")
@@ -15,13 +14,12 @@ const WIN_PANEL := preload("res://scripts/game/win_panel.gd")
 
 const ROOM_NAMES := {
 	"main": "SALA PRINCIPAL",
-	"kitchen": "COZINHA",
-	"basement": "PORÃO",
+	"main_left": "LADO ESQUERDO",
+	"main_right": "LADO DIREITO",
 	"outside": "CAIS",
 }
 
-var _backdrop: Control
-var _hotspot_layer: Control
+var _room_host: Control
 var _inventory_bar: HBoxContainer
 var _room_label: Label
 var _objective_label: Label
@@ -40,7 +38,6 @@ var _toast_label: Label
 var _toast_tween: Tween
 
 var _current_overlay: Control
-var _hotspots: Array = []
 var _changing_room := false
 var _resolving_summon := false
 var _save_clock := 0.0
@@ -51,11 +48,11 @@ func _ready() -> void:
 	if not GameState.run_started:
 		GameState.start_new_game()
 
-	_backdrop = $RoomBackdrop
-	_build_hotspot_layer()
+	_build_room_host()
 	_build_hud()
 	_build_toast()
 	_build_fade()
+	RoomManager.register_host(_room_host, _fade)
 	_build_overlays()
 	_build_dialog()
 	_build_pause()
@@ -80,13 +77,19 @@ func _process(delta: float) -> void:
 		GameState.save_game()
 
 
+func _exit_tree() -> void:
+	var room := RoomManager.current_room_node()
+	if room != null and is_instance_valid(room) and is_ancestor_of(room):
+		RoomManager.unregister_host()
+
+
 # ================================================================== BUILD UI
-func _build_hotspot_layer() -> void:
-	_hotspot_layer = Control.new()
-	_hotspot_layer.name = "Hotspots"
-	_hotspot_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_hotspot_layer.mouse_filter = Control.MOUSE_FILTER_PASS
-	add_child(_hotspot_layer)
+func _build_room_host() -> void:
+	_room_host = Control.new()
+	_room_host.name = "RoomHost"
+	_room_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_room_host.mouse_filter = Control.MOUSE_FILTER_PASS
+	add_child(_room_host)
 
 
 func _build_hud() -> void:
@@ -260,313 +263,52 @@ func _connect_signals() -> void:
 	GameState.objective_changed.connect(_on_objective_changed)
 	GameState.toast.connect(_show_toast)
 	GameState.selection_changed.connect(_on_selection_changed)
+	GameState.flags_changed.connect(_on_flags_changed)
+	GameState.dialogue_requested.connect(_on_dialogue_requested)
+	GameState.panel_requested.connect(_on_panel_requested)
+	GameState.action_requested.connect(_on_action)
+	RoomManager.room_changed.connect(_on_room_changed)
+	RoomManager.transition_started.connect(_on_transition_started)
+	RoomManager.transition_finished.connect(_on_transition_finished)
 
 
 # ================================================================== ROOMS
 func _apply_room(room_id: String) -> void:
-	_backdrop.set_room(room_id)
+	var scene := RoomManager.get_room_scene(room_id)
+	if scene == null:
+		push_warning("No room scene registered for id '%s'." % room_id)
+		scene = RoomManager.get_room_scene("main")
+	if scene == null:
+		return
+
+	RoomManager.load_immediate(scene)
 	if _room_label:
 		_room_label.text = String(ROOM_NAMES.get(room_id, room_id.to_upper()))
-	_rebuild_hotspots()
 	_refresh_objective()
 
 
 func _change_room(room_id: String) -> void:
-	if _changing_room or room_id == GameState.current_room:
-		return
-	_changing_room = true
-	_fade.mouse_filter = Control.MOUSE_FILTER_STOP
-	var out := create_tween()
-	out.tween_property(_fade, "modulate:a", 0.9, 0.16)
-	await out.finished
-
-	GameState.current_room = room_id
-	GameState.save_game()
-	_apply_room(room_id)
-
-	var fade_in := create_tween()
-	fade_in.tween_property(_fade, "modulate:a", 0.0, 0.22)
-	await fade_in.finished
-	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_changing_room = false
+	RoomManager.go_to_room(room_id)
 
 
 func _rebuild_hotspots() -> void:
-	for node in _hotspots:
-		if is_instance_valid(node):
-			_hotspot_layer.remove_child(node)
-			node.queue_free()
-	_hotspots.clear()
-
-	match GameState.current_room:
-		"main": _main_hotspots()
-		"kitchen": _kitchen_hotspots()
-		"basement": _basement_hotspots()
-		"outside": _outside_hotspots()
-
-
-func _add_hotspot(id: String, label: String, rect: Rect2) -> void:
-	var node: Control = HOTSPOT.new()
-	node.setup(id, label)
-	node.anchor_left = rect.position.x
-	node.anchor_top = rect.position.y
-	node.anchor_right = rect.end.x
-	node.anchor_bottom = rect.end.y
-	node.offset_left = 0.0
-	node.offset_top = 0.0
-	node.offset_right = 0.0
-	node.offset_bottom = 0.0
-	node.pressed.connect(_on_hotspot)
-	node.set_selected_item(GameState.selected_item)
-	_hotspot_layer.add_child(node)
-	_hotspots.append(node)
-
-
-func _main_hotspots() -> void:
-	_add_hotspot("bookshelf", "Estante de livros", Rect2(0.16, 0.12, 0.22, 0.42))
-	_add_hotspot("basement_door", "Porta do porão", Rect2(0.04, 0.19, 0.12, 0.39))
-	_add_hotspot("main_door", "Porta da frente", Rect2(0.405, 0.14, 0.19, 0.44))
-	_add_hotspot("kitchen_door", "Porta da cozinha", Rect2(0.83, 0.18, 0.13, 0.40))
-	_add_hotspot("window", "Janela", Rect2(0.59, 0.19, 0.17, 0.22))
-	if not GameState.has_flag("picked_feather"):
-		_add_hotspot("feather", "Pena de gaivota", Rect2(0.625, 0.378, 0.07, 0.035))
-	_add_hotspot("mirror", "Espelho", Rect2(0.76, 0.21, 0.08, 0.17))
-	if not GameState.has_flag("picked_moss"):
-		_add_hotspot("moss", "Musgo da parede", Rect2(0.74, 0.395, 0.06, 0.045))
-	if not GameState.has_flag("picked_music_box"):
-		_add_hotspot("music_box", "Caixa de música", Rect2(0.74, 0.445, 0.07, 0.055))
-	if not GameState.has_flag("picked_mushroom"):
-		_add_hotspot("mushrooms", "Cogumelos", Rect2(0.19, 0.54, 0.075, 0.06))
-	_add_hotspot("circle", "Círculo mágico", Rect2(0.34, 0.60, 0.36, 0.27))
-	_add_hotspot("safe", "Cofre", Rect2(0.225, 0.59, 0.11, 0.10))
-	if GameState.has_flag("summoned_green"):
-		_add_hotspot("companion", "O Errante Verde", Rect2(0.525, 0.43, 0.13, 0.16))
-
-
-func _kitchen_hotspots() -> void:
-	_add_hotspot("kitchen_door", "Voltar à sala", Rect2(0.03, 0.18, 0.13, 0.40))
-	_add_hotspot("shelves", "Prateleiras", Rect2(0.33, 0.11, 0.24, 0.15))
-	_add_hotspot("stove", "Fogão a lenha", Rect2(0.11, 0.29, 0.19, 0.18))
-	_add_hotspot("sink", "Torneira", Rect2(0.59, 0.35, 0.18, 0.10))
-	_add_hotspot("kitchen_window", "Janela", Rect2(0.61, 0.14, 0.14, 0.17))
-	if not GameState.has_flag("picked_knife"):
-		_add_hotspot("knife", "Faca de cozinha", Rect2(0.30, 0.33, 0.05, 0.07))
-	if not GameState.has_flag("picked_candle"):
-		_add_hotspot("candle", "Vela de sebo", Rect2(0.53, 0.335, 0.05, 0.075))
-	if not GameState.has_flag("picked_syringe"):
-		_add_hotspot("syringe", "Seringa vazia", Rect2(0.765, 0.38, 0.08, 0.04))
-	if not GameState.has_flag("picked_potion"):
-		_add_hotspot("potion", "Poção estranha", Rect2(0.82, 0.35, 0.055, 0.06))
-
-
-func _basement_hotspots() -> void:
-	if not GameState.has_flag("basement_lit"):
-		_add_hotspot("dark", "Escuridão", Rect2(0.0, 0.17, 1.0, 0.73))
-		_add_hotspot("basement_door", "Voltar à sala", Rect2(0.05, 0.18, 0.12, 0.40))
-		return
-
-	_add_hotspot("basement_door", "Voltar à sala", Rect2(0.05, 0.18, 0.12, 0.40))
-	_add_hotspot("lamp", "Lâmpada", Rect2(0.46, 0.13, 0.08, 0.10))
-	if not GameState.has_flag("picked_rod"):
-		_add_hotspot("rod", "Vara de pescar", Rect2(0.19, 0.29, 0.09, 0.31))
-	_add_hotspot("crates", "Caixas", Rect2(0.28, 0.43, 0.15, 0.14))
-	_add_hotspot("creature", "Criatura na jaula", Rect2(0.545, 0.28, 0.25, 0.35))
-	_add_hotspot("barrel", "Barril", Rect2(0.815, 0.39, 0.12, 0.21))
-
-
-func _outside_hotspots() -> void:
-	_add_hotspot("outside_door", "Voltar para a cabana", Rect2(0.03, 0.27, 0.12, 0.36))
-	_add_hotspot("horizon", "Horizonte", Rect2(0.55, 0.18, 0.35, 0.25))
-	_add_hotspot("sea", "Mar", Rect2(0.30, 0.52, 0.68, 0.42))
-	if not GameState.has_flag("picked_algae"):
-		_add_hotspot("algae", "Alga viscosa", Rect2(0.20, 0.70, 0.09, 0.11))
-	if not GameState.has_flag("picked_shell"):
-		_add_hotspot("shell", "Concha", Rect2(0.60, 0.77, 0.05, 0.05))
-	if not GameState.has_flag("picked_stone"):
-		_add_hotspot("stone", "Pedra do cais", Rect2(0.77, 0.74, 0.08, 0.08))
-	_add_hotspot("bucket", "Balde", Rect2(0.845, 0.74, 0.07, 0.08))
-	if GameState.has_flag("summoned_green"):
-		_add_hotspot("companion", "O Errante Verde", Rect2(0.505, 0.47, 0.12, 0.17))
+	var room := RoomManager.current_room_node()
+	if room == null or room.get_room_id() != GameState.current_room:
+		_apply_room(GameState.current_room)
+	else:
+		RoomManager.refresh_current()
+	_refresh_objective()
 
 
 # ================================================================== INPUT
 func _on_hotspot(id: String) -> void:
+	## Compatibility entry point used by tests and optional custom code.
+	## Real mouse clicks go straight to the component in the room scene.
 	if _changing_room or _dialog.visible or _current_overlay != null:
 		return
-	var sel := GameState.selected_item
-
-	match id:
-		# ---------------------------------------------------------- main
-		"bookshelf":
-			if sel != "":
-				_nope()
-			else:
-				_open_overlay(_book)
-		"basement_door", "main_door", "kitchen_door", "outside_door":
-			_go_through_door(id)
-		"window":
-			_say("O mar está negro. Nenhum barco, nenhuma luz além da sua.")
-		"feather":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("feather", "picked_feather", "Uma pena de gaivota presa na umidade da janela. Leve demais para o vento que existe aqui dentro.")
-		"mirror":
-			_say("O espelho devolve seu rosto com um atraso mínimo. Você decide não olhar duas vezes.")
-		"moss":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("moss", "picked_moss", "Você raspa um tufo de musgo da parede. Pequenas flores brancas se desfazem entre os dedos.")
-		"music_box":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("music_box", "picked_music_box", "Uma caixa de música. A corda ainda funciona. A valsa começa sozinha e para.")
-		"mushrooms":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("mushroom", "picked_mushroom", "Cogumelos pálidos crescem entre as tábuas. Cheiram a terra e a algo doce demais.")
-		"circle":
-			_open_overlay(_circle)
-		"safe":
-			if sel != "":
-				_say("Não há fechadura para forçar. Há um teclado.")
-			elif GameState.has_flag("safe_open"):
-				if GameState.has_item("diary"):
-					_open_overlay(_diary)
-				else:
-					_say("O cofre está vazio. Só o diário importava.")
-			else:
-				_open_overlay(_keypad)
-		"companion":
-			if GameState.current_room == "outside":
-				_finish_game()
-			else:
-				_say("Ele inclina a cabeça na direção da porta da frente. O cais.")
-
-		# ---------------------------------------------------------- kitchen
-		"knife":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("knife", "picked_knife", "Uma faca de cozinha, ainda afiada. Serve para cortar ervas, peixes e outras coisas.")
-		"candle":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("candle", "picked_candle", "Uma vela de sebo. A chama é pequena, mas teimosa.")
-		"syringe":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("syringe", "picked_syringe", "Uma seringa vazia. Grande o bastante para extrair quase qualquer coisa.")
-		"potion":
-			if sel == "syringe":
-				_combine_tranq_from_counter()
-			elif sel != "":
-				_nope()
-			else:
-				_pickup("potion", "picked_potion", "Poção Estranha. O rótulo diz: para dormir. O líquido violeta parece olhar de volta.")
-		"shelves":
-			if sel != "":
-				_nope()
-			elif GameState.has_flag("picked_sardines"):
-				_say("Latas vazias e um cheiro antigo.")
-			else:
-				GameState.set_flag("picked_sardines", true)
-				GameState.add_item("sardines")
-				GameState.save_game()
-				_rebuild_hotspots()
-				_say("Você encontra uma lata de sardinha enferrujada. Comida é comida.")
-		"sink":
-			if sel != "" and sel != "syringe":
-				_nope()
-			elif GameState.has_flag("water_taken"):
-				_say("A torneira continua cuspindo água salgada.")
-			else:
-				GameState.set_flag("water_taken", true)
-				GameState.add_item("water")
-				GameState.save_game()
-				_rebuild_hotspots()
-				_say("Você enche uma garrafa quebrada com água do mar.")
-		"stove":
-			_say("O forno está morno. Alguém cozinhou aqui há pouco tempo.")
-		"kitchen_window":
-			_say("A cozinha cheira a sal e a gordura antiga.")
-
-		# ---------------------------------------------------------- basement
-		"dark":
-			if GameState.has_item("candle") or sel == "candle":
-				GameState.set_flag("basement_lit", true)
-				GameState.clear_selection()
-				GameState.save_game()
-				_rebuild_hotspots()
-				_say("Você acende a vela. A chama revela uma jaula, caixas e um barril.")
-			else:
-				_say("Está escuro demais. Você precisa de uma luz.")
-		"lamp":
-			_say("A lâmpada balança sozinha. O porão cheira a ferrugem e a maré baixa.")
-		"rod":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("rod", "picked_rod", "Uma vara de pescar encostada na parede. A linha ainda tem um anzol.")
-		"crates":
-			_say("Caixas vazias. Há marcas de unhas na madeira.")
-		"barrel":
-			if sel == "syringe":
-				GameState.replace_item("syringe", "monster_fluid")
-				GameState.clear_selection()
-				GameState.save_game()
-				_say("Você extrai um líquido verde e viscoso do barril. Ele ferve baixinho dentro da seringa.")
-			else:
-				_say("Um barril de líquido verde. Ferve baixinho quando você se aproxima.")
-		"creature":
-			_interact_creature(sel)
-
-		# ---------------------------------------------------------- outside
-		"sea":
-			_fish(sel)
-		"algae":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("algae", "picked_algae", "Alga viscosa, salgada, viva. Ainda guarda água do mar por dentro.")
-		"shell":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("shell", "picked_shell", "Uma concha em espiral, dura e vazia. Nenhum outro bicho escolheu morar aqui.")
-		"stone":
-			if sel != "":
-				_nope()
-			else:
-				_pickup("stone", "picked_stone", "Uma pedra pesada e fria, coberta de limo.")
-		"bucket":
-			_say("Um balde furado. Só serve para lembrar que alguém esteve aqui.")
-		"horizon":
-			_say("Nenhum barco no horizonte. Só a maré.")
-
-
-func _go_through_door(id: String) -> void:
-	GameState.clear_selection()
-	match id:
-		"basement_door":
-			if GameState.current_room == "basement":
-				_change_room("main")
-			else:
-				_change_room("basement")
-		"main_door":
-			_change_room("outside")
-		"kitchen_door":
-			if GameState.current_room == "kitchen":
-				_change_room("main")
-			else:
-				_change_room("kitchen")
-		"outside_door":
-			_change_room("main")
+	var node := RoomManager.find_interactable(id)
+	if node != null:
+		node.interact()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -622,126 +364,24 @@ func _on_item_clicked(id: String) -> void:
 		GameState.clear_selection()
 		_open_overlay(_diary)
 		return
-	if GameState.selected_item == "syringe" and id == "potion":
-		_combine_tranq()
+	if id == "suitcase":
+		_say("A maleta está trancada. Dois encaixes esperam por ponteiros: um marcado com o sol, outro com a lua.")
+		return
+	if GameState.selected_item == "screwdriver" and id == "oyster":
+		_combine_oyster()
 		return
 	GameState.select_item(id)
 
 
-func _pickup(item_id: String, flag: String, text: String) -> void:
-	if GameState.has_flag(flag):
+func _combine_oyster() -> void:
+	if not GameState.has_item("screwdriver") or not GameState.has_item("oyster"):
 		return
-	GameState.add_item(item_id)
-	GameState.set_flag(flag)
+	GameState.remove_item("oyster")
+	GameState.add_item("pearl")
 	GameState.clear_selection()
 	GameState.save_game()
-	_rebuild_hotspots()
+	_say("A chave de fenda força a concha. Dentro, uma pérola lustrosa.")
 	_refresh_objective()
-	_say(text)
-
-
-func _nope() -> void:
-	GameState.notify("Nada acontece.")
-
-
-func _combine_tranq() -> void:
-	if not GameState.has_item("syringe") or not GameState.has_item("potion"):
-		return
-	GameState.remove_item("potion")
-	GameState.replace_item("syringe", "tranq")
-	GameState.clear_selection()
-	GameState.save_game()
-	_say("Você puxa a poção violeta para dentro da seringa. A dose parece... suficiente.")
-
-
-func _combine_tranq_from_counter() -> void:
-	if not GameState.has_item("syringe"):
-		return
-	GameState.set_flag("picked_potion", true)
-	GameState.replace_item("syringe", "tranq")
-	GameState.clear_selection()
-	GameState.save_game()
-	_rebuild_hotspots()
-	_say("Você puxa a poção violeta para dentro da seringa. A dose parece... suficiente.")
-
-
-func _interact_creature(sel: String) -> void:
-	var sleepy := GameState.has_flag("creature_tranquilized") or GameState.has_flag("creature_calmed")
-
-	if sel == "tranq":
-		if sleepy:
-			_say("A criatura já está imóvel.")
-			return
-		GameState.remove_item("tranq")
-		GameState.set_flag("creature_tranquilized", true)
-		GameState.clear_selection()
-		GameState.save_game()
-		_rebuild_hotspots()
-		_refresh_objective()
-		_say("A agulha entra. A criatura pisca uma vez e desaba contra o fundo da jaula.")
-		return
-
-	if sel == "music_box":
-		if sleepy:
-			_say("A valsa já fez o que tinha de fazer.")
-			return
-		GameState.set_flag("creature_calmed", true)
-		GameState.clear_selection()
-		GameState.save_game()
-		_rebuild_hotspots()
-		_refresh_objective()
-		_say("Você dá corda na caixa. A valsa enche o porão. A criatura para de bater na jaula e fecha os olhos.")
-		return
-
-	if sel == "knife":
-		if not sleepy:
-			_say("A criatura arranha a jaula e rosna. Você recua antes que ela alcance seus dedos.")
-			return
-		if GameState.has_flag("meat_taken"):
-			_say("Não sobrou muito. Só o cheiro.")
-			return
-		GameState.add_item("meat")
-		GameState.set_flag("meat_taken", true)
-		GameState.clear_selection()
-		GameState.save_game()
-		_rebuild_hotspots()
-		_refresh_objective()
-		_say("Você corta um pedaço generoso. A carne ainda está quente. Você prefere não pensar de onde veio.")
-		return
-
-	if sel == "syringe":
-		if GameState.has_item("monster_fluid"):
-			_say("A seringa já está cheia.")
-			return
-		GameState.replace_item("syringe", "monster_fluid")
-		GameState.clear_selection()
-		GameState.save_game()
-		_say("Você extrai um líquido escuro da criatura. Ela nem abre os olhos.")
-		return
-
-	if sleepy and not GameState.has_flag("meat_taken"):
-		_say("A criatura está imóvel. A faca está no inventário.")
-	elif GameState.has_flag("meat_taken"):
-		_say("A jaula cheira a ferro. A criatura respira devagar.")
-	else:
-		_say("A criatura bate na jaula. Os olhos seguem você pelo escuro.")
-
-
-func _fish(sel: String) -> void:
-	if sel == "rod":
-		if GameState.has_flag("fish_caught"):
-			_say("O mar já te deu o que tinha.")
-			return
-		GameState.add_item("fish")
-		GameState.set_flag("fish_caught", true)
-		GameState.clear_selection()
-		GameState.save_game()
-		_rebuild_hotspots()
-		_say("Você lança a linha. Algo morde. Um peixe prateado debate no cais.")
-	elif GameState.has_item("rod"):
-		_say("Você precisa segurar a vara. Selecione-a no inventário.")
-	else:
-		_say("O mar está violento. Sem uma vara, não dá para pescar.")
 
 
 # ================================================================== RITUAL
@@ -755,7 +395,7 @@ func _on_summon_requested() -> void:
 
 	if result == ItemDB.TARGET:
 		GameState.consume_circle()
-		GameState.set_flag("summoned_green", true)
+		GameState.set_flag("summoned_carmesim", true)
 		GameState.save_game()
 		_refresh_objective()
 	else:
@@ -774,7 +414,7 @@ func _on_monster_result_finished(victory: bool) -> void:
 	if victory:
 		_refresh_objective()
 		_rebuild_hotspots()
-		_say("O Errante Verde inclina a cabeça na direção do cais. O círculo se apaga.")
+		_say("O Beija-Flor Carmesim paira sobre o círculo. Ele espera ser alimentado.")
 	else:
 		GameState.clear_circle()
 		_say("A fumaça se desfaz. As oferendas voltam para as suas mãos.")
@@ -783,7 +423,7 @@ func _on_monster_result_finished(victory: bool) -> void:
 func _on_safe_solved() -> void:
 	_refresh_objective()
 	await get_tree().create_timer(0.22).timeout
-	_say("O cofre abre com um estalo. Dentro, só um diário. A capa está morna.")
+	_say("O cofre abre com um estalo. Dentro, um rubi vermelho.")
 
 
 # ================================================================== ENDING
@@ -791,9 +431,9 @@ func _finish_game() -> void:
 	if _dialog.visible:
 		return
 	_show_dialog([
-		{"speaker": "O ERRANTE VERDE", "text": "Ele se ergue na água e oferece uma mão longa e úmida."},
-		{"text": "Você sobe. A cabana encolhe atrás de vocês até virar uma luz pequena."},
-		{"text": "O mar abre caminho."},
+		{"speaker": "O BEIJA-FLOR CARMESIM", "text": "Ele devora o peixe e sobe até a porta do sótão. Um estalo seco, e a passagem cede."},
+		{"text": "Você sobe. O escuro lá em cima cheira a poeira, madeira velha e metal molhado."},
+		{"text": "Alguma coisa espera no sótão. A história continua."},
 	])
 	await _dialog.finished
 	GameState.set_flag("won", true)
@@ -822,8 +462,7 @@ func _maybe_intro() -> void:
 	_show_dialog([
 		{"text": "Você acorda com o som do mar batendo nos pilares."},
 		{"text": "A cabana pertence a um bruxo. Ele não está aqui. Você não lembra como chegou."},
-		{"text": "No chão, um círculo. Nas paredes, um aviso: \"SÓ O QUE NASCE DAS QUALIDADES ATRAVESSA A MARÉ.\""},
-		{"speaker": "VOCÊ", "text": "Então eu preciso descobrir o que ele queria invocar."},
+		{"text": "No livro sobre a mesa, está escrito: para abrir a passagem ao sótão, invoque o Beija-Flor Carmesim com aroma floral e algo vermelho."},
 	])
 
 
@@ -837,37 +476,149 @@ func _show_dialog(lines: Array) -> void:
 	_dialog.open(lines)
 
 
+# ================================================================== ROOM SIGNALS
+func _on_room_changed(room: Room) -> void:
+	if _room_label == null:
+		return
+	if room != null:
+		var display := room.get_display_name()
+		if display == "":
+			display = String(ROOM_NAMES.get(room.get_room_id(), room.get_room_id().to_upper()))
+		_room_label.text = display
+	else:
+		_room_label.text = String(ROOM_NAMES.get(GameState.current_room, GameState.current_room.to_upper()))
+	_refresh_objective()
+
+
+func _on_transition_started() -> void:
+	_changing_room = true
+
+
+func _on_transition_finished() -> void:
+	_changing_room = false
+
+
+func _on_flags_changed() -> void:
+	_refresh_objective()
+
+
+func _on_dialogue_requested(lines: Array) -> void:
+	_show_dialog(lines)
+
+
+func _on_panel_requested(panel_id: String) -> void:
+	match panel_id:
+		"book":
+			_open_overlay(_book)
+		"circle":
+			_open_overlay(_circle)
+		"keypad":
+			_open_overlay(_keypad)
+		"diary":
+			_open_overlay(_diary)
+		_:
+			push_warning("Unknown panel id '%s'." % panel_id)
+
+
+## Actions that are too specific to express with a single inspector field.
+## Everything else lives in the component scripts.
+func _on_action(action_id: String, _source: Node = null) -> void:
+	match action_id:
+		"safe":
+			_action_safe()
+		"sea":
+			_action_sea()
+		"dig":
+			_action_dig()
+		"attic":
+			_action_attic()
+		_:
+			push_warning("Unknown action id '%s'." % action_id)
+
+
+func _action_safe() -> void:
+	if GameState.selected_item != "":
+		_say("Não há fechadura para forçar. Há um teclado.")
+	elif GameState.has_flag("safe_open"):
+		if GameState.has_item("ruby"):
+			_say("O cofre está aberto. O rubi ainda está com você.")
+		else:
+			_say("O cofre está vazio.")
+	else:
+		_open_overlay(_keypad)
+
+
+func _action_dig() -> void:
+	if GameState.has_flag("dirt_dug"):
+		return
+	GameState.add_item("bait")
+	GameState.add_item("suitcase")
+	GameState.set_flag("dirt_dug", true)
+	GameState.save_game()
+	_say("Sob a terra molhada, uma minhoca gorda e uma maleta de couro. A maleta está trancada.")
+	_refresh_objective()
+
+
+func _action_attic() -> void:
+	if GameState.has_flag("carmesim_fed"):
+		_finish_game()
+
+
+func _action_sea() -> void:
+	if GameState.has_flag("fish_caught"):
+		_say("O mar já te deu o que tinha.")
+	elif not GameState.has_item("rod"):
+		_say("O mar está violento. Sem uma vara, não dá para pescar.")
+	elif not GameState.has_item("bait"):
+		_say("Você tem a vara, mas falta isca. Talvez haja algo na terra do cais.")
+	elif GameState.selected_item == "":
+		_say("Selecione a isca no inventário para pescar.")
+	else:
+		_say("O mar espera.")
+
+
 func _on_objective_changed(text: String) -> void:
 	if _objective_label:
 		_objective_label.text = text
 
 
 func _refresh_objective() -> void:
-	var text := "Explore a cabana e descubra como escapar."
+	var text := "Leia o livro do bruxo."
 	if GameState.has_flag("won"):
 		text = "Você está livre."
-	elif GameState.has_flag("summoned_green"):
-		text = "O Errante Verde espera no cais. Vá até ele."
-	elif GameState.has_flag("meat_taken"):
-		text = "Coloque comida, vento e água no círculo."
-	elif GameState.has_flag("creature_tranquilized") or GameState.has_flag("creature_calmed"):
-		text = "A criatura está imóvel. Use a faca para pegar carne."
-	elif GameState.has_flag("diary_read"):
-		text = "Reúna as oferendas: comida, vento e água."
-	elif GameState.has_flag("diary_found"):
-		text = "Leia o diário no inventário."
-	elif GameState.has_flag("safe_open"):
-		text = "O cofre está aberto. Pegue o diário."
-	elif GameState.has_flag("shelf_seen"):
-		text = "O cofre pede quatro números. As cores estão na estante."
+	elif GameState.has_flag("carmesim_fed"):
+		text = "A porta do sótão está aberta. Suba."
+	elif GameState.has_flag("summoned_carmesim"):
+		if GameState.has_flag("fish_caught"):
+			text = "Alimente o Beija-Flor Carmesim com o peixe."
+		elif not GameState.has_flag("front_door_open"):
+			if not GameState.has_flag("picked_key"):
+				text = "A porta da frente está trancada. A pista na porta aponta para uma tábua solta na estante."
+			else:
+				text = "Use a chave na porta da frente."
+		elif not GameState.has_flag("picked_rod"):
+			text = "No cais, pegue a vara de pescar."
+		elif not GameState.has_flag("dirt_dug"):
+			text = "Cave a terra suspeita no cais para encontrar isca."
+		elif not GameState.has_flag("fish_caught"):
+			text = "Selecione a isca e pesque no mar."
+		else:
+			text = "Alimente o Beija-Flor Carmesim com o peixe."
+	elif not GameState.has_flag("book_read"):
+		text = "Leia o livro do bruxo."
+	elif not GameState.has_flag("lavender_revived"):
+		text = "Revitalize a lavanda murcha do lado direito com a poção."
+	elif not GameState.has_flag("picked_lavender_revived"):
+		text = "Colha a lavanda revivida."
+	elif not GameState.has_flag("ruby_taken"):
+		text = "Abra o cofre da estante: a ordem das cores e as quantidades estão nos livros."
+	else:
+		text = "Invoque o Carmesim: coloque a lavanda revivida e o rubi no círculo."
 	GameState.set_objective(text)
 
 
 func _on_selection_changed() -> void:
 	_update_selection_hint()
-	for node in _hotspots:
-		if is_instance_valid(node):
-			node.set_selected_item(GameState.selected_item)
 
 
 func _update_selection_hint() -> void:
@@ -876,8 +627,20 @@ func _update_selection_hint() -> void:
 	var selected := GameState.selected_item
 	if selected == "":
 		_selection_label.text = "Nenhum item selecionado."
-	elif selected == "syringe":
-		_selection_label.text = "Seringa selecionada. Clique na poção para preparar o tranquilizante."
+	elif selected == "screwdriver":
+		_selection_label.text = "Chave de fenda selecionada. Clique na ostra no inventário para abri-la."
+	elif selected == "potion":
+		_selection_label.text = "Poção selecionada. Use na lavanda murcha, no lado direito."
+	elif selected == "bucket":
+		_selection_label.text = "Balde selecionado. Encha no mar."
+	elif selected == "bucket_water":
+		_selection_label.text = "Balde com água selecionado. Use na lareira."
+	elif selected == "bait":
+		_selection_label.text = "Isca selecionada. Use no mar, com a vara."
+	elif selected == "fish":
+		_selection_label.text = "Peixe selecionado. Ofereça ao Carmesim."
+	elif selected == "ruby" or selected == "lavender_revived":
+		_selection_label.text = "Usando: %s. Coloque no círculo." % ItemDB.item_name(selected)
 	else:
 		_selection_label.text = "Usando: %s." % ItemDB.item_name(selected)
 

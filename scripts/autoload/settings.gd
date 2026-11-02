@@ -1,15 +1,33 @@
 extends Node
 ## User preferences, persisted separately from the run save.
 
+signal debug_hover_changed(enabled: bool)
+
 const PATH := "user://settings.cfg"
 
 var master_volume: float = 0.8
 var fullscreen: bool = false
+## Development hover outlines/labels. On by default in debug builds and off in
+## release exports. Press F1 in a debug build to toggle it while playtesting.
+var debug_hover: bool = OS.is_debug_build()
 
 
 func _ready() -> void:
 	load_settings()
 	apply()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not OS.is_debug_build():
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F1:
+		toggle_debug_hover()
+		get_viewport().set_input_as_handled()
+
+
+func toggle_debug_hover() -> void:
+	debug_hover = not debug_hover
+	debug_hover_changed.emit(debug_hover)
 
 
 func load_settings() -> void:

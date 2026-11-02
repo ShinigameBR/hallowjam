@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://n0nf47vv8csq"]
+
+[ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="1_7aatv"]
+[ext_resource type="Texture2D" uid="uid://dgj1crut1gm7k" path="res://assets/backgrounds/sotao.jpeg" id="2_b4a6u"]
+[ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="3_d0aeu"]
+
+[node name="AtticRoom" type="Control" unique_id=2065341818]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7aatv")
+
+[node name="Background" type="TextureRect" parent="." unique_id=531916194]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_b4a6u")
+expand_mode = 1
+
+[node name="Interactables" type="Control" parent="." unique_id=1721004583]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="AtticDoor" type="Control" parent="Interactables" unique_id=1798216026]
+layout_mode = 1
+anchor_left = 0.19500001
+anchor_top = 0.915
+anchor_right = 0.813
+anchor_bottom = 0.99000007
+offset_left = -5.600006
+offset_top = 0.2000122
+offset_right = 0.35998535
+offset_bottom = 0.19995117
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_d0aeu")
+target_room_id = "main_left"
+required_flag = "carmesim_fed"
+interaction_id = "attic_door"
+label = "Porta do sótão"
+
+[node name="Spawn_default" type="Control" parent="." unique_id=885832328]
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 648.0
+offset_bottom = 368.0
+mouse_filter = 2

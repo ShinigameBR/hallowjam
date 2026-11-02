@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/rooms/room.gd" id="1_53pnx"]
+[ext_resource type="Script" path="res://scripts/game/room_backdrop.gd" id="2_oxw5x"]
+
+[node name="RoomTemplate" type="Control" unique_id=615669849]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_53pnx")
+display_name = "NOVA SALA"
+
+[node name="Backdrop" type="Control" parent="." unique_id=1384500667]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_oxw5x")
+
+[node name="Art" type="Control" parent="." unique_id=2085221376]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Interactables" type="Control" parent="." unique_id=697682145]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Spawn_default" type="Control" parent="." unique_id=1699875220]
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 648.0
+offset_bottom = 368.0
+mouse_filter = 2

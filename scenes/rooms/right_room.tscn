@@ -1,0 +1,200 @@
+[gd_scene format=3 uid="uid://oa0v8vrb6nfj"]
+
+[ext_resource type="Texture2D" uid="uid://cpmct5g7ixt00" path="res://assets/backgrounds/sala_direita.jpeg" id="bg"]
+[ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
+[ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
+[ext_resource type="Texture2D" uid="uid://dboqb5qjjumwk" path="res://assets/props/fogo.png" id="fire_tex"]
+[ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
+[ext_resource type="Texture2D" uid="uid://c2qa1cbcs06qg" path="res://assets/props/flor_revivida.png" id="revived_tex"]
+[ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
+[ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
+[ext_resource type="Texture2D" uid="uid://lh5j5in2p1i" path="res://assets/props/flor_murcha.png" id="wilted_tex"]
+
+[sub_resource type="Resource" id="Resource_extinguish"]
+script = ExtResource("rule")
+item_id = "bucket_water"
+consume_selected = true
+give_item = "sapphire"
+set_flag = "fire_out"
+message = "A água apaga a lareira com um chiado. Entre as cinzas, uma safira azul espera."
+
+[sub_resource type="Resource" id="Resource_revive"]
+script = ExtResource("rule")
+item_id = "potion"
+consume_selected = true
+set_flag = "lavender_revived"
+message = "A poção escorre entre as folhas secas. A lavanda estremece, abre-se em violeta e exala um aroma floral."
+
+[node name="RightRoom" type="Control" unique_id=1746896425]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("room")
+room_id = "main_right"
+display_name = "LADO DIREITO"
+
+[node name="Background" type="TextureRect" parent="." unique_id=901140475]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Interactables" type="Control" parent="." unique_id=195089858]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Fireplace" type="TextureRect" parent="Interactables" unique_id=268370150]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.70900005
+anchor_top = 0.52400005
+anchor_right = 0.90900004
+anchor_bottom = 0.89000005
+offset_left = 0.47991943
+offset_top = -0.2800293
+offset_right = 0.47998047
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("fire_tex")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("examine")
+message = "A lareira queima alta. Algo azul brilha entre as chamas, mas o calor não deixa chegar perto."
+wrong_item_message = "O fogo não se importa com isso."
+interaction_id = "fireplace"
+label = "Lareira"
+hide_when_flags = Array[String](["fire_out"])
+use_rules = Array[ExtResource("rule")]([SubResource("Resource_extinguish")])
+
+[node name="FireplaceAshes" type="Control" parent="Interactables" unique_id=1974585481]
+visible = false
+layout_mode = 1
+anchor_left = 0.74500006
+anchor_top = 0.74200004
+anchor_right = 0.878
+anchor_bottom = 0.901
+offset_left = -0.60009766
+offset_top = -0.24005127
+offset_right = 0.15991211
+offset_bottom = 0.27996826
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+message = "Cinzas frias. A safira já está com você."
+interaction_id = "fireplace_ashes"
+label = "Lareira apagada"
+show_when_flags = Array[String](["fire_out"])
+
+[node name="LavenderWilted" type="TextureRect" parent="Interactables" unique_id=1683372911]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.76
+anchor_top = 0.5
+anchor_right = 0.92
+anchor_bottom = 0.78
+offset_left = -644.8
+offset_top = 17.0
+offset_right = -644.8
+offset_bottom = 17.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("wilted_tex")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("examine")
+message = "Uma lavanda seca, morta há anos. Ainda resta um perfume fraco nas hastes."
+wrong_item_message = "A planta precisa de algo que a traga de volta."
+interaction_id = "lavender_wilted"
+label = "Lavanda murcha"
+hide_when_flags = Array[String](["lavender_revived"])
+use_rules = Array[ExtResource("rule")]([SubResource("Resource_revive")])
+
+[node name="LavenderRevived" type="TextureRect" parent="Interactables" unique_id=534042782]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.19800001
+anchor_top = 0.342
+anchor_right = 0.358
+anchor_bottom = 0.66200006
+offset_left = -0.4400177
+offset_top = -0.2400055
+offset_right = -0.44003296
+offset_bottom = -0.24002075
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("revived_tex")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("pickup")
+item_id = "lavender_revived"
+description = "Você colhe a lavanda revivida. O aroma floral impregna seus dedos."
+interaction_id = "lavender_revived"
+label = "Lavanda revivida"
+show_when_flags = Array[String](["lavender_revived"])
+
+[node name="SunClock" type="Control" parent="Interactables" unique_id=2023611932]
+layout_mode = 1
+anchor_left = 0.45400003
+anchor_top = 0.287
+anchor_right = 0.587
+anchor_bottom = 0.492
+offset_left = -0.12005615
+offset_top = 0.3600006
+offset_right = -0.35998535
+offset_bottom = -0.24002075
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+message = "Um relógio de sol com apenas o ponteiro das horas. Ele aponta para o símbolo do sol, no número 3."
+set_flag = "sun_clock_seen"
+interaction_id = "sun_clock"
+label = "Relógio do sol"
+always_show_label = true
+
+[node name="BackDoor" type="Control" parent="Interactables" unique_id=1947424948]
+layout_mode = 1
+anchor_right = 0.074
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_right = -0.120025635
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("door")
+target_room_id = "main"
+spawn_point = "main_right"
+interaction_id = "right_back"
+label = "Voltar à sala"
+
+[node name="Spawn_default" type="Control" parent="." unique_id=1165854844]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 648.0
+offset_bottom = 368.0
+mouse_filter = 2
+
+[node name="Spawn_main_right" type="Control" parent="." unique_id=2127293235]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 260.0
+offset_top = 400.0
+offset_right = 268.0
+offset_bottom = 408.0
+mouse_filter = 2

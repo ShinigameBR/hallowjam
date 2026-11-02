@@ -15,17 +15,17 @@ func _build() -> void:
 	body.add_child(UI.label("FIM DO PROTÓTIPO", "Eyebrow"))
 
 	var glyph := GLYPH.new()
-	glyph.setup("verde")
+	glyph.setup("carmesim")
 	glyph.custom_minimum_size = Vector2(240, 240)
 	glyph.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	body.add_child(glyph)
 
-	var title := UI.label("O ritual se completa.", "H1")
+	var title := UI.label("A primeira porta se abre.", "H1")
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	body.add_child(title)
 
 	var text := UI.label(
-		"O Errante Verde mergulha sem fazer barulho e espera por você. A cabana fica para trás, com suas luzes e seus livros e a coisa que ainda respira no porão.\n\nDo outro lado da maré, alguém vai acordar em casa.",
+		"O Beija-Flor Carmesim devora o peixe e força a porta do sótão. O escuro lá em cima cheira a poeira, madeira velha e metal molhado.\n\nO sótão, a maleta e a última invocação ficam para o próximo capítulo.",
 		"BodyLarge"
 	)
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

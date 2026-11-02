@@ -1,5 +1,9 @@
 extends Node
-## Temporary integration test. Runs headless and drives the whole slice.
+## Headless integration test for the Etapa 2 vertical slice.
+##
+## It drives the same entry points as real clicks (through RoomManager and the
+## game controller) and checks the full Carmesim route:
+##   book -> lavender -> safe/ruby -> summon -> key -> dock -> fish -> attic.
 
 var _failures: Array[String] = []
 var _game: Control
@@ -28,120 +32,195 @@ func _run() -> void:
 
 	print("VIEWPORT %s GAME %s" % [get_viewport().get_visible_rect().size, _game.size])
 	await _audit_overlays()
+
 	GameState.start_new_game()
 	_game.call("_rebuild_hotspots")
-	await get_tree().process_frame
+	await _wait(0.4)
 
-	# ---------------------------------------------------------- wrong summon
+	# ---------------------------------------------------- wrong summon (roxo)
 	GameState.add_item("mushroom")
 	GameState.add_item("water")
 	await _open_circle()
 	await _place("mushroom", 0)
 	await _place("water", 1)
+	_check(GameState.circle == ["mushroom", "water", "", ""], "two offerings placed in the circle")
 	_game.call("_on_summon_requested")
 	await _wait(0.7)
 	var result: Control = _game.get("_monster_result")
 	_check(result.visible, "monster result opens after a summon")
-	_check(GameState.monsters_seen.has("roxo"), "mushroom + water summons the purple toad")
+	_check(GameState.monsters_seen.has("roxo"), "mushroom + water summons the poison toad")
 	result.call("dismiss")
 	await _wait(0.4)
 	await _finish_dialog()
 	_check(GameState.circle == ["", "", "", ""], "failed summon empties the circle")
 	_check(GameState.has_item("mushroom") and GameState.has_item("water"), "failed summon returns the offerings")
 
-	# ---------------------------------------------------------- explore
-	_game.call("_on_hotspot", "mushrooms")
-	await _finish_dialog()
-	_game.call("_on_hotspot", "feather")
-	await _finish_dialog()
-	_game.call("_on_hotspot", "music_box")
-	await _finish_dialog()
-	_check(GameState.has_item("mushroom"), "mushroom picked up")
-	_check(GameState.has_item("feather"), "feather picked up from the windowsill")
-	_check(GameState.has_item("music_box"), "music box picked up")
+	# ---------------------------------------------------------------- book
+	GameState.clear_selection()
+	await _interact("bookshelf")
+	_check(_game.get("_book").visible, "bookshelf opens the grimoire")
+	_check(GameState.has_flag("book_read"), "reading the book sets book_read")
+	await _close_overlay("_book")
+	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the book")
 
-	_game.call("_on_hotspot", "kitchen_door")
-	await _wait(0.7)
-	_check(GameState.current_room == "kitchen", "kitchen door works")
+	# ------------------------------------------------------ front door clue
+	GameState.clear_selection()
+	await _interact("main_door")
+	await _finish_dialog()
+	_check(GameState.has_flag("door_clue_seen"), "locked front door writes its clue flag")
+	_check(GameState.current_room == "main", "locked front door does not change rooms")
+	_check(RoomManager.find_interactable("hidden_key") != null, "the loose shelf board appears after the door clue")
 
-	for id in ["knife", "candle", "syringe", "potion"]:
-		_game.call("_on_hotspot", id)
-		await _finish_dialog()
-	_game.call("_on_hotspot", "shelves")
+	await _interact("hidden_key")
 	await _finish_dialog()
-	_game.call("_on_hotspot", "sink")
+	_check(GameState.has_item("key"), "hidden key picked up")
+	_check(GameState.has_flag("picked_key"), "hidden key sets its pickup flag")
+
+	# ------------------------------------------------------------ left side
+	await _interact("left_door", 0.7)
+	_check(GameState.current_room == "main_left", "left door reaches the left room")
+	await _interact("bucket")
 	await _finish_dialog()
-	_check(GameState.has_item("knife"), "knife picked up")
-	_check(GameState.has_item("candle"), "candle picked up")
-	_check(GameState.has_item("syringe"), "syringe picked up")
+	await _interact("screwdriver")
+	await _finish_dialog()
+	_check(GameState.has_item("bucket"), "bucket picked up")
+	_check(GameState.has_item("screwdriver"), "screwdriver picked up")
+
+	# ----------------------------------------------------------- right side
+	await _interact("left_back", 0.7)
+	_check(GameState.current_room == "main", "left room returns to the main room")
+	await _interact("right_door", 0.7)
+	_check(GameState.current_room == "main_right", "right door reaches the right room")
+
+	await _interact("potion")
+	await _finish_dialog()
 	_check(GameState.has_item("potion"), "potion picked up")
-	_check(GameState.has_item("sardines"), "sardines picked up")
-	_check(GameState.has_item("water"), "water picked up")
 
-	_game.call("_on_item_clicked", "syringe")
+	GameState.clear_selection()
 	_game.call("_on_item_clicked", "potion")
+	_check(GameState.selected_item == "potion", "potion is selected before reviving the lavender")
+	await _interact("lavender_wilted")
 	await _finish_dialog()
-	_check(GameState.has_item("tranq"), "syringe + potion makes the tranquilizer")
-	_check(not GameState.has_item("syringe") and not GameState.has_item("potion"), "combine consumes the parts")
+	_check(GameState.has_flag("lavender_revived"), "potion revives the lavender")
+	_check(not GameState.has_item("potion"), "reviving the lavender consumes the potion")
 
-	_game.call("_on_hotspot", "kitchen_door")
-	await _wait(0.7)
-	_game.call("_on_hotspot", "basement_door")
-	await _wait(0.7)
-	_check(GameState.current_room == "basement", "basement door works")
+	await _interact("lavender_revived")
+	await _finish_dialog()
+	_check(GameState.has_item("lavender_revived"), "revived lavender picked up")
 
-	_game.call("_on_hotspot", "dark")
-	await _finish_dialog()
-	_check(GameState.has_flag("basement_lit"), "candle lights the basement")
-	_game.call("_on_hotspot", "rod")
-	await _finish_dialog()
-	_check(GameState.has_item("rod"), "fishing rod picked up")
-
-	_game.call("_on_item_clicked", "tranq")
-	_game.call("_on_hotspot", "creature")
-	await _finish_dialog()
-	_check(GameState.has_flag("creature_tranquilized"), "tranquilizer calms the creature")
-	_game.call("_on_item_clicked", "knife")
-	_game.call("_on_hotspot", "creature")
-	await _finish_dialog()
-	_check(GameState.has_item("meat"), "knife on the sleeping creature yields meat")
-
-	# ---------------------------------------------------------- safe
-	_game.call("_on_hotspot", "basement_door")
-	await _wait(0.7)
-	await _open_overlay("_keypad")
+	# ---------------------------------------------------------------- safe
+	await _interact("right_back", 0.7)
+	_check(GameState.current_room == "main", "right room returns to the main room")
+	GameState.clear_selection()
+	await _interact("safe")
+	await _wait(0.35)
+	var keypad: Control = _game.get("_keypad")
+	_check(keypad.visible, "safe opens the keypad")
 	for digit in ["3", "1", "4", "2"]:
-		_game.get("_keypad").call("_press_digit", digit)
-	_game.get("_keypad").call("_submit")
-	await _wait(0.5)
+		keypad.call("_press_digit", digit)
+	keypad.call("_submit")
+	await _wait(0.6)
 	await _finish_dialog()
 	_check(GameState.has_flag("safe_open"), "code 3142 opens the safe")
-	_check(GameState.has_item("diary"), "safe contains the diary")
+	_check(GameState.has_item("ruby"), "safe contains the ruby")
+	_check(GameState.has_flag("ruby_taken"), "taking the ruby sets ruby_taken")
 
-	# ---------------------------------------------------------- ritual
+	# ------------------------------------------------------ summon Carmesim
 	await _open_circle()
-	await _place("meat", 0)
-	await _place("feather", 1)
-	await _place("water", 2)
-	await _place("sardines", 3)
-	_check(GameState.circle == ["meat", "feather", "water", "sardines"], "four offerings placed")
+	await _place("lavender_revived", 0)
+	await _place("ruby", 1)
+	_check(GameState.circle == ["lavender_revived", "ruby", "", ""], "floral + red offerings placed")
 	_game.call("_on_summon_requested")
 	await _wait(0.8)
 	result = _game.get("_monster_result")
-	_check(result.visible, "successful summon shows the result")
-	_check(GameState.has_flag("summoned_green"), "food + wind + water summons the green wanderer")
+	_check(result.visible, "successful summon shows the result card")
+	_check(GameState.has_flag("summoned_carmesim"), "floral + red summons the Carmesim")
+	_check(GameState.monsters_seen.has("carmesim"), "the Carmesim is recorded as seen")
 	result.call("dismiss")
 	await _wait(0.4)
 	await _finish_dialog()
+	_check(RoomManager.find_interactable("carmesim") != null, "the Carmesim appears in the main room")
 
-	# ---------------------------------------------------------- ending
-	_game.call("_on_hotspot", "main_door")
-	await _wait(0.7)
-	_check(GameState.current_room == "outside", "front door reaches the dock")
-	_game.call("_on_hotspot", "companion")
+	# ------------------------------------------------------ unlock the dock
+	GameState.clear_selection()
+	_game.call("_on_item_clicked", "key")
+	_check(GameState.selected_item == "key", "key selected for the front door")
+	await _interact("main_door", 0.7)
+	await _finish_dialog()
+	_check(GameState.current_room == "outside", "key opens the front door to the dock")
+	_check(GameState.has_flag("front_door_open"), "front door stays open")
+	_check(not GameState.has_item("key"), "the key is consumed")
+
+	# ---------------------------------------------------------------- dock
+	await _interact("rod")
+	await _finish_dialog()
+	await _interact("oyster")
+	await _finish_dialog()
+	_check(GameState.has_item("rod"), "fishing rod picked up")
+	_check(GameState.has_item("oyster"), "oyster picked up")
+
+	GameState.clear_selection()
+	_game.call("_on_item_clicked", "bucket")
+	_check(GameState.selected_item == "bucket", "bucket selected before filling it")
+	await _interact("sea")
+	await _finish_dialog()
+	_check(GameState.has_item("bucket_water"), "bucket filled with seawater")
+	_check(not GameState.has_item("bucket"), "filling replaces the empty bucket")
+
+	await _interact("dirt")
+	await _finish_dialog()
+	_check(GameState.has_item("bait"), "digging finds the bait")
+	_check(GameState.has_item("suitcase"), "digging finds the locked suitcase")
+	_check(GameState.has_flag("dirt_dug"), "digging sets dirt_dug")
+
+	_game.call("_on_item_clicked", "suitcase")
+	await _finish_dialog()
+	_check(GameState.selected_item == "", "inspecting the suitcase does not select it")
+
+	GameState.clear_selection()
+	_game.call("_on_item_clicked", "screwdriver")
+	_check(GameState.selected_item == "screwdriver", "screwdriver selected")
+	_game.call("_on_item_clicked", "oyster")
+	await _finish_dialog()
+	_check(GameState.has_item("pearl"), "screwdriver + oyster yields the pearl")
+	_check(not GameState.has_item("oyster"), "opening the oyster consumes it")
+
+	GameState.clear_selection()
+	_game.call("_on_item_clicked", "bait")
+	_check(GameState.selected_item == "bait", "bait selected for fishing")
+	await _interact("sea")
+	await _finish_dialog()
+	_check(GameState.has_item("fish"), "bait + rod catches a fish")
+	_check(not GameState.has_item("bait"), "fishing consumes the bait")
+	_check(GameState.has_flag("fish_caught"), "fishing sets fish_caught")
+
+	# ------------------------------------------------- optional sapphire
+	await _interact("outside_door", 0.7)
+	_check(GameState.current_room == "main", "dock returns to the main room")
+	await _interact("right_door", 0.7)
+	GameState.clear_selection()
+	_game.call("_on_item_clicked", "bucket_water")
+	await _interact("fireplace")
+	await _finish_dialog()
+	_check(GameState.has_flag("fire_out"), "water puts out the fireplace")
+	_check(GameState.has_item("sapphire"), "the sapphire can be recovered from the ashes")
+	await _interact("right_back", 0.7)
+	_check(GameState.current_room == "main", "back from the right room before feeding")
+
+	# ------------------------------------------------------- feed Carmesim
+	GameState.clear_selection()
+	_game.call("_on_item_clicked", "fish")
+	_check(GameState.selected_item == "fish", "fish selected for the Carmesim")
+	await _interact("carmesim")
+	await _finish_dialog()
+	_check(GameState.has_flag("carmesim_fed"), "feeding the Carmesim sets carmesim_fed")
+	_check(not GameState.has_item("fish"), "feeding consumes the fish")
+
+	# --------------------------------------------------------------- ending
+	await _interact("attic_door")
 	await _finish_dialog()
 	await _wait(0.4)
-	_check(GameState.has_flag("won"), "talking to the companion completes the slice")
+	_check(GameState.has_flag("won"), "the attic door completes the slice")
 	_check(_game.get("_win").visible, "win panel is visible")
 	_check(not GameState.has_save(), "winning deletes the run save")
 
@@ -198,12 +277,22 @@ func _finish_dialog() -> void:
 		_check(false, "dialog failed to close")
 
 
+func _interact(interaction_id: String, wait: float = 0.2) -> void:
+	_game.call("_on_hotspot", interaction_id)
+	await _wait(wait)
+
+
 func _open_circle() -> void:
 	await _open_overlay("_circle")
 
 
 func _open_overlay(name: String) -> void:
 	_game.call("_open_overlay", _game.get(name))
+	await _wait(0.3)
+
+
+func _close_overlay(name: String) -> void:
+	_game.get(name).call("close")
 	await _wait(0.3)
 
 
@@ -242,7 +331,7 @@ func _audit_overlays() -> void:
 
 	var result_panel: Control = load("res://scripts/game/monster_result_panel.gd").new()
 	add_child(result_panel)
-	result_panel.call("show_result", "verde")
+	result_panel.call("show_result", "carmesim")
 	await _wait(0.3)
 	_audit_panel(result_panel, "monster result")
 	result_panel.call("close")

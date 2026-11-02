@@ -1,0 +1,228 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/rooms/room.gd" id="1_uf0e1"]
+[ext_resource type="Script" path="res://scripts/game/room_backdrop.gd" id="2_f3a71"]
+[ext_resource type="Script" path="res://scripts/components/examine.gd" id="3_vj03g"]
+[ext_resource type="Script" path="res://scripts/components/item_use_rule.gd" id="4_feinp"]
+[ext_resource type="Script" path="res://scripts/components/door.gd" id="5_nwqyr"]
+[ext_resource type="Script" path="res://scripts/components/item_pickup.gd" id="6_24uh8"]
+
+[sub_resource type="Resource" id="Resource_vgrp6"]
+script = ExtResource("4_feinp")
+item_id = "candle"
+needs_selection = false
+set_flag = "basement_lit"
+message = "Você acende a vela. A chama revela uma jaula, caixas e um barril."
+
+[sub_resource type="Resource" id="Resource_lqb85"]
+script = ExtResource("4_feinp")
+item_id = "tranq"
+forbidden_flags = Array[String](["creature_tranquilized", "creature_calmed"])
+consume_selected = true
+set_flag = "creature_tranquilized"
+message = "A agulha entra. A criatura pisca uma vez e desaba contra o fundo da jaula."
+
+[sub_resource type="Resource" id="Resource_hh3wv"]
+script = ExtResource("4_feinp")
+item_id = "music_box"
+forbidden_flags = Array[String](["creature_tranquilized", "creature_calmed"])
+set_flag = "creature_calmed"
+message = "Você dá corda na caixa. A valsa enche o porão. A criatura para de bater na jaula e fecha os olhos."
+
+[sub_resource type="Resource" id="Resource_he1kl"]
+script = ExtResource("4_feinp")
+item_id = "knife"
+required_flags = Array[String](["creature_tranquilized"])
+give_item = "meat"
+set_flag = "meat_taken"
+once_flag = "meat_taken"
+message = "Você corta um pedaço generoso. A carne ainda está quente. Você prefere não pensar de onde veio."
+repeat_message = "Não sobrou muito. Só o cheiro."
+
+[sub_resource type="Resource" id="Resource_vuady"]
+script = ExtResource("4_feinp")
+item_id = "knife"
+required_flags = Array[String](["creature_calmed"])
+give_item = "meat"
+set_flag = "meat_taken"
+once_flag = "meat_taken"
+message = "Você corta um pedaço generoso. A carne ainda está quente. Você prefere não pensar de onde veio."
+repeat_message = "Não sobrou muito. Só o cheiro."
+
+[sub_resource type="Resource" id="Resource_a6r75"]
+script = ExtResource("4_feinp")
+item_id = "knife"
+message = "A criatura arranha a jaula e rosna. Você recua antes que ela alcance seus dedos."
+
+[sub_resource type="Resource" id="Resource_ndaxr"]
+script = ExtResource("4_feinp")
+item_id = "tranq"
+required_flags = Array[String](["creature_tranquilized"])
+message = "A criatura já está imóvel."
+
+[sub_resource type="Resource" id="Resource_je2jl"]
+script = ExtResource("4_feinp")
+item_id = "tranq"
+required_flags = Array[String](["creature_calmed"])
+message = "A criatura já está imóvel."
+
+[sub_resource type="Resource" id="Resource_ueix6"]
+script = ExtResource("4_feinp")
+item_id = "syringe"
+consume_selected = true
+give_item = "monster_fluid"
+message = "Você extrai um líquido escuro da criatura. Ela nem abre os olhos."
+
+[sub_resource type="Resource" id="Resource_8c2h6"]
+script = ExtResource("4_feinp")
+item_id = "syringe"
+consume_selected = true
+give_item = "monster_fluid"
+message = "Você extrai um líquido verde e viscoso do barril. Ele ferve baixinho dentro da seringa."
+
+[node name="BasementRoom" type="Control" unique_id=869771478]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_uf0e1")
+room_id = "basement"
+display_name = "PORÃO"
+
+[node name="Backdrop" type="Control" parent="." unique_id=579584575]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_f3a71")
+
+[node name="Art" type="Control" parent="." unique_id=1544144546]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Interactables" type="Control" parent="." unique_id=1387378832]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dark" type="Control" parent="Interactables" unique_id=1709340124]
+anchors_preset = 0
+anchor_top = 0.17
+anchor_right = 1.0
+anchor_bottom = 0.90000004
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_vj03g")
+message = "Está escuro demais. Você precisa de uma luz."
+wrong_item_message = "Está escuro demais. Você precisa de uma luz."
+interaction_id = "dark"
+label = "Escuridão"
+hide_when_flags = Array[String](["basement_lit"])
+use_rules = Array[ExtResource("4_feinp")]([SubResource("Resource_vgrp6")])
+
+[node name="BasementDoor" type="Control" parent="Interactables" unique_id=1055886251]
+anchors_preset = 0
+anchor_left = 0.05
+anchor_top = 0.18
+anchor_right = 0.17
+anchor_bottom = 0.58000004
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_nwqyr")
+target_scene = "res://scenes/rooms/main_room.tscn"
+spawn_point = "main"
+interaction_id = "basement_door"
+label = "Voltar à sala"
+
+[node name="Lamp" type="Control" parent="Interactables" unique_id=2008842314]
+anchors_preset = 0
+anchor_left = 0.46
+anchor_top = 0.13
+anchor_right = 0.54
+anchor_bottom = 0.22999999
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_vj03g")
+message = "A lâmpada balança sozinha. O porão cheira a ferrugem e a maré baixa."
+interaction_id = "lamp"
+label = "Lâmpada"
+show_when_flags = Array[String](["basement_lit"])
+
+[node name="Rod" type="Control" parent="Interactables" unique_id=1909826068]
+anchors_preset = 0
+anchor_left = 0.19
+anchor_top = 0.29
+anchor_right = 0.28
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_24uh8")
+item_id = "rod"
+description = "Uma vara de pescar encostada na parede. A linha ainda tem um anzol."
+interaction_id = "rod"
+label = "Vara de pescar"
+show_when_flags = Array[String](["basement_lit"])
+
+[node name="Crates" type="Control" parent="Interactables" unique_id=2089812180]
+anchors_preset = 0
+anchor_left = 0.28
+anchor_top = 0.43
+anchor_right = 0.43
+anchor_bottom = 0.57
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_vj03g")
+message = "Caixas vazias. Há marcas de unhas na madeira."
+interaction_id = "crates"
+label = "Caixas"
+show_when_flags = Array[String](["basement_lit"])
+
+[node name="Creature" type="Control" parent="Interactables" unique_id=1977000717]
+anchors_preset = 0
+anchor_left = 0.545
+anchor_top = 0.28
+anchor_right = 0.795
+anchor_bottom = 0.63
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_vj03g")
+action_id = "creature"
+interaction_id = "creature"
+label = "Criatura na jaula"
+show_when_flags = Array[String](["basement_lit"])
+use_rules = Array[ExtResource("4_feinp")]([SubResource("Resource_lqb85"), SubResource("Resource_hh3wv"), SubResource("Resource_he1kl"), SubResource("Resource_vuady"), SubResource("Resource_a6r75"), SubResource("Resource_ndaxr"), SubResource("Resource_je2jl"), SubResource("Resource_ueix6")])
+
+[node name="Barrel" type="Control" parent="Interactables" unique_id=1157134876]
+anchors_preset = 0
+anchor_left = 0.815
+anchor_top = 0.39
+anchor_right = 0.935
+anchor_bottom = 0.59999996
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_vj03g")
+message = "Um barril de líquido verde. Ferve baixinho quando você se aproxima."
+interaction_id = "barrel"
+label = "Barril"
+show_when_flags = Array[String](["basement_lit"])
+use_rules = Array[ExtResource("4_feinp")]([SubResource("Resource_8c2h6")])
+
+[node name="Spawn_default" type="Control" parent="." unique_id=218833417]
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 648.0
+offset_bottom = 368.0
+mouse_filter = 2

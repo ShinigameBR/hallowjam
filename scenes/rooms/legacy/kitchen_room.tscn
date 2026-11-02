@@ -1,0 +1,192 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/rooms/room.gd" id="1_caoi4"]
+[ext_resource type="Script" path="res://scripts/game/room_backdrop.gd" id="2_7d5ew"]
+[ext_resource type="Script" path="res://scripts/components/door.gd" id="3_6sm4w"]
+[ext_resource type="Script" path="res://scripts/components/examine.gd" id="4_ygyg5"]
+[ext_resource type="Script" path="res://scripts/components/item_pickup.gd" id="5_2jck6"]
+[ext_resource type="Script" path="res://scripts/components/item_use_rule.gd" id="6_mcuyg"]
+
+[sub_resource type="Resource" id="Resource_p0q0s"]
+script = ExtResource("6_mcuyg")
+item_id = "syringe"
+consume_selected = true
+give_item = "tranq"
+set_flag = "picked_potion"
+message = "Você puxa a poção violeta para dentro da seringa. A dose parece... suficiente."
+
+[node name="KitchenRoom" type="Control" unique_id=1993007904]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_caoi4")
+room_id = "kitchen"
+display_name = "COZINHA"
+
+[node name="Backdrop" type="Control" parent="." unique_id=1047025533]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_7d5ew")
+
+[node name="Art" type="Control" parent="." unique_id=1220219887]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Interactables" type="Control" parent="." unique_id=2136025781]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="KitchenDoor" type="Control" parent="Interactables" unique_id=1768156976]
+anchors_preset = 0
+anchor_left = 0.03
+anchor_top = 0.18
+anchor_right = 0.16
+anchor_bottom = 0.58000004
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_6sm4w")
+target_scene = "res://scenes/rooms/main_room.tscn"
+spawn_point = "main"
+interaction_id = "kitchen_door"
+label = "Voltar à sala"
+
+[node name="Shelves" type="Control" parent="Interactables" unique_id=668141724]
+anchors_preset = 0
+anchor_left = 0.33
+anchor_top = 0.11
+anchor_right = 0.57
+anchor_bottom = 0.26
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_ygyg5")
+message = "Você encontra uma lata de sardinha enferrujada. Comida é comida."
+set_flag = "picked_sardines"
+give_item = "sardines"
+once_flag = "picked_sardines"
+repeat_message = "Latas vazias e um cheiro antigo."
+interaction_id = "shelves"
+label = "Prateleiras"
+
+[node name="Stove" type="Control" parent="Interactables" unique_id=637987916]
+anchors_preset = 0
+anchor_left = 0.11
+anchor_top = 0.29
+anchor_right = 0.3
+anchor_bottom = 0.47
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_ygyg5")
+message = "O forno está morno. Alguém cozinhou aqui há pouco tempo."
+interaction_id = "stove"
+label = "Fogão a lenha"
+
+[node name="Sink" type="Control" parent="Interactables" unique_id=875862082]
+anchors_preset = 0
+anchor_left = 0.59
+anchor_top = 0.35
+anchor_right = 0.77
+anchor_bottom = 0.45
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_ygyg5")
+message = "Você enche uma garrafa quebrada com água do mar."
+set_flag = "water_taken"
+give_item = "water"
+once_flag = "water_taken"
+repeat_message = "A torneira continua cuspindo água salgada."
+interaction_id = "sink"
+label = "Torneira"
+
+[node name="KitchenWindow" type="Control" parent="Interactables" unique_id=1621478321]
+anchors_preset = 0
+anchor_left = 0.61
+anchor_top = 0.14
+anchor_right = 0.75
+anchor_bottom = 0.31
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_ygyg5")
+message = "A cozinha cheira a sal e a gordura antiga."
+interaction_id = "kitchen_window"
+label = "Janela"
+
+[node name="Knife" type="Control" parent="Interactables" unique_id=991885687]
+anchors_preset = 0
+anchor_left = 0.3
+anchor_top = 0.33
+anchor_right = 0.35000002
+anchor_bottom = 0.4
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_2jck6")
+item_id = "knife"
+description = "Uma faca de cozinha, ainda afiada. Serve para cortar ervas, peixes e outras coisas."
+interaction_id = "knife"
+label = "Faca de cozinha"
+
+[node name="Candle" type="Control" parent="Interactables" unique_id=1858094503]
+anchors_preset = 0
+anchor_left = 0.53
+anchor_top = 0.335
+anchor_right = 0.58
+anchor_bottom = 0.41000003
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_2jck6")
+item_id = "candle"
+description = "Uma vela de sebo. A chama é pequena, mas teimosa."
+interaction_id = "candle"
+label = "Vela de sebo"
+
+[node name="Syringe" type="Control" parent="Interactables" unique_id=366705566]
+anchors_preset = 0
+anchor_left = 0.765
+anchor_top = 0.38
+anchor_right = 0.84499997
+anchor_bottom = 0.42
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_2jck6")
+item_id = "syringe"
+description = "Uma seringa vazia. Grande o bastante para extrair quase qualquer coisa."
+interaction_id = "syringe"
+label = "Seringa vazia"
+
+[node name="Potion" type="Control" parent="Interactables" unique_id=1796284336]
+anchors_preset = 0
+anchor_left = 0.82
+anchor_top = 0.35
+anchor_right = 0.875
+anchor_bottom = 0.41
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_2jck6")
+item_id = "potion"
+description = "Poção Estranha. O rótulo diz: para dormir. O líquido violeta parece olhar de volta."
+interaction_id = "potion"
+label = "Poção estranha"
+use_rules = Array[ExtResource("6_mcuyg")]([SubResource("Resource_p0q0s")])
+
+[node name="Spawn_default" type="Control" parent="." unique_id=1402767374]
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 648.0
+offset_bottom = 368.0
+mouse_filter = 2

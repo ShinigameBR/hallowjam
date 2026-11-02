@@ -21,12 +21,27 @@ func _draw() -> void:
 	var s := minf(size.x, size.y)
 	if s <= 0.0:
 		return
-	var origin := (size - Vector2(s, s)) * 0.5
-	draw_set_transform(origin, 0.0, Vector2(s / 64.0, s / 64.0))
+
 	var base: Color = data.get("color", UI.MUTED)
 	if glow:
-		draw_circle(Vector2(32, 32), 27.0, Color(base, 0.14))
-		draw_circle(Vector2(32, 32), 20.0, Color(base, 0.08))
+		draw_circle(Vector2(size.x * 0.5, size.y * 0.5), minf(size.x, size.y) * 0.42, Color(base, 0.14))
+		draw_circle(Vector2(size.x * 0.5, size.y * 0.5), minf(size.x, size.y) * 0.31, Color(base, 0.08))
+
+	var texture_path := String(data.get("texture", ""))
+	if texture_path != "":
+		var texture := load(texture_path) as Texture2D
+		if texture != null:
+			var tex_size := texture.get_size()
+			if tex_size.x > 0.0 and tex_size.y > 0.0:
+				var fit := minf(size.x / tex_size.x, size.y / tex_size.y) * 0.86
+				var draw_size := tex_size * fit
+				var pos := (size - draw_size) * 0.5
+				draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+				draw_texture_rect(texture, Rect2(pos, draw_size), false)
+			return
+
+	var origin := (size - Vector2(s, s)) * 0.5
+	draw_set_transform(origin, 0.0, Vector2(s / 64.0, s / 64.0))
 	_draw_icon(String(data.get("icon", "stone")), base)
 
 

@@ -1,0 +1,214 @@
+[gd_scene format=3 uid="uid://d4xgan412txh"]
+
+[ext_resource type="Texture2D" uid="uid://60i381iw4i1r" path="res://assets/backgrounds/cais.jpeg" id="bg"]
+[ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
+[ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
+[ext_resource type="Texture2D" uid="uid://dkbes6f8edp0r" path="res://assets/props/buraco_na_praia.png" id="hole_tex"]
+[ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
+[ext_resource type="Texture2D" uid="uid://br7cjeeawufhs" path="res://assets/props/vara_desativada.png" id="rod_tex"]
+[ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
+[ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
+
+[sub_resource type="Resource" id="Resource_fish"]
+script = ExtResource("rule")
+item_id = "bait"
+required_flags = Array[String](["picked_rod"])
+forbidden_flags = Array[String](["fish_caught"])
+consume_item = "bait"
+give_item = "fish"
+set_flag = "fish_caught"
+message = "Você prende a isca no anzol e lança a linha. Um peixe prateado salta no cais."
+
+[sub_resource type="Resource" id="Resource_no_rod"]
+script = ExtResource("rule")
+item_id = "bait"
+forbidden_flags = Array[String](["picked_rod"])
+message = "Você tem a isca, mas precisa de uma vara de pescar."
+
+[sub_resource type="Resource" id="Resource_bucket"]
+script = ExtResource("rule")
+item_id = "bucket"
+consume_selected = true
+give_item = "bucket_water"
+message = "Você enche o balde até a borda com água do mar."
+
+[node name="DockRoom" type="Control" unique_id=1087959578]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("room")
+room_id = "outside"
+display_name = "CAIS"
+
+[node name="Background" type="TextureRect" parent="." unique_id=2120917076]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Interactables" type="Control" parent="." unique_id=1420096873]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Sea" type="Control" parent="Interactables" unique_id=906743792]
+layout_mode = 1
+anchor_left = 0.33
+anchor_right = 0.998
+anchor_bottom = 0.48100004
+offset_left = -28.400024
+offset_top = -1.0
+offset_right = 0.5599365
+offset_bottom = -0.32003784
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+action_id = "sea"
+interaction_id = "sea"
+label = "Mar"
+use_rules = Array[ExtResource("rule")]([SubResource("Resource_fish"), SubResource("Resource_no_rod"), SubResource("Resource_bucket")])
+
+[node name="Rod" type="TextureRect" parent="Interactables" unique_id=1049628999]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.22000001
+anchor_top = 0.078
+anchor_right = 0.32000002
+anchor_bottom = 0.37600002
+offset_left = -0.6000061
+offset_top = -1.1599998
+offset_right = -0.6000366
+offset_bottom = 0.27999878
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("rod_tex")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("pickup")
+item_id = "rod"
+description = "Uma vara de pescar velha. A linha ainda tem um anzol enferrujado."
+interaction_id = "rod"
+label = "Vara de pescar"
+
+[node name="Oyster" type="Control" parent="Interactables" unique_id=1265163993]
+layout_mode = 1
+anchor_left = 0.38300002
+anchor_top = 0.578
+anchor_right = 0.44300002
+anchor_bottom = 0.638
+offset_left = -0.24002075
+offset_top = -0.16000366
+offset_right = -0.24005127
+offset_bottom = -0.16000366
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("pickup")
+item_id = "oyster"
+description = "Uma ostra presa no anzol da vara. A concha está bem fechada."
+interaction_id = "oyster"
+label = "Ostra"
+always_show_label = true
+
+[node name="DirtHole" type="TextureRect" parent="Interactables" unique_id=710985212]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.845
+anchor_top = 0.776
+anchor_right = 0.975
+anchor_bottom = 0.91600007
+offset_left = -0.60009766
+offset_top = 0.27996826
+offset_right = -0.5999756
+offset_bottom = 0.27996826
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("hole_tex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Dirt" type="Control" parent="Interactables" unique_id=1799957579]
+layout_mode = 1
+anchor_left = 0.845
+anchor_top = 0.776
+anchor_right = 0.975
+anchor_bottom = 0.91600007
+offset_left = -0.60009766
+offset_top = 0.27996826
+offset_right = -0.5999756
+offset_bottom = 0.27996826
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+action_id = "dig"
+once_flag = "dirt_dug"
+repeat_message = "A terra já foi revolvida. Só resta o buraco."
+interaction_id = "dirt"
+label = "Terra suspeita"
+always_show_label = true
+
+[node name="BackDoor" type="Control" parent="Interactables" unique_id=1052343620]
+layout_mode = 1
+anchor_top = -0.001
+anchor_right = 0.066
+anchor_bottom = 0.99000007
+offset_left = -1.0
+offset_top = -0.27999997
+offset_right = -0.47999573
+offset_bottom = 6.199951
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("door")
+target_room_id = "main"
+spawn_point = "outside"
+interaction_id = "outside_door"
+label = "Voltar para a cabana"
+
+[node name="Horizon" type="Control" parent="Interactables" unique_id=1209243117]
+layout_mode = 1
+anchor_left = 0.333
+anchor_top = 0.003
+anchor_right = 0.9990001
+anchor_bottom = 0.11400001
+offset_left = -0.23999023
+offset_top = -0.16000009
+offset_right = 0.27990723
+offset_bottom = -0.08000183
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+message = "Nenhum barco no horizonte. Só a maré e o sol baixo."
+interaction_id = "horizon"
+label = "Horizonte"
+
+[node name="Spawn_default" type="Control" parent="." unique_id=305503709]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 648.0
+offset_bottom = 368.0
+mouse_filter = 2
+
+[node name="Spawn_outside" type="Control" parent="." unique_id=1438556832]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 260.0
+offset_top = 400.0
+offset_right = 268.0
+offset_bottom = 408.0
+mouse_filter = 2

@@ -8,15 +8,18 @@ signal selection_changed
 signal flags_changed
 signal objective_changed(text: String)
 signal toast(text: String)
+signal dialogue_requested(lines: Array)
+signal panel_requested(panel_id: String)
+signal action_requested(action_id: String, source: Node)
 
 const SAVE_PATH := "user://circulo_run.cfg"
-const ROOMS := ["main", "kitchen", "basement", "outside"]
+const ROOMS := ["main", "main_left", "main_right", "outside"]
 
 var inventory: Array[String] = []
 var circle: Array[String] = ["", "", "", ""]
 var flags: Dictionary = {}
 var current_room: String = "main"
-var objective: String = "Explore a cabana e descubra como escapar."
+var objective: String = "Leia o livro do bruxo."
 var play_time: float = 0.0
 var monsters_seen: Array[String] = []
 var selected_item: String = ""
@@ -28,7 +31,7 @@ func start_new_game() -> void:
 	circle = ["", "", "", ""]
 	flags.clear()
 	current_room = "main"
-	objective = "Explore a cabana e descubra como escapar."
+	objective = "Leia o livro do bruxo."
 	play_time = 0.0
 	monsters_seen.clear()
 	selected_item = ""
@@ -158,6 +161,11 @@ func has_flag(key: String) -> bool:
 	return bool(flags.get(key, false))
 
 
+func clear_flag(key: String) -> void:
+	if flags.erase(key):
+		flags_changed.emit()
+
+
 func set_objective(text: String) -> void:
 	objective = text
 	objective_changed.emit(objective)
@@ -172,6 +180,27 @@ func track_monster(monster_id: String) -> void:
 
 func notify(text: String) -> void:
 	toast.emit(text)
+
+
+## Convenience helpers used by room components.
+func say(text: String, speaker: String = "") -> void:
+	if text.strip_edges() == "":
+		return
+	dialogue_requested.emit([{"speaker": speaker, "text": text}])
+
+
+func show_dialog(lines: Array) -> void:
+	if lines.is_empty():
+		return
+	dialogue_requested.emit(lines)
+
+
+func open_panel(panel_id: String) -> void:
+	panel_requested.emit(panel_id)
+
+
+func request_action(action_id: String, source: Node = null) -> void:
+	action_requested.emit(action_id, source)
 
 
 # ------------------------------------------------------------------ persistence
@@ -220,9 +249,9 @@ func load_game() -> bool:
 		flags = saved_flags.duplicate(true)
 
 	current_room = String(cfg.get_value("run", "current_room", "main"))
-	if not ROOMS.has(current_room):
+	if RoomManager.get_room_scene(current_room) == null:
 		current_room = "main"
-	objective = String(cfg.get_value("run", "objective", "Explore a cabana e descubra como escapar."))
+	objective = String(cfg.get_value("run", "objective", "Leia o livro do bruxo."))
 	play_time = float(cfg.get_value("run", "play_time", 0.0))
 
 	monsters_seen.clear()

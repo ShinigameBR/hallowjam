@@ -29,9 +29,9 @@ func _build() -> void:
 	paper.add_child(page)
 
 	_page_line(page, "Terceira noite. O círculo não me obedece porque eu tenho medo. Ele sente isso.")
-	_page_line(page, "O Errante Verde é o único que conhece as correntes. Não vem por força: vem por fome, por movimento e por mar.")
-	_page_line(page, "Comida. Vento. Água. A ordem não importa. O que importa é o que cada coisa carrega por dentro.")
-	_page_line(page, "A coisa no porão ainda respira. A poção da cozinha, na dose certa, a derruba. Uma valsa antiga também serve, se você tiver estômago para dançar.")
+	_page_line(page, "O Beija-Flor Carmesim atende a duas coisas: algo vermelho e um aroma floral. Não vem por força: vem por cheiro.")
+	_page_line(page, "A lavanda do lado direito morreu há anos. A poção violeta ainda pode trazê-la de volta.")
+	_page_line(page, "A ordem das cores abre o cofre: azul, vermelho, verde, amarelo. As quantidades estão nos livros da estante.")
 	_page_line(page, "Se eu não voltar, que alguém termine o que eu comecei.")
 
 	var signature := UI.label("— E.", "Small")
