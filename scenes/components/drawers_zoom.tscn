@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://bs24mgtjs6jss"]
+
+[ext_resource type="Script" uid="uid://d142vqucekq22" path="res://scripts/game/drawers_zoom.gd" id="1_d8q3c"]
+[ext_resource type="Texture2D" uid="uid://buo8btrylytf6" path="res://assets/backgrounds/gavetas.jpeg" id="2_bs70a"]
+[ext_resource type="Texture2D" uid="uid://b32ufuhy43krg" path="res://assets/props/chave_de_fenda.png" id="3_bs70a"]
+
+[node name="DrawersZoom" type="Control" unique_id=667240615]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_d8q3c")
+metadata/_edit_use_anchors_ = true
+
+[node name="Background" type="TextureRect" parent="." unique_id=541804442]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bs70a")
+expand_mode = 1
+stretch_mode = 6
+metadata/_edit_use_anchors_ = true
+
+[node name="LeftDrawer" type="Button" parent="Background" unique_id=404894381]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.22000001
+anchor_top = 0.71800005
+anchor_right = 0.388
+anchor_bottom = 1.0
+offset_left = -0.6000061
+offset_top = 0.039978027
+offset_right = 0.35998535
+focus_mode = 0
+flat = true
+
+[node name="Screwdriver" type="TextureButton" parent="Background" unique_id=643018364]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.223
+anchor_top = 0.78300005
+anchor_right = 0.39000002
+anchor_bottom = 0.94200003
+offset_left = 3.5599976
+offset_top = 0.23999023
+offset_right = -0.2000122
+offset_bottom = -0.24005127
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("3_bs70a")
+ignore_texture_size = true
+stretch_mode = 5

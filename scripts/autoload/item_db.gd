@@ -251,6 +251,7 @@ var ITEMS := {
 		"color": Color("#b9c4cc"),
 		"icon": "stone",
 		"kind": "tool",
+		"texture": "res://assets/props/chave_de_fenda.png",
 	},
 	"sapphire": {
 		"name": "Safira",
