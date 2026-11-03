@@ -251,7 +251,7 @@ func load_game() -> bool:
 	current_room = String(cfg.get_value("run", "current_room", "main"))
 	if RoomManager.get_room_scene(current_room) == null:
 		current_room = "main"
-	objective = String(cfg.get_value("run", "objective", "Leia o livro do bruxo."))
+	objective = String(cfg.get_value("run", "objective", "Pegue a página do livro na estante."))
 	play_time = float(cfg.get_value("run", "play_time", 0.0))
 
 	monsters_seen.clear()

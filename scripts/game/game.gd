@@ -142,7 +142,7 @@ func _build_hud() -> void:
 	_book_button.focus_mode = Control.FOCUS_NONE
 	_book_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	_book_button.visible = false
-	_book_button.pressed.connect(func() -> void: _open_overlay(_book))
+	_book_button.pressed.connect(func() -> void: _open_book())
 	top_row.add_child(_book_button)
 
 	var menu_button := UI.button("MENU", "IconButton")
@@ -385,12 +385,21 @@ func _open_shelf() -> void:
 	_open_overlay(_shelf)
 	if _current_overlay != _shelf:
 		return
-	if not GameState.has_flag("picked_book_page"):
-		if not GameState.has_item("book_page"):
-			GameState.add_item("book_page")
-		GameState.set_flag("picked_book_page", true)
+	if not GameState.has_flag("shelf_seen"):
 		GameState.set_flag("shelf_seen", true)
 		GameState.save_game()
+
+
+func _open_book() -> void:
+	if _dialog.visible or _changing_room:
+		return
+	# A página fica na estante: o primeiro clique nela já a guarda no HUD.
+	if not GameState.has_item("book_page"):
+		GameState.add_item("book_page")
+	if not GameState.has_flag("picked_book_page"):
+		GameState.set_flag("picked_book_page", true)
+		GameState.save_game()
+	_open_overlay(_book)
 
 
 func _refresh_book_button() -> void:
@@ -510,7 +519,7 @@ func _maybe_intro() -> void:
 	_show_dialog([
 		{"text": "Você acorda com o som do mar batendo nos pilares."},
 		{"text": "A cabana pertence a um bruxo. Ele não está aqui. Você não lembra como chegou."},
-		{"text": "No livro sobre a mesa, está escrito: para abrir a passagem ao sótão, invoque o Beija-Flor Carmesim com aroma floral e algo vermelho."},
+		{"text": "Numa página solta sobre a estante, está escrito: para abrir a passagem ao sótão, invoque o Beija-Flor Carmesim com aroma floral e algo vermelho."},
 	])
 
 
@@ -557,7 +566,7 @@ func _on_dialogue_requested(lines: Array) -> void:
 func _on_panel_requested(panel_id: String) -> void:
 	match panel_id:
 		"book":
-			_open_overlay(_book)
+			_open_book()
 		"shelf":
 			_open_shelf()
 		"circle":

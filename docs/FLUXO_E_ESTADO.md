@@ -92,8 +92,8 @@ Use `set_flag`/`clear_flag` sempre que possível; eles emitem
 | `carmesim_fed` | O Carmesim comeu e abriu a porta do sótão. |
 | `won` | O jogo foi concluído. |
 
-`monsters_seen` não é uma flag: é uma lista separada, usada pelo livro e pela
-tela de vitória.
+`monsters_seen` não é uma flag: é uma lista separada, usada pelo menu de pausa
+e pela tela de vitória.
 
 ## Inventário e seleção
 
@@ -104,8 +104,9 @@ tela de vitória.
 - `clear_selection()` é chamada ao usar um item, trocar de sala ou clicar com o
   botão direito.
 - `replace_item(old, new)` remove um e adiciona outro.
-- `book_page` não aparece na barra inferior: o item ganha um ícone próprio no
-  canto superior do HUD e abre o leitor de página.
+- `book_page` não aparece na barra inferior: o item é obtido ao clicar na
+  estante, ganha um ícone próprio no canto superior do HUD e abre o leitor de
+  página.
 
 ## Círculo
 

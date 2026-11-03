@@ -27,9 +27,9 @@ português nos `.tscn` e `.gd`.
 | Final da fatia | `game.gd > _finish_game()` | Porta do sótão após alimentar o Carmesim. |
 | Objetivo do HUD | `game.gd > _refresh_objective()` | Sempre que uma flag muda. |
 | Falas de ação | `game.gd > _action_*` | Ações `safe`, `sea`, `dig`, `attic`. |
-| Página do livro | `scripts/game/book_panel.gd` | Ícone no canto superior do HUD. |
+| Página do livro | `scripts/game/book_panel.gd` | Hotspot da estante ou ícone no topo do HUD. |
 | Diário | `scripts/game/diary_panel.gd` | Item `diary` / hotspot do diário. |
-| Estante | `scripts/game/shelf_zoom.gd` | Hotspot da estante. |
+| Estante | `scripts/game/shelf_zoom.gd` | Hotspot do canto da estante. |
 | Círculo | `scripts/game/circle_panel.gd` | Hotspot do círculo. |
 | Cartão de invocação | `scripts/game/monster_result_panel.gd` | Fim de uma invocação. |
 | Nomes/descrições de monstros | `ItemDB.MONSTERS` | Cartão de resultado. |
@@ -119,9 +119,9 @@ O objetivo inicial (`Pegue a página do livro na estante.`) também está em
 `assets/props/pagina_do_livro_aberta.jpeg` em tela cheia, sem textos, botões ou
 outros elementos de HUD. Fecha com clique, botão direito ou **Esc**.
 
-A página em si é o item `book_page`, obtido na primeira visita ao zoom da
-estante. O ícone dela aparece no canto superior do HUD; a barra inferior não
-mostra esse item.
+A página em si é o item `book_page`, obtido ao clicar na estante. O ícone dela
+aparece no canto superior do HUD; a barra inferior não mostra esse item. O canto
+da estante tem um hotspot separado que abre o zoom da tábua e da chave.
 
 ### Diário
 
@@ -146,7 +146,7 @@ entre `PARTIR` (vitória) e `RECOLHER OFERENDAS` (fracasso).
 - Objetivos aparecem em uma faixa no topo e quebram linha automaticamente; use
   no máximo duas frases curtas.
 - Painéis têm larguras fixas (por exemplo, diário 824 px, círculo 780 px,
-  teclado 470 px). Textos longos devem usar `autowrap_mode`, como já acontece
+  cofre 470 px). Textos longos devem usar `autowrap_mode`, como já acontece
   nos painéis.
 - Os labels não interpretam BBCode/HTML. Para destaque, use os estilos da UI
   (`Eyebrow`, `H1`, `H2`, `Muted`, `Tiny`, etc.) ou cores definidas em

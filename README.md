@@ -12,7 +12,9 @@ pode abrir a passagem para o sótão.
 - **Clique** em um item do inventário para selecioná-lo e depois clique em um
   objeto para usá-lo.
 - **Clique com o botão direito** para soltar o item selecionado.
-- **Ícone da página** (canto superior) abre a página do livro, sem painéis.
+- **Clique na estante** para pegar a página do livro; depois use o **ícone da
+  página** (canto superior) para reabri-la.
+- **Clique no canto da estante** para o zoom da tábua solta e da chave.
 - **MENU** pausa o jogo.
 - **ESC** fecha painéis ou pausa.
 - Em builds de debug, **F1** liga/desliga os contornos e etiquetas de
@@ -24,7 +26,7 @@ pode abrir a passagem para o sótão.
 - Quatro áreas: sala principal, lado esquerdo, lado direito e cais.
 - Arte de fundo para as quatro áreas, menu e tela final, com props recortados
   para os objetos e itens.
-- Livro do bruxo, cofre com senha, círculo de invocação e pistas no cenário.
+- Página do livro do bruxo, cofre com senha, círculo de invocação e pistas no cenário.
 - Zoom do canto da estante para achar a chave escondida.
 - Lavanda revivida, rubi, vara de pescar, minhoca, ostra, pérola e peixe.
 - Seis monstros possíveis, definidos pelas qualidades dos ingredientes.

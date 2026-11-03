@@ -3,7 +3,7 @@ extends Node
 ##
 ## It drives the same entry points as real clicks (through RoomManager and the
 ## game controller) and checks the full Carmesim route:
-##   book page -> shelf/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic.
+##   bookshelf/page -> shelf corner/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic.
 
 var _failures: Array[String] = []
 var _game: Control
@@ -58,12 +58,25 @@ func _run() -> void:
 	# ------------------------------------------------------ page and shelf
 	GameState.clear_selection()
 	await _interact("bookshelf")
-	var shelf_zoom: Control = _game.get("_shelf")
-	_check(shelf_zoom.visible, "bookshelf opens the shelf corner zoom")
-	_check(GameState.has_item("book_page"), "first shelf visit gives the book page")
+	var book_viewer: Control = _game.get("_book")
+	_check(book_viewer.visible, "bookshelf opens the book page")
+	_check(GameState.has_item("book_page"), "taking the page adds it to the inventory")
 	_check(GameState.has_flag("picked_book_page"), "picking up the page sets its flag")
 	_check(_game.get("_book_button").visible, "the page icon appears in the top corner")
-	_check(not GameState.has_flag("book_read"), "picking up the page does not read it yet")
+	_check(GameState.has_flag("book_read"), "opening the page sets book_read")
+	_check(book_viewer.find_children("*", "Label", true, false).is_empty(), "the page viewer has no text labels")
+	await _close_overlay("_book")
+	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the page")
+
+	_game.get("_book_button").pressed.emit()
+	await _wait(0.2)
+	_check(book_viewer.visible, "the page icon opens the page viewer")
+	await _close_overlay("_book")
+
+	GameState.clear_selection()
+	await _interact("bookshelf_corner")
+	var shelf_zoom: Control = _game.get("_shelf")
+	_check(shelf_zoom.visible, "shelf corner opens the shelf corner zoom")
 	_check(not shelf_zoom.get_node("Background/Key").visible, "key hidden while the board is closed")
 	_check(shelf_zoom.get_node("Background/Key").texture_click_mask != null, "the key only clicks on its drawing")
 	shelf_zoom.call("_toggle_board")
@@ -76,13 +89,6 @@ func _run() -> void:
 	await _wait(0.7)
 	_check(not shelf_zoom.visible, "shelf zoom closes")
 	_check(not shelf_zoom.get("_board_open"), "leaving the zoom closes the board")
-
-	await _open_overlay("_book")
-	_check(_game.get("_book").visible, "the page icon opens the page viewer")
-	_check(GameState.has_flag("book_read"), "opening the page sets book_read")
-	_check(_game.get("_book").find_children("*", "Label", true, false).is_empty(), "the page viewer has no text labels")
-	await _close_overlay("_book")
-	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the page")
 
 	# ------------------------------------------------------ front door clue
 	GameState.clear_selection()

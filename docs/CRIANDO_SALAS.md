@@ -326,9 +326,10 @@ Depois de criar ou editar uma sala, rode o teste de fluxo:
 godot --headless --path . res://tests/flow_test.tscn
 ```
 
-O teste usa os `Interaction Id` atuais (`bookshelf`, `main_door`,
-`lavender_wilted`, `sea`, `dirt`, `carmesim`, `attic_door`, ...). Se você
-renomear esses ids nas salas de exemplo, atualize também `tests/flow_test.gd`.
+O teste usa os `Interaction Id` atuais (`bookshelf`, `bookshelf_corner`,
+`main_door`, `lavender_wilted`, `sea`, `dirt`, `carmesim`, `attic_door`, ...). Se
+você renomear esses ids nas salas de exemplo, atualize também
+`tests/flow_test.gd`.
 
 Para gerar capturas de tela das salas e painéis:
 

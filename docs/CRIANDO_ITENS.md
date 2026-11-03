@@ -151,11 +151,11 @@ As criaturas ficam em `MONSTERS`, no mesmo arquivo. Cada entrada tem:
 
 | Campo | Para que serve |
 | --- | --- |
-| `name` | Nome exibido no cartão de resultado e no livro. |
+| `name` | Nome exibido no cartão de resultado. |
 | `title` | Subtítulo curto. |
 | `color` | Cor do glifo e do cartão. |
 | `recipe` | Lista de tags necessárias (todas). |
-| `hints` | Dicas mostradas no livro. |
+| `hints` | Reservado para dicas extras (o leitor da página mostra só a arte). |
 | `desc` | Descrição no cartão de resultado. |
 | `ability` | Habilidade mostrada no cartão. |
 | `victory` | `true` se essa invocação vence a fatia. |
