@@ -104,8 +104,9 @@ e pela tela de vitória.
 - `clear_selection()` é chamada ao usar um item, trocar de sala ou clicar com o
   botão direito.
 - `replace_item(old, new)` remove um e adiciona outro.
-- `book_page` não aparece na barra inferior: o item é pego sobre a estante,
-  ganha um ícone próprio no canto superior do HUD e abre o leitor de página.
+- `book_page` não aparece na barra inferior (aberta pelo botão **INVENTÁRIO**):
+  o item é pego sobre a estante, ganha um ícone próprio no canto superior do HUD
+  e abre o leitor de página.
 
 ## Círculo
 

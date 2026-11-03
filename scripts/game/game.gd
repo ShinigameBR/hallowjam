@@ -24,8 +24,16 @@ const ROOM_NAMES := {
 	"outside": "CAIS",
 }
 
+const INVENTORY_HEIGHT := 134.0
+const INVENTORY_TOP_OPEN := -134.0
+const INVENTORY_TOP_CLOSED := -100.0
+
 var _room_host: Control
 var _inventory_bar: HBoxContainer
+var _inventory_panel: PanelContainer
+var _inventory_toggle: Button
+var _inventory_tween: Tween
+var _inventory_open := false
 var _room_label: Label
 var _objective_label: Label
 var _selection_label: Label
@@ -104,99 +112,56 @@ func _build_room_host() -> void:
 
 
 func _build_hud() -> void:
-	_build_hud_brand()
-	_build_objective_card()
+	_build_room_block()
 	_build_top_actions()
-	_build_inventory_tray()
+	_build_inventory_panel()
+	_build_inventory_toggle()
 
 
-func _build_hud_brand() -> void:
-	var brand := VBoxContainer.new()
-	brand.name = "HudBrand"
-	brand.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	brand.anchor_top = 0.0
-	brand.anchor_bottom = 0.0
-	brand.offset_left = 22.0
-	brand.offset_top = 18.0
-	brand.offset_right = 208.0
-	brand.offset_bottom = 82.0
-	brand.add_theme_constant_override("separation", 1)
-	add_child(brand)
+func _build_room_block() -> void:
+	var block := VBoxContainer.new()
+	block.name = "HudRoomBlock"
+	block.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	block.anchor_top = 0.0
+	block.anchor_bottom = 0.0
+	block.offset_left = 22.0
+	block.offset_top = 16.0
+	block.offset_right = 342.0
+	block.offset_bottom = 140.0
+	block.add_theme_constant_override("separation", 8)
+	add_child(block)
 
-	var title_row := HBoxContainer.new()
-	title_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title_row.add_theme_constant_override("separation", 9)
-	brand.add_child(title_row)
-
-	var mark := ColorRect.new()
-	mark.color = Color(UI.ACCENT, 0.75)
-	mark.custom_minimum_size = Vector2(2, 22)
-	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title_row.add_child(mark)
-
-	var title := UI.label("CÍRCULO", "HudTitle")
-	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_hud_text(title)
-	title_row.add_child(title)
-
-	var tagline := UI.label("UM RITUAL PARA ESCAPAR", "EyebrowMuted")
-	_hud_text(tagline)
-	brand.add_child(tagline)
-
-
-func _build_objective_card() -> void:
 	var card := PanelContainer.new()
-	card.name = "ObjectiveCard"
-	card.theme_type_variation = "HudCard"
-	card.anchor_left = 0.285
-	card.anchor_right = 0.72
-	card.anchor_top = 0.0
-	card.anchor_bottom = 0.0
-	card.offset_top = 16.0
-	card.offset_bottom = 88.0
-	# O cartão é só leitura: o clique atravessa para o cenário.
+	card.name = "RoomCard"
+	card.theme_type_variation = "HudPanel"
+	card.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(card)
-
-	var margin := MarginContainer.new()
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 16)
-	margin.add_theme_constant_override("margin_right", 14)
-	margin.add_theme_constant_override("margin_top", 10)
-	margin.add_theme_constant_override("margin_bottom", 10)
-	card.add_child(margin)
+	block.add_child(card)
 
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", 12)
-	margin.add_child(row)
+	row.add_theme_constant_override("separation", 9)
+	card.add_child(row)
 
-	var rule := ColorRect.new()
-	rule.color = Color(UI.ACCENT, 0.62)
-	rule.custom_minimum_size = Vector2(2, 0)
-	rule.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_child(rule)
+	var mark := ColorRect.new()
+	mark.color = Color(UI.ACCENT, 0.7)
+	mark.custom_minimum_size = Vector2(2, 16)
+	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(mark)
 
-	var text_box := VBoxContainer.new()
-	text_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_box.add_theme_constant_override("separation", 2)
-	row.add_child(text_box)
-
-	_room_label = UI.label("SALA PRINCIPAL", "Eyebrow")
+	_room_label = UI.label("SALA PRINCIPAL", "H3")
 	_hud_text(_room_label)
-	text_box.add_child(_room_label)
+	row.add_child(_room_label)
 
+	# Objective as a quiet line under the place name, not a mission card.
 	_objective_label = UI.label(GameState.objective, "Objective")
 	_hud_text(_objective_label)
 	_objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_objective_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_objective_label.custom_minimum_size = Vector2(310, 0)
 	_objective_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_objective_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_objective_label.add_theme_constant_override("line_spacing", 2)
-	text_box.add_child(_objective_label)
+	block.add_child(_objective_label)
 
 
 func _build_top_actions() -> void:
@@ -207,12 +172,12 @@ func _build_top_actions() -> void:
 	actions.anchor_right = 1.0
 	actions.anchor_top = 0.0
 	actions.anchor_bottom = 0.0
-	actions.offset_left = -190.0
+	actions.offset_left = -240.0
 	actions.offset_right = -22.0
-	actions.offset_top = 18.0
+	actions.offset_top = 16.0
 	actions.offset_bottom = 76.0
 	actions.alignment = BoxContainer.ALIGNMENT_END
-	actions.add_theme_constant_override("separation", 10)
+	actions.add_theme_constant_override("separation", 8)
 	add_child(actions)
 
 	_book_slot = PanelContainer.new()
@@ -227,7 +192,7 @@ func _build_top_actions() -> void:
 	_book_button.texture_normal = PAGE_ICON
 	_book_button.ignore_texture_size = true
 	_book_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	_book_button.custom_minimum_size = Vector2(38, 44)
+	_book_button.custom_minimum_size = Vector2(34, 40)
 	_book_button.tooltip_text = "Página do livro"
 	_book_button.focus_mode = Control.FOCUS_NONE
 	_book_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -235,41 +200,34 @@ func _build_top_actions() -> void:
 	_book_button.pressed.connect(func() -> void: _open_book())
 	_book_slot.add_child(_book_button)
 
-	var divider := ColorRect.new()
-	divider.color = Color(UI.ACCENT, 0.18)
-	divider.custom_minimum_size = Vector2(1, 28)
-	divider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	actions.add_child(divider)
-
-	var menu_button := UI.button("MENU", "IconButton")
-	menu_button.custom_minimum_size = Vector2(76, 36)
+	var menu_button := UI.button("MENU", "HudButton")
+	menu_button.custom_minimum_size = Vector2(82, 44)
 	menu_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	menu_button.pressed.connect(_open_pause)
 	actions.add_child(menu_button)
 
 
-func _build_inventory_tray() -> void:
-	var tray := PanelContainer.new()
-	tray.name = "InventoryTray"
-	tray.theme_type_variation = "HudTray"
-	tray.anchor_left = 0.105
-	tray.anchor_right = 0.895
-	tray.anchor_top = 1.0
-	tray.anchor_bottom = 1.0
-	tray.offset_top = -146.0
-	tray.offset_bottom = -16.0
-	# Fora dos slots, a bandeja deixa o clique passar para o cenário.
-	tray.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(tray)
+func _build_inventory_panel() -> void:
+	_inventory_panel = PanelContainer.new()
+	_inventory_panel.name = "InventoryPanel"
+	_inventory_panel.theme_type_variation = "HudPanel"
+	_inventory_panel.anchor_top = 1.0
+	_inventory_panel.anchor_bottom = 1.0
+	_inventory_panel.anchor_right = 1.0
+	_inventory_panel.offset_top = INVENTORY_TOP_CLOSED
+	_inventory_panel.offset_bottom = INVENTORY_TOP_CLOSED + INVENTORY_HEIGHT
+	# A bandeja em si é só fundo: os slots continuam capturando o clique.
+	_inventory_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_inventory_panel.visible = false
+	add_child(_inventory_panel)
 
 	var margin := MarginContainer.new()
 	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 18)
-	margin.add_theme_constant_override("margin_right", 18)
-	margin.add_theme_constant_override("margin_top", 12)
-	margin.add_theme_constant_override("margin_bottom", 12)
-	tray.add_child(margin)
+	margin.add_theme_constant_override("margin_left", 196)
+	margin.add_theme_constant_override("margin_right", 22)
+	margin.add_theme_constant_override("margin_top", 14)
+	margin.add_theme_constant_override("margin_bottom", 14)
+	_inventory_panel.add_child(margin)
 
 	var box := VBoxContainer.new()
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -281,10 +239,6 @@ func _build_inventory_tray() -> void:
 	header.add_theme_constant_override("separation", 12)
 	box.add_child(header)
 
-	var inventory_title := UI.label("INVENTÁRIO", "Eyebrow")
-	_hud_text(inventory_title)
-	header.add_child(inventory_title)
-
 	_selection_label = UI.label("Nenhum item selecionado.", "Small")
 	_hud_text(_selection_label)
 	_selection_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -293,7 +247,6 @@ func _build_inventory_tray() -> void:
 
 	var hint := UI.label("Botão direito solta o item.", "Tiny")
 	_hud_text(hint)
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	header.add_child(hint)
 
@@ -309,6 +262,47 @@ func _build_inventory_tray() -> void:
 	_inventory_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_inventory_bar.item_clicked.connect(_on_item_clicked)
 	center.add_child(_inventory_bar)
+
+
+func _build_inventory_toggle() -> void:
+	_inventory_toggle = UI.button("INVENTÁRIO", "HudButton")
+	_inventory_toggle.name = "InventoryToggle"
+	_inventory_toggle.anchor_top = 1.0
+	_inventory_toggle.anchor_bottom = 1.0
+	_inventory_toggle.offset_left = 22.0
+	_inventory_toggle.offset_right = 172.0
+	_inventory_toggle.offset_top = -78.0
+	_inventory_toggle.offset_bottom = -36.0
+	_inventory_toggle.pressed.connect(_toggle_inventory)
+	add_child(_inventory_toggle)
+
+
+func _toggle_inventory() -> void:
+	if _inventory_panel == null or _inventory_toggle == null:
+		return
+	if _inventory_tween and _inventory_tween.is_valid():
+		_inventory_tween.kill()
+	_inventory_open = not _inventory_open
+	_inventory_toggle.text = "FECHAR" if _inventory_open else "INVENTÁRIO"
+	_inventory_tween = create_tween().set_parallel(true)
+	_inventory_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	if _inventory_open:
+		_inventory_panel.visible = true
+		_inventory_panel.modulate.a = 0.0
+		_inventory_tween.tween_property(_inventory_panel, "offset_top", INVENTORY_TOP_OPEN, 0.22)
+		_inventory_tween.tween_property(_inventory_panel, "offset_bottom", INVENTORY_TOP_OPEN + INVENTORY_HEIGHT, 0.22)
+		_inventory_tween.tween_property(_inventory_panel, "modulate:a", 1.0, 0.18)
+	else:
+		_inventory_tween.tween_property(_inventory_panel, "offset_top", INVENTORY_TOP_CLOSED, 0.2)
+		_inventory_tween.tween_property(_inventory_panel, "offset_bottom", INVENTORY_TOP_CLOSED + INVENTORY_HEIGHT, 0.2)
+		_inventory_tween.tween_property(_inventory_panel, "modulate:a", 0.0, 0.16)
+		_inventory_tween.tween_callback(_hide_inventory_panel).set_delay(0.2)
+
+
+func _hide_inventory_panel() -> void:
+	if _inventory_panel == null or _inventory_open:
+		return
+	_inventory_panel.visible = false
 
 
 func _hud_text(label: Label) -> void:
@@ -793,39 +787,39 @@ func _on_objective_changed(text: String) -> void:
 
 
 func _refresh_objective() -> void:
-	var text := "Pegue a página do livro na estante."
+	var text := "Uma página solta repousa sobre a estante."
 	if GameState.has_flag("won"):
 		text = "Você está livre."
 	elif GameState.has_flag("carmesim_fed"):
-		text = "A porta do sótão está aberta. Suba."
+		text = "O sótão espera."
 	elif GameState.has_flag("summoned_carmesim"):
 		if GameState.has_flag("fish_caught"):
-			text = "Alimente o Beija-Flor Carmesim com o peixe."
+			text = "O Carmesim ainda espera o peixe."
 		elif not GameState.has_flag("front_door_open"):
 			if not GameState.has_flag("picked_key"):
-				text = "A porta da frente está trancada. A pista na porta aponta para uma tábua solta na estante."
+				text = "A porta não cede. Algo range perto da estante."
 			else:
-				text = "Use a chave na porta da frente."
+				text = "A chave na porta da frente."
 		elif not GameState.has_flag("picked_rod"):
-			text = "No cais, pegue a vara de pescar."
+			text = "O cais guarda uma vara de pescar."
 		elif not GameState.has_flag("dirt_dug"):
-			text = "Cave a terra suspeita no cais para encontrar isca."
+			text = "A terra do cais parece revolvida."
 		elif not GameState.has_flag("fish_caught"):
-			text = "Selecione a isca e pesque no mar."
+			text = "O mar está calmo demais."
 		else:
-			text = "Alimente o Beija-Flor Carmesim com o peixe."
+			text = "O Carmesim ainda espera o peixe."
 	elif not GameState.has_item("book_page"):
-		text = "Pegue a página do livro na estante."
+		text = "Uma página solta repousa sobre a estante."
 	elif not GameState.has_flag("book_read"):
-		text = "Abra a página do livro no canto superior."
+		text = "A página ainda está fechada."
 	elif not GameState.has_flag("lavender_revived"):
-		text = "Revitalize a lavanda murcha do lado direito com a poção."
+		text = "A lavanda murcha pede a poção."
 	elif not GameState.has_flag("picked_lavender_revived"):
-		text = "Colha a lavanda revivida."
+		text = "A lavanda reviveu."
 	elif not GameState.has_flag("ruby_taken"):
-		text = "Abra o cofre da estante."
+		text = "O cofre da estante está trancado."
 	else:
-		text = "Invoque o Carmesim: coloque a lavanda revivida e o rubi no círculo."
+		text = "O círculo aguarda a lavanda e o rubi."
 	GameState.set_objective(text)
 
 

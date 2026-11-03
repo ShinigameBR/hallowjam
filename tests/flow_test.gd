@@ -37,6 +37,18 @@ func _run() -> void:
 	_game.call("_rebuild_hotspots")
 	await _wait(0.4)
 
+	# ---------------------------------------------------- inventory toggle
+	var inventory_toggle: Button = _game.get("_inventory_toggle")
+	var inventory_panel: Control = _game.get("_inventory_panel")
+	_check(not inventory_panel.visible, "inventory bar starts closed")
+	inventory_toggle.pressed.emit()
+	await _wait(0.3)
+	_check(inventory_panel.visible, "the inventory button opens the bottom bar")
+	_check(inventory_toggle.text == "FECHAR", "the inventory button becomes a close action")
+	inventory_toggle.pressed.emit()
+	await _wait(0.3)
+	_check(not inventory_panel.visible, "the inventory button closes the bottom bar")
+
 	# ---------------------------------------------------- wrong summon (roxo)
 	GameState.add_item("mushroom")
 	GameState.add_item("water")

@@ -105,10 +105,10 @@ Exemplo:
 
 ```gdscript
 elif not GameState.has_flag("lavender_revived"):
-	text = "Revitalize a lavanda murcha do lado direito com a poção."
+	text = "A lavanda murcha pede a poção."
 ```
 
-O objetivo inicial (`Pegue a página do livro na estante.`) também está em
+O objetivo inicial (`Uma página solta repousa sobre a estante.`) também está em
 `GameState.start_new_game()` e em `GameState.objective`.
 
 ## Textos de painéis
@@ -143,8 +143,8 @@ entre `PARTIR` (vitória) e `RECOLHER OFERENDAS` (fracasso).
 
 - O diálogo ocupa ~84% da largura e cerca de 2 a 4 linhas. Prefira falas de
   1 a 3 frases.
-- Objetivos aparecem em um cartão no topo e quebram linha automaticamente; use
-  no máximo duas frases curtas.
+- Objetivos aparecem como texto simples sob o nome da sala e quebram linha
+  automaticamente; use no máximo duas frases curtas e evite instruções óbvias.
 - Painéis têm larguras fixas (por exemplo, diário 824 px, círculo 780 px,
   cofre 470 px). Textos longos devem usar `autowrap_mode`, como já acontece
   nos painéis.

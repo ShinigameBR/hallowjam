@@ -71,12 +71,11 @@ func _build_theme() -> Theme:
 
 	_variation(t, "Title", "Label", font_title, 86, ACCENT)
 	_variation(t, "TitleSmall", "Label", font_title, 42, TEXT)
-	_variation(t, "HudTitle", "Label", font_title, 24, ACCENT)
 	_variation(t, "H1", "Label", font_title, 30, TEXT)
 	_variation(t, "H2", "Label", font_bold, 20, TEXT)
 	_variation(t, "H3", "Label", font_bold, 16, TEXT)
 	_variation(t, "BodyLarge", "Label", font_body, 18, TEXT)
-	_variation(t, "Objective", "Label", font_body, 15, Color(TEXT, 0.94))
+	_variation(t, "Objective", "Label", font_body, 13, MUTED)
 	_variation(t, "Muted", "Label", font_body, 14, MUTED)
 	_variation(t, "Small", "Label", font_body, 12, MUTED)
 	_variation(t, "Tiny", "Label", font_medium, 10, MUTED_DIM)
@@ -166,6 +165,19 @@ func _build_theme() -> Theme:
 	t.set_stylebox("pressed", "IconButton", _style(Color(ACCENT, 0.12), 6, ACCENT, 1, 10))
 	t.set_stylebox("focus", "IconButton", _style(Color.TRANSPARENT, 6, Color(ACCENT, 0.9), 1, 10))
 
+	# Dark glass button used by the HUD (MENU, INVENTÁRIO).
+	t.set_type_variation("HudButton", "Button")
+	t.set_font("font", "HudButton", font_spaced)
+	t.set_font_size("font_size", "HudButton", 11)
+	t.set_color("font_color", "HudButton", MUTED)
+	t.set_color("font_hover_color", "HudButton", ACCENT)
+	t.set_color("font_focus_color", "HudButton", ACCENT)
+	t.set_color("font_pressed_color", "HudButton", ACCENT)
+	t.set_stylebox("normal", "HudButton", _style(Color(BG_SOFT, 0.82), 8, Color(1, 1, 1, 0.06), 1, 12))
+	t.set_stylebox("hover", "HudButton", _style(Color(BG_SOFT, 0.92), 8, Color(ACCENT, 0.45), 1, 12))
+	t.set_stylebox("pressed", "HudButton", _style(Color(BG_SOFT, 0.96), 8, Color(ACCENT, 0.8), 1, 12))
+	t.set_stylebox("focus", "HudButton", _style(Color(BG_SOFT, 0.82), 8, Color(ACCENT, 0.9), 1, 12))
+
 	# Inventory slot.
 	t.set_type_variation("SlotButton", "Button")
 	t.set_stylebox("normal", "SlotButton", _style(Color(1, 1, 1, 0.035), 9, Color(1, 1, 1, 0.09), 1, 4))
@@ -183,24 +195,9 @@ func _build_theme() -> Theme:
 	t.set_type_variation("HudPanel", "PanelContainer")
 	t.set_stylebox("panel", "HudPanel", _style(Color(BG_SOFT, 0.82), 10, Color(1, 1, 1, 0.06), 1, 12))
 
-	# Floating HUD cards: dark glass, a thin gold edge and a soft drop shadow.
-	t.set_type_variation("HudCard", "PanelContainer")
-	var hud_card := _style(Color(BG_SOFT, 0.80), 12, Color(ACCENT, 0.18), 1, 0)
-	hud_card.border_width_left = 2
-	hud_card.shadow_color = Color(0, 0, 0, 0.35)
-	hud_card.shadow_size = 12
-	hud_card.shadow_offset = Vector2(0, 5)
-	t.set_stylebox("panel", "HudCard", hud_card)
-
-	t.set_type_variation("HudTray", "PanelContainer")
-	var hud_tray := _style(Color("#0a0f18"), 16, Color(ACCENT, 0.16), 1, 0)
-	hud_tray.shadow_color = Color(0, 0, 0, 0.45)
-	hud_tray.shadow_size = 18
-	hud_tray.shadow_offset = Vector2(0, 7)
-	t.set_stylebox("panel", "HudTray", hud_tray)
-
+	# Same dark glass, tighter padding, used around the page icon.
 	t.set_type_variation("HudSlot", "PanelContainer")
-	t.set_stylebox("panel", "HudSlot", _style(Color(BG_SOFT, 0.62), 9, Color(ACCENT, 0.20), 1, 4))
+	t.set_stylebox("panel", "HudSlot", _style(Color(BG_SOFT, 0.82), 8, Color(1, 1, 1, 0.06), 1, 6))
 
 	t.set_type_variation("DialogPanel", "PanelContainer")
 	var dialog_style := _style(Color("#0d131e"), 10, Color(ACCENT, 0.22), 1, 20)
