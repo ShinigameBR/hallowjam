@@ -3,7 +3,7 @@ extends Node
 ##
 ## It drives the same entry points as real clicks (through RoomManager and the
 ## game controller) and checks the full Carmesim route:
-##   bookshelf/page -> shelf corner/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic.
+##   book page -> shelf corner/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic.
 
 var _failures: Array[String] = []
 var _game: Control
@@ -37,6 +37,18 @@ func _run() -> void:
 	_game.call("_rebuild_hotspots")
 	await _wait(0.4)
 
+	# ---------------------------------------------------- inventory toggle
+	var inventory_toggle: Button = _game.get("_inventory_toggle")
+	var inventory_panel: Control = _game.get("_inventory_panel")
+	_check(not inventory_panel.visible, "inventory bar starts closed")
+	inventory_toggle.pressed.emit()
+	await _wait(0.3)
+	_check(inventory_panel.visible, "the inventory button opens the bottom bar")
+	_check(inventory_toggle.text == "FECHAR", "the inventory button becomes a close action")
+	inventory_toggle.pressed.emit()
+	await _wait(0.3)
+	_check(not inventory_panel.visible, "the inventory button closes the bottom bar")
+
 	# ---------------------------------------------------- wrong summon (roxo)
 	GameState.add_item("mushroom")
 	GameState.add_item("water")
@@ -57,21 +69,22 @@ func _run() -> void:
 
 	# ------------------------------------------------------ page and shelf
 	GameState.clear_selection()
-	await _interact("bookshelf")
+	await _interact("book_page")
+	await _finish_dialog()
 	var book_viewer: Control = _game.get("_book")
-	_check(book_viewer.visible, "bookshelf opens the book page")
+	_check(not book_viewer.visible, "picking up the page does not open it")
 	_check(GameState.has_item("book_page"), "taking the page adds it to the inventory")
 	_check(GameState.has_flag("picked_book_page"), "picking up the page sets its flag")
 	_check(_game.get("_book_button").visible, "the page icon appears in the top corner")
-	_check(GameState.has_flag("book_read"), "opening the page sets book_read")
-	_check(book_viewer.find_children("*", "Label", true, false).is_empty(), "the page viewer has no text labels")
-	await _close_overlay("_book")
-	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the page")
+	_check(not GameState.has_flag("book_read"), "picking up the page does not read it yet")
 
 	_game.get("_book_button").pressed.emit()
 	await _wait(0.2)
 	_check(book_viewer.visible, "the page icon opens the page viewer")
+	_check(GameState.has_flag("book_read"), "opening the page sets book_read")
+	_check(book_viewer.find_children("*", "Label", true, false).is_empty(), "the page viewer has no text labels")
 	await _close_overlay("_book")
+	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the page")
 
 	GameState.clear_selection()
 	await _interact("bookshelf_corner")

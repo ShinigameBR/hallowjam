@@ -46,7 +46,7 @@ func _build() -> void:
 	body.add_child(UI.label("OFERENDAS DISPONÍVEIS", "EyebrowMuted"))
 
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 78)
+	scroll.custom_minimum_size = Vector2(0, 86)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	body.add_child(scroll)

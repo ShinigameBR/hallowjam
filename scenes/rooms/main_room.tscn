@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cij00ndjj5xwm" path="res://assets/props/monstro_carmesim.png" id="carmesim_tex"]
 [ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
 [ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
+[ext_resource type="Texture2D" uid="uid://nfyitx4ktfp" path="res://assets/props/pagina_do_livro.png" id="page_tex"]
 [ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
 [ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
 [ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
@@ -48,23 +49,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="Bookshelf" type="Control" parent="Interactables" unique_id=2008497924]
-layout_mode = 1
-anchor_left = 0.120000005
-anchor_top = 0.147
-anchor_right = 0.36
-anchor_bottom = 0.5
-offset_left = 0.3999939
-offset_top = 0.16000366
-offset_right = 0.39996338
-offset_bottom = -16.599976
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("examine")
-open_panel = "book"
-interaction_id = "bookshelf"
-label = "Estante de livros"
 
 [node name="BookshelfCorner" type="Control" parent="Interactables" unique_id=542250819]
 layout_mode = 1
@@ -254,6 +238,28 @@ item_id = "potion"
 description = "Uma poção de cura. O líquido violeta parece olhar de volta."
 interaction_id = "potion"
 label = "Poção"
+
+[node name="BookPage" type="TextureRect" parent="Interactables" unique_id=1903375062]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.277
+anchor_top = 0.208
+anchor_right = 0.324
+anchor_bottom = 0.321
+offset_left = -0.55999756
+offset_top = 0.23999023
+offset_right = 0.07998657
+offset_bottom = -0.32002258
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("page_tex")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("pickup")
+item_id = "book_page"
+description = "Você pega a página solta sobre a estante. A letra fala do Beija-Flor Carmesim."
+interaction_id = "book_page"
+label = "Página do Livro"
 
 [node name="Spawn_default" type="Control" parent="." unique_id=1385361942]
 layout_mode = 1

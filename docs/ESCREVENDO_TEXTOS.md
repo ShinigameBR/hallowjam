@@ -105,10 +105,10 @@ Exemplo:
 
 ```gdscript
 elif not GameState.has_flag("lavender_revived"):
-	text = "Revitalize a lavanda murcha do lado direito com a poção."
+	text = "A lavanda murcha pede a poção."
 ```
 
-O objetivo inicial (`Pegue a página do livro na estante.`) também está em
+O objetivo inicial (`Uma página solta repousa sobre a estante.`) também está em
 `GameState.start_new_game()` e em `GameState.objective`.
 
 ## Textos de painéis
@@ -119,9 +119,9 @@ O objetivo inicial (`Pegue a página do livro na estante.`) também está em
 `assets/props/pagina_do_livro_aberta.jpeg` em tela cheia, sem textos, botões ou
 outros elementos de HUD. Fecha com clique, botão direito ou **Esc**.
 
-A página em si é o item `book_page`, obtido ao clicar na estante. O ícone dela
-aparece no canto superior do HUD; a barra inferior não mostra esse item. O canto
-da estante tem um hotspot separado que abre o zoom da tábua e da chave.
+A página em si é o item `book_page`, pego como um objeto sobre a estante. O ícone
+dela aparece no canto superior do HUD; a barra inferior não mostra esse item. O
+canto da estante tem um hotspot separado que abre o zoom da tábua e da chave.
 
 ### Diário
 
@@ -143,8 +143,8 @@ entre `PARTIR` (vitória) e `RECOLHER OFERENDAS` (fracasso).
 
 - O diálogo ocupa ~84% da largura e cerca de 2 a 4 linhas. Prefira falas de
   1 a 3 frases.
-- Objetivos aparecem em uma faixa no topo e quebram linha automaticamente; use
-  no máximo duas frases curtas.
+- Objetivos aparecem como texto simples sob o nome da sala e quebram linha
+  automaticamente; use no máximo duas frases curtas e evite instruções óbvias.
 - Painéis têm larguras fixas (por exemplo, diário 824 px, círculo 780 px,
   cofre 470 px). Textos longos devem usar `autowrap_mode`, como já acontece
   nos painéis.

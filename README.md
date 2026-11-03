@@ -12,8 +12,9 @@ pode abrir a passagem para o sótão.
 - **Clique** em um item do inventário para selecioná-lo e depois clique em um
   objeto para usá-lo.
 - **Clique com o botão direito** para soltar o item selecionado.
-- **Clique na estante** para pegar a página do livro; depois use o **ícone da
-  página** (canto superior) para reabri-la.
+- **INVENTÁRIO** (canto inferior esquerdo) abre e fecha a barra de itens.
+- **Clique na página solta na estante** para pegá-la; depois use o **ícone da
+  página** (canto superior) para abri-la.
 - **Clique no canto da estante** para o zoom da tábua solta e da chave.
 - **MENU** pausa o jogo.
 - **ESC** fecha painéis ou pausa.
