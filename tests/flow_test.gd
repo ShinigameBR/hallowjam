@@ -101,12 +101,14 @@ func _run() -> void:
 	# ----------------------------------------------------------- right side
 	await _interact("left_back", 0.7)
 	_check(GameState.current_room == "main", "left room returns to the main room")
-	await _interact("right_door", 0.7)
-	_check(GameState.current_room == "main_right", "right door reaches the right room")
 
+	# The potion stays in the main room, next to the bookshelf.
 	await _interact("potion")
 	await _finish_dialog()
 	_check(GameState.has_item("potion"), "potion picked up")
+
+	await _interact("right_door", 0.7)
+	_check(GameState.current_room == "main_right", "right door reaches the right room")
 
 	GameState.clear_selection()
 	_game.call("_on_item_clicked", "potion")
@@ -230,6 +232,9 @@ func _run() -> void:
 	_check(not GameState.has_item("fish"), "feeding consumes the fish")
 
 	# --------------------------------------------------------------- ending
+	# The attic stair is on the left side of the main room.
+	await _interact("left_door", 0.7)
+	_check(GameState.current_room == "main_left", "the attic stair is reached from the left room")
 	await _interact("attic_door")
 	await _finish_dialog()
 	await _wait(0.4)

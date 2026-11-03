@@ -87,8 +87,8 @@ dentro do slot. Use PNG com fundo transparente, como as de `assets/props/`.
 ### Texturas de item
 
 Itens que também aparecem no cenário podem compartilhar a mesma PNG. É o caso
-de `potion`, `rod`, `bucket`, `sapphire`, `ruby`, `lavender` e
-`lavender_revived`:
+de `potion`, `rod`, `bucket`, `sapphire`, `ruby`, `lavender`,
+`lavender_revived` e `oyster`:
 
 ```gdscript
 "ruby": {

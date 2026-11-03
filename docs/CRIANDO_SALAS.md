@@ -47,7 +47,8 @@ entram na rotação automática.
 ## Antes de começar: tamanho e camadas
 
 O projeto roda em **1280×720** com `window/stretch/mode = canvas_items` e
-`aspect = expand`. As artes de fundo atuais têm **1600×785** e são exibidas com:
+`aspect = expand`. As artes de fundo atuais têm **1600×785** ou **2200×1080** e
+são exibidas com:
 
 - `expand_mode = Ignore Size` (`1`);
 - `stretch_mode = Keep Aspect Covered` (`6`);
@@ -55,6 +56,24 @@ O projeto roda em **1280×720** com `window/stretch/mode = canvas_items` e
 
 Isso preenche a tela sem distorcer a imagem, cortando um pouco as laterais.
 Use esse mesmo formato ao criar uma sala nova para manter a composição.
+
+### Arte atual
+
+| Arquivo | Uso |
+| --- | --- |
+| `assets/backgrounds/sala_principal.png` | Sala principal. |
+| `assets/backgrounds/sala_esquerda.jpeg` | Lado esquerdo. |
+| `assets/backgrounds/sala_direita.jpeg` | Lado direito. |
+| `assets/backgrounds/cais.jpeg` | Cais. |
+| `assets/backgrounds/menu_principal.png` | Fundo do menu principal. |
+| `assets/backgrounds/fim_do_jogo.png` | Ilustração da tela de vitória. |
+| `assets/props/*.png` | Recortes transparentes de objetos e itens. |
+| `assets/props/pagina_do_livro_aberta.jpeg` | Página aberta usada no painel do livro. |
+| `assets/props/pagina_do_livro.jpeg` | Ícone do botão LIVRO no HUD. |
+
+Os arquivos originais enviados ficam em `artifacts/assets/`. Ao adicionar uma
+imagem nova, copie (não mova) o original para `artifacts/assets/` e a versão
+pronta para `assets/`.
 
 Cada sala dos exemplos tem esta ordem de nós:
 

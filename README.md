@@ -22,6 +22,8 @@ pode abrir a passagem para o sótão.
 
 - Menu principal com novo jogo, continuar, como jogar e opções.
 - Quatro áreas: sala principal, lado esquerdo, lado direito e cais.
+- Arte de fundo para as quatro áreas, menu e tela final, com props recortados
+  para os objetos e itens.
 - Livro do bruxo, cofre com senha, círculo de invocação e pistas no cenário.
 - Lavanda revivida, rubi, vara de pescar, minhoca, ostra, pérola e peixe.
 - Seis monstros possíveis, definidos pelas qualidades dos ingredientes.
