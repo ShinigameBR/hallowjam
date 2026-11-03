@@ -24,9 +24,9 @@ const ROOM_NAMES := {
 	"outside": "CAIS",
 }
 
-const INVENTORY_HEIGHT := 134.0
-const INVENTORY_TOP_OPEN := -134.0
-const INVENTORY_TOP_CLOSED := -100.0
+const INVENTORY_HEIGHT := 150.0
+const INVENTORY_TOP_OPEN := -150.0
+const INVENTORY_TOP_CLOSED := -110.0
 
 var _room_host: Control
 var _inventory_bar: HBoxContainer
@@ -126,8 +126,8 @@ func _build_room_block() -> void:
 	block.anchor_bottom = 0.0
 	block.offset_left = 22.0
 	block.offset_top = 16.0
-	block.offset_right = 342.0
-	block.offset_bottom = 140.0
+	block.offset_right = 392.0
+	block.offset_bottom = 150.0
 	block.add_theme_constant_override("separation", 8)
 	add_child(block)
 
@@ -151,6 +151,7 @@ func _build_room_block() -> void:
 	row.add_child(mark)
 
 	_room_label = UI.label("SALA PRINCIPAL", "H3")
+	_room_label.add_theme_font_size_override("font_size", 18)
 	_hud_text(_room_label)
 	row.add_child(_room_label)
 
@@ -158,9 +159,9 @@ func _build_room_block() -> void:
 	_objective_label = UI.label(GameState.objective, "Objective")
 	_hud_text(_objective_label)
 	_objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_objective_label.custom_minimum_size = Vector2(310, 0)
+	_objective_label.custom_minimum_size = Vector2(360, 0)
 	_objective_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_objective_label.add_theme_constant_override("line_spacing", 2)
+	_objective_label.add_theme_constant_override("line_spacing", 3)
 	block.add_child(_objective_label)
 
 
@@ -172,12 +173,12 @@ func _build_top_actions() -> void:
 	actions.anchor_right = 1.0
 	actions.anchor_top = 0.0
 	actions.anchor_bottom = 0.0
-	actions.offset_left = -240.0
+	actions.offset_left = -260.0
 	actions.offset_right = -22.0
 	actions.offset_top = 16.0
-	actions.offset_bottom = 76.0
+	actions.offset_bottom = 80.0
 	actions.alignment = BoxContainer.ALIGNMENT_END
-	actions.add_theme_constant_override("separation", 8)
+	actions.add_theme_constant_override("separation", 10)
 	add_child(actions)
 
 	_book_slot = PanelContainer.new()
@@ -192,7 +193,7 @@ func _build_top_actions() -> void:
 	_book_button.texture_normal = PAGE_ICON
 	_book_button.ignore_texture_size = true
 	_book_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	_book_button.custom_minimum_size = Vector2(34, 40)
+	_book_button.custom_minimum_size = Vector2(40, 46)
 	_book_button.tooltip_text = "Página do livro"
 	_book_button.focus_mode = Control.FOCUS_NONE
 	_book_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -201,7 +202,7 @@ func _build_top_actions() -> void:
 	_book_slot.add_child(_book_button)
 
 	var menu_button := UI.button("MENU", "HudButton")
-	menu_button.custom_minimum_size = Vector2(82, 44)
+	menu_button.custom_minimum_size = Vector2(94, 50)
 	menu_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	menu_button.pressed.connect(_open_pause)
 	actions.add_child(menu_button)
@@ -223,10 +224,10 @@ func _build_inventory_panel() -> void:
 
 	var margin := MarginContainer.new()
 	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 196)
-	margin.add_theme_constant_override("margin_right", 22)
-	margin.add_theme_constant_override("margin_top", 14)
-	margin.add_theme_constant_override("margin_bottom", 14)
+	margin.add_theme_constant_override("margin_left", 216)
+	margin.add_theme_constant_override("margin_right", 24)
+	margin.add_theme_constant_override("margin_top", 16)
+	margin.add_theme_constant_override("margin_bottom", 16)
 	_inventory_panel.add_child(margin)
 
 	var box := VBoxContainer.new()
@@ -270,9 +271,9 @@ func _build_inventory_toggle() -> void:
 	_inventory_toggle.anchor_top = 1.0
 	_inventory_toggle.anchor_bottom = 1.0
 	_inventory_toggle.offset_left = 22.0
-	_inventory_toggle.offset_right = 172.0
-	_inventory_toggle.offset_top = -78.0
-	_inventory_toggle.offset_bottom = -36.0
+	_inventory_toggle.offset_right = 192.0
+	_inventory_toggle.offset_top = -88.0
+	_inventory_toggle.offset_bottom = -40.0
 	_inventory_toggle.pressed.connect(_toggle_inventory)
 	add_child(_inventory_toggle)
 
@@ -655,7 +656,7 @@ func _maybe_intro() -> void:
 	_show_dialog([
 		{"text": "Você acorda com o som do mar batendo nos pilares."},
 		{"text": "A cabana pertence a um bruxo. Ele não está aqui. Você não lembra como chegou."},
-		{"text": "Numa página solta sobre a estante, está escrito: para abrir a passagem ao sótão, invoque o Beija-Flor Carmesim com aroma floral e algo vermelho."},
+		{"text": "Numa página solta sobre a estante, está escrito: para abrir a passagem ao sótão, invoque o Carmesim."},
 	])
 
 

@@ -75,7 +75,7 @@ func _build_theme() -> Theme:
 	_variation(t, "H2", "Label", font_bold, 20, TEXT)
 	_variation(t, "H3", "Label", font_bold, 16, TEXT)
 	_variation(t, "BodyLarge", "Label", font_body, 18, TEXT)
-	_variation(t, "Objective", "Label", font_body, 13, MUTED)
+	_variation(t, "Objective", "Label", font_body, 15, WHITE)
 	_variation(t, "Muted", "Label", font_body, 14, MUTED)
 	_variation(t, "Small", "Label", font_body, 12, MUTED)
 	_variation(t, "Tiny", "Label", font_medium, 10, MUTED_DIM)
@@ -168,15 +168,15 @@ func _build_theme() -> Theme:
 	# Dark glass button used by the HUD (MENU, INVENTÁRIO).
 	t.set_type_variation("HudButton", "Button")
 	t.set_font("font", "HudButton", font_spaced)
-	t.set_font_size("font_size", "HudButton", 11)
-	t.set_color("font_color", "HudButton", MUTED)
+	t.set_font_size("font_size", "HudButton", 16)
+	t.set_color("font_color", "HudButton", WHITE)
 	t.set_color("font_hover_color", "HudButton", ACCENT)
 	t.set_color("font_focus_color", "HudButton", ACCENT)
 	t.set_color("font_pressed_color", "HudButton", ACCENT)
-	t.set_stylebox("normal", "HudButton", _style(Color(BG_SOFT, 0.82), 8, Color(1, 1, 1, 0.06), 1, 12))
-	t.set_stylebox("hover", "HudButton", _style(Color(BG_SOFT, 0.92), 8, Color(ACCENT, 0.45), 1, 12))
-	t.set_stylebox("pressed", "HudButton", _style(Color(BG_SOFT, 0.96), 8, Color(ACCENT, 0.8), 1, 12))
-	t.set_stylebox("focus", "HudButton", _style(Color(BG_SOFT, 0.82), 8, Color(ACCENT, 0.9), 1, 12))
+	t.set_stylebox("normal", "HudButton", _style(Color(BG_SOFT, 0.82), 9, Color(1, 1, 1, 0.06), 1, 14))
+	t.set_stylebox("hover", "HudButton", _style(Color(BG_SOFT, 0.92), 9, Color(ACCENT, 0.45), 1, 14))
+	t.set_stylebox("pressed", "HudButton", _style(Color(BG_SOFT, 0.96), 9, Color(ACCENT, 0.8), 1, 14))
+	t.set_stylebox("focus", "HudButton", _style(Color(BG_SOFT, 0.82), 9, Color(ACCENT, 0.9), 1, 14))
 
 	# Inventory slot.
 	t.set_type_variation("SlotButton", "Button")
@@ -197,7 +197,7 @@ func _build_theme() -> Theme:
 
 	# Same dark glass, tighter padding, used around the page icon.
 	t.set_type_variation("HudSlot", "PanelContainer")
-	t.set_stylebox("panel", "HudSlot", _style(Color(BG_SOFT, 0.82), 8, Color(1, 1, 1, 0.06), 1, 6))
+	t.set_stylebox("panel", "HudSlot", _style(Color(BG_SOFT, 0.82), 9, Color(1, 1, 1, 0.06), 1, 7))
 
 	t.set_type_variation("DialogPanel", "PanelContainer")
 	var dialog_style := _style(Color("#0d131e"), 10, Color(ACCENT, 0.22), 1, 20)
@@ -246,6 +246,8 @@ func _variation(t: Theme, name: StringName, base: StringName, font: Font, size: 
 	t.set_font("font", name, font)
 	t.set_font_size("font_size", name, size)
 	t.set_color("font_color", name, color)
+	t.set_color("font_outline_color", name, BLACK)
+	t.set_constant("outline_size", name, 5)
 
 
 func _nav_style(bg: Color) -> StyleBoxFlat:

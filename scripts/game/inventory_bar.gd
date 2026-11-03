@@ -14,7 +14,7 @@ var _borders: Array = []
 
 func _ready() -> void:
 	theme = UI.theme
-	add_theme_constant_override("separation", 8)
+	add_theme_constant_override("separation", 10)
 	GameState.inventory_changed.connect(_refresh)
 	GameState.selection_changed.connect(_refresh_selection)
 	_refresh()
@@ -31,7 +31,7 @@ func _refresh() -> void:
 			continue
 		var slot := Button.new()
 		slot.theme_type_variation = "SlotButton"
-		slot.custom_minimum_size = Vector2(56, 56)
+		slot.custom_minimum_size = Vector2(62, 62)
 		slot.tooltip_text = ItemDB.item_name(id) + "\n" + ItemDB.tags_text(ItemDB.item_tags(id))
 		slot.pressed.connect(_on_slot_pressed.bind(id))
 		add_child(slot)
@@ -41,17 +41,17 @@ func _refresh() -> void:
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.add_child(icon)
 		icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		icon.offset_left = 7
-		icon.offset_top = 7
-		icon.offset_right = -7
-		icon.offset_bottom = -7
+		icon.offset_left = 8
+		icon.offset_top = 8
+		icon.offset_right = -8
+		icon.offset_bottom = -8
 
 		var border := Panel.new()
 		var style := StyleBoxFlat.new()
 		style.bg_color = Color.TRANSPARENT
 		style.border_color = UI.ACCENT
 		style.set_border_width_all(2)
-		style.set_corner_radius_all(9)
+		style.set_corner_radius_all(10)
 		style.anti_aliasing = true
 		border.add_theme_stylebox_override("panel", style)
 		border.mouse_filter = Control.MOUSE_FILTER_IGNORE
