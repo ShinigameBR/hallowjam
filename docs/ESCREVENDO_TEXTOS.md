@@ -143,7 +143,7 @@ entre `PARTIR` (vitória) e `RECOLHER OFERENDAS` (fracasso).
 
 - O diálogo ocupa ~84% da largura e cerca de 2 a 4 linhas. Prefira falas de
   1 a 3 frases.
-- Objetivos aparecem em uma faixa no topo e quebram linha automaticamente; use
+- Objetivos aparecem em um cartão no topo e quebram linha automaticamente; use
   no máximo duas frases curtas.
 - Painéis têm larguras fixas (por exemplo, diário 824 px, círculo 780 px,
   cofre 470 px). Textos longos devem usar `autowrap_mode`, como já acontece
