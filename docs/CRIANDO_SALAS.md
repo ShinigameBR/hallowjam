@@ -64,7 +64,8 @@ Use esse mesmo formato ao criar uma sala nova para manter a composição.
 | `assets/backgrounds/sala_principal.png` | Sala principal. |
 | `assets/backgrounds/sala_esquerda.jpeg` | Lado esquerdo. |
 | `assets/backgrounds/sala_direita.jpeg` | Lado direito. |
-| `assets/backgrounds/cais.jpeg` | Cais. |
+| `assets/backgrounds/cais_buraco_fechado.jpeg` / `cais_buraco_cavado.png` | Cais (antes e depois de cavar). |
+| `assets/backgrounds/zoom_buraco_fechado.png` / `zoom_buraco_cavado.png` | Zoom do buraco na areia do cais. |
 | `assets/backgrounds/menu_principal.png` | Fundo do menu principal. |
 | `assets/backgrounds/fim_do_jogo.png` | Ilustração da tela de vitória. |
 | `assets/props/*.png` | Recortes transparentes de objetos e itens. |

@@ -305,6 +305,7 @@ var ITEMS := {
 		"color": Color("#b7a06a"),
 		"icon": "mushroom",
 		"kind": "ingredient",
+		"texture": "res://assets/props/minhoca.png",
 	},
 	"suitcase": {
 		"name": "Maleta",
@@ -313,6 +314,7 @@ var ITEMS := {
 		"color": Color("#8a6a4a"),
 		"icon": "diary",
 		"kind": "clue",
+		"texture": "res://assets/props/maleta.png",
 	},
 	"key": {
 		"name": "Chave",

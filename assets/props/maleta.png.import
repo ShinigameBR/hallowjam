@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://60i381iw4i1r"
-path="res://.godot/imported/cais.jpeg-26fd8af0a3d5e7e890a945449b3d9c48.ctex"
+uid="uid://bo4ohbe1s5wex"
+path="res://.godot/imported/maleta.png-1c573ca2a770d51ffdaf4c3830b439e0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/backgrounds/cais.jpeg"
-dest_files=["res://.godot/imported/cais.jpeg-26fd8af0a3d5e7e890a945449b3d9c48.ctex"]
+source_file="res://assets/props/maleta.png"
+dest_files=["res://.godot/imported/maleta.png-1c573ca2a770d51ffdaf4c3830b439e0.ctex"]
 
 [params]
 

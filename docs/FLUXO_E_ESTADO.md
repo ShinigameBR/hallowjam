@@ -87,7 +87,8 @@ Use `set_flag`/`clear_flag` sempre que possível; eles emitem
 | `safe_open` | O cofre foi aberto com o código 3142. |
 | `ruby_taken` | O rubi saiu do cofre. |
 | `summoned_carmesim` | O Beija-Flor Carmesim foi invocado. |
-| `dirt_dug` | A terra do cais foi revolvida. |
+| `dirt_dug` | O buraco na areia do cais foi cavado. |
+| `picked_bait` / `picked_suitcase` | A minhoca / a maleta foram pegas no buraco. |
 | `fish_caught` | O peixe foi pescado. |
 | `carmesim_fed` | O Carmesim comeu e abriu a porta do sótão. |
 | `won` | O jogo foi concluído. |

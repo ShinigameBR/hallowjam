@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://c1o5q5b5vnjw5"]
+
+[ext_resource type="Script" uid="uid://bgvw2ascttorw" path="res://scripts/game/hole_zoom.gd" id="1_hole"]
+[ext_resource type="Texture2D" uid="uid://s3dmr1g1jhnm" path="res://assets/backgrounds/zoom_buraco_fechado.png" id="2_closed"]
+[ext_resource type="Texture2D" uid="uid://bo4ohbe1s5wex" path="res://assets/props/maleta.png" id="3_suitcase"]
+[ext_resource type="Texture2D" uid="uid://dvdhhg8g6li72" path="res://assets/props/minhoca.png" id="4_bait"]
+
+[node name="HoleZoom" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+script = ExtResource("1_hole")
+metadata/_edit_use_anchors_ = true
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_closed")
+expand_mode = 1
+stretch_mode = 6
+metadata/_edit_use_anchors_ = true
+
+[node name="Hole" type="Button" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.3
+anchor_top = 0.35
+anchor_right = 0.7
+anchor_bottom = 0.85
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+flat = true
+
+[node name="Suitcase" type="TextureButton" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.45
+anchor_right = 0.52
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("3_suitcase")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Bait" type="TextureButton" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.54
+anchor_top = 0.55
+anchor_right = 0.64
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+texture_normal = ExtResource("4_bait")
+ignore_texture_size = true
+stretch_mode = 5

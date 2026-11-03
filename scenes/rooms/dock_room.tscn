@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://d4xgan412txh"]
 
-[ext_resource type="Texture2D" uid="uid://60i381iw4i1r" path="res://assets/backgrounds/cais.jpeg" id="bg"]
+[ext_resource type="Texture2D" uid="uid://60i381iw4i1r" path="res://assets/backgrounds/cais_buraco_fechado.jpeg" id="bg"]
+[ext_resource type="Texture2D" uid="uid://blat57joy5jbt" path="res://assets/backgrounds/cais_buraco_cavado.png" id="bg_dug"]
 [ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
 [ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
-[ext_resource type="Texture2D" uid="uid://dkbes6f8edp0r" path="res://assets/props/buraco_na_praia.png" id="hole_tex"]
+[ext_resource type="Script" uid="uid://gig1l0v47471" path="res://scripts/components/flag_background.gd" id="flag_bg"]
+[ext_resource type="Texture2D" uid="uid://dw74fwcrr3ups" path="res://assets/props/ostra.png" id="oyster_tex"]
 [ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
 [ext_resource type="Texture2D" uid="uid://br7cjeeawufhs" path="res://assets/props/vara_desativada.png" id="rod_tex"]
-[ext_resource type="Texture2D" uid="uid://dw74fwcrr3ups" path="res://assets/props/ostra.png" id="oyster_tex"]
 [ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
 [ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
 
@@ -56,6 +57,9 @@ mouse_filter = 2
 texture = ExtResource("bg")
 expand_mode = 1
 stretch_mode = 6
+script = ExtResource("flag_bg")
+flag = "dirt_dug"
+texture_when_flag = ExtResource("bg_dug")
 
 [node name="Interactables" type="Control" parent="." unique_id=1420096873]
 layout_mode = 1
@@ -111,7 +115,7 @@ anchors_preset = -1
 anchor_left = 0.36
 anchor_top = 0.56
 anchor_right = 0.46
-anchor_bottom = 0.70
+anchor_bottom = 0.7
 offset_left = -0.24002075
 offset_top = -0.16000366
 offset_right = -0.24005127
@@ -127,24 +131,6 @@ description = "Uma ostra presa no anzol da vara. A concha está bem fechada."
 interaction_id = "oyster"
 label = "Ostra"
 
-[node name="DirtHole" type="TextureRect" parent="Interactables" unique_id=710985212]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.845
-anchor_top = 0.776
-anchor_right = 0.975
-anchor_bottom = 0.91600007
-offset_left = -0.60009766
-offset_top = 0.27996826
-offset_right = -0.5999756
-offset_bottom = 0.27996826
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("hole_tex")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="Dirt" type="Control" parent="Interactables" unique_id=1799957579]
 layout_mode = 1
 anchor_left = 0.845
@@ -158,11 +144,10 @@ offset_bottom = 0.27996826
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("examine")
-action_id = "dig"
-once_flag = "dirt_dug"
-repeat_message = "A terra já foi revolvida. Só resta o buraco."
+ignore_selected_item = true
+open_panel = "hole"
 interaction_id = "dirt"
-label = "Terra suspeita"
+label = "Buraco na areia"
 always_show_label = true
 
 [node name="BackDoor" type="Control" parent="Interactables" unique_id=1052343620]
