@@ -1,13 +1,13 @@
 extends "res://scripts/game/overlay.gd"
 ## The wizard's grimoire: the target creature and its qualities.
 
-const GLYPH := preload("res://scripts/game/monster_glyph.gd")
+const PAGE_ART := preload("res://assets/props/pagina_do_livro_aberta.jpeg")
 
 var _seen_label: Label
 
 
 func _build() -> void:
-	panel.custom_minimum_size = Vector2(840, 0)
+	panel.custom_minimum_size = Vector2(800, 0)
 
 	body.add_child(UI.label("O LIVRO DO BRUXO", "Eyebrow"))
 	body.add_child(UI.label("A página que ficou aberta.", "H1"))
@@ -20,15 +20,18 @@ func _build() -> void:
 	body.add_child(columns)
 
 	var left := VBoxContainer.new()
-	left.custom_minimum_size = Vector2(250, 0)
+	left.custom_minimum_size = Vector2(215, 0)
 	left.add_theme_constant_override("separation", 4)
 	columns.add_child(left)
 
-	var glyph := GLYPH.new()
-	glyph.setup("carmesim")
-	glyph.custom_minimum_size = Vector2(230, 230)
-	glyph.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	left.add_child(glyph)
+	var page_art := TextureRect.new()
+	page_art.texture = PAGE_ART
+	page_art.custom_minimum_size = Vector2(215, 304)
+	page_art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	page_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	page_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	page_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	left.add_child(page_art)
 
 	var name_label := UI.label("O Beija-Flor Carmesim", "H2")
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

@@ -328,6 +328,7 @@ var ITEMS := {
 		"color": Color("#c9b9a0"),
 		"icon": "shell",
 		"kind": "ingredient",
+		"texture": "res://assets/props/ostra.png",
 	},
 }
 

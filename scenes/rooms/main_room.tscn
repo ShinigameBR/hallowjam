@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://dqbdxy8blf10j"]
 
 [ext_resource type="Texture2D" uid="uid://b0g2hc2r6yqqw" path="res://assets/props/pocao.png" id="7_7q6w2"]
-[ext_resource type="Texture2D" uid="uid://ck4u4136dn45r" path="res://assets/backgrounds/sala_principal.jpeg" id="bg"]
+[ext_resource type="Texture2D" uid="uid://dunlwdcdholay" path="res://assets/backgrounds/sala_principal.png" id="bg"]
 [ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
 [ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
 [ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
 [ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
 [ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
+[ext_resource type="Texture2D" uid="uid://cij00ndjj5xwm" path="res://assets/props/monstro_carmesim.png" id="carmesim_tex"]
 
 [sub_resource type="Resource" id="Resource_feed"]
 script = ExtResource("rule")
@@ -105,10 +106,14 @@ label = "Cofre"
 
 [node name="Circle" type="Control" parent="Interactables" unique_id=483569690]
 layout_mode = 1
-anchor_left = 0.37
-anchor_top = 0.6
-anchor_right = 0.63
-anchor_bottom = 0.88
+anchor_left = 0.37500003
+anchor_top = 0.762
+anchor_right = 0.717
+anchor_bottom = 0.96400005
+offset_left = -3.0517578e-05
+offset_top = 0.35998535
+offset_right = 0.23999023
+offset_bottom = -0.08001709
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("examine")
@@ -173,14 +178,18 @@ unlock_message = "A chave gira. O ar salgado do cais entra pela fresta."
 interaction_id = "main_door"
 label = "Porta da frente"
 
-[node name="Carmesim" type="Control" parent="Interactables" unique_id=514719002]
+[node name="Carmesim" type="TextureRect" parent="Interactables" unique_id=514719002]
 layout_mode = 1
-anchor_left = 0.51
-anchor_top = 0.4
-anchor_right = 0.61
-anchor_bottom = 0.56
+anchors_preset = -1
+anchor_left = 0.48
+anchor_top = 0.27
+anchor_right = 0.67
+anchor_bottom = 0.79
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("carmesim_tex")
+expand_mode = 1
+stretch_mode = 5
 script = ExtResource("examine")
 message = "O Beija-Flor Carmesim paira sobre o círculo, imóvel. Ele espera ser alimentado."
 wrong_item_message = "Ele ignora tudo que não seja comida."

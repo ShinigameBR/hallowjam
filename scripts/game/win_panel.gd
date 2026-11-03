@@ -4,7 +4,7 @@ extends "res://scripts/game/overlay.gd"
 signal menu_requested
 signal restart_requested
 
-const GLYPH := preload("res://scripts/game/monster_glyph.gd")
+const ART := preload("res://assets/backgrounds/fim_do_jogo.png")
 
 var _stats: Label
 
@@ -14,11 +14,14 @@ func _build() -> void:
 
 	body.add_child(UI.label("FIM DO PROTÓTIPO", "Eyebrow"))
 
-	var glyph := GLYPH.new()
-	glyph.setup("carmesim")
-	glyph.custom_minimum_size = Vector2(240, 240)
-	glyph.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	body.add_child(glyph)
+	var art := TextureRect.new()
+	art.texture = ART
+	art.custom_minimum_size = Vector2(600, 295)
+	art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	body.add_child(art)
 
 	var title := UI.label("A primeira porta se abre.", "H1")
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

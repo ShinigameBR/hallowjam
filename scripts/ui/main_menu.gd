@@ -134,6 +134,11 @@ func _refresh_continue() -> void:
 
 
 func _play_intro() -> void:
+	var art := get_node_or_null("Art")
+	if art:
+		art.modulate.a = 0.0
+		var at := create_tween()
+		at.tween_property(art, "modulate:a", 1.0, 1.4)
 	var backdrop := get_node_or_null("Backdrop")
 	if backdrop:
 		backdrop.modulate.a = 0.0

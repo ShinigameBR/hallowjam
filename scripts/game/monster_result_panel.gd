@@ -5,6 +5,7 @@ extends "res://scripts/game/overlay.gd"
 signal finished(victory: bool)
 
 const GLYPH := preload("res://scripts/game/monster_glyph.gd")
+const CARMESIM_ART := preload("res://assets/props/monstro_carmesim.png")
 
 var _monster_id := "none"
 var _victory := false
@@ -16,6 +17,7 @@ var _desc: Label
 var _ability: Label
 var _action: Button
 var _glyph: Control
+var _portrait: TextureRect
 
 
 func _build() -> void:
@@ -24,6 +26,16 @@ func _build() -> void:
 	_eyebrow = UI.label("O CÍRCULO RESPONDE", "Eyebrow")
 	_eyebrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	body.add_child(_eyebrow)
+
+	_portrait = TextureRect.new()
+	_portrait.texture = CARMESIM_ART
+	_portrait.custom_minimum_size = Vector2(140, 226)
+	_portrait.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portrait.visible = false
+	body.add_child(_portrait)
 
 	_glyph = GLYPH.new()
 	_glyph.setup("none")
@@ -79,6 +91,9 @@ func show_result(monster_id: String) -> void:
 	_acting = false
 	var data := ItemDB.monster(monster_id)
 	_victory = bool(data.get("victory", false))
+	var is_carmesim := monster_id == "carmesim"
+	_portrait.visible = is_carmesim
+	_glyph.visible = not is_carmesim
 	_glyph.setup(monster_id)
 	_name.text = String(data.get("name", "Nada"))
 	_title.text = String(data.get("title", ""))

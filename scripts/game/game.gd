@@ -129,6 +129,8 @@ func _build_hud() -> void:
 	top_row.add_child(_objective_label)
 
 	var book_button := UI.button("LIVRO", "GhostButton")
+	book_button.icon = preload("res://assets/props/pagina_do_livro.jpeg")
+	book_button.add_theme_constant_override("icon_max_width", 18)
 	book_button.custom_minimum_size = Vector2(92, 34)
 	book_button.pressed.connect(func() -> void: _open_overlay(_book))
 	top_row.add_child(book_button)
