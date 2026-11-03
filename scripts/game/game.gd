@@ -17,6 +17,7 @@ const ROOM_NAMES := {
 	"main": "SALA PRINCIPAL",
 	"main_left": "LADO ESQUERDO",
 	"main_right": "LADO DIREITO",
+	"attic": "SOTÃO",
 	"outside": "CAIS",
 }
 

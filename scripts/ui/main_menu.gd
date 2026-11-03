@@ -62,7 +62,7 @@ func _build() -> void:
 	_content.add_theme_constant_override("separation", 3)
 	add_child(_content)
 
-	_content.add_child(UI.label("HALLOWJAM 2026  ·  PROTÓTIPO", "EyebrowMuted"))
+	_content.add_child(UI.label("HALLOWJAM 2026", "EyebrowMuted"))
 	_content.add_child(UI.spacer(4))
 
 	var title := UI.label("CÍRCULO", "Title")
@@ -103,7 +103,7 @@ func _build() -> void:
 	footer.anchor_bottom = 0.97
 	add_child(footer)
 
-	var version := UI.label("v0.1  ·  GODOT 4.7", "Tiny")
+	var version := UI.label("v0.1", "Tiny")
 	version.anchor_left = 0.8
 	version.anchor_top = 0.935
 	version.anchor_right = 0.94
