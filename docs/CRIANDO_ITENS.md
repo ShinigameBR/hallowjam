@@ -179,8 +179,8 @@ criatura. A prioridade acima decide o empate.
 3. Adicione o id à ordem de prioridade em `resolve_summon()` (se ele puder
    empatar com outros).
 4. Se quiser um glifo próprio, adicione um `case` em `monster_glyph.gd`.
-5. Lembre que o livro só mostra o alvo (`TARGET`); para exibir outros monstros,
-   ajuste `book_panel.gd` ou use o cartão de resultado.
+5. Lembre que o leitor da página do livro mostra só a arte; os outros monstros
+   aparecem no cartão de resultado.
 
 ## Checklist de item
 

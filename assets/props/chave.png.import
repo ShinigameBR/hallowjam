@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1l6nnv0jldr6"
-path="res://.godot/imported/monstro_carmesim_pedindo_comida.png-c93de3e25ed06000453aa4ecaf705fee.ctex"
+uid="uid://busa5516mifqs"
+path="res://.godot/imported/chave.png-3134a6b35db43af4b34c3c256dcbfd5c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://artifacts/assets/monstro_carmesim_pedindo_comida.png"
-dest_files=["res://.godot/imported/monstro_carmesim_pedindo_comida.png-c93de3e25ed06000453aa4ecaf705fee.ctex"]
+source_file="res://assets/props/chave.png"
+dest_files=["res://.godot/imported/chave.png-3134a6b35db43af4b34c3c256dcbfd5c.ctex"]
 
 [params]
 

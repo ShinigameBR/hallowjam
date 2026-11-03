@@ -3,7 +3,7 @@ extends Node
 ##
 ## It drives the same entry points as real clicks (through RoomManager and the
 ## game controller) and checks the full Carmesim route:
-##   book -> lavender -> safe/ruby -> summon -> key -> dock -> fish -> attic.
+##   book page -> shelf/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic.
 
 var _failures: Array[String] = []
 var _game: Control
@@ -55,13 +55,34 @@ func _run() -> void:
 	_check(GameState.circle == ["", "", "", ""], "failed summon empties the circle")
 	_check(GameState.has_item("mushroom") and GameState.has_item("water"), "failed summon returns the offerings")
 
-	# ---------------------------------------------------------------- book
+	# ------------------------------------------------------ page and shelf
 	GameState.clear_selection()
 	await _interact("bookshelf")
-	_check(_game.get("_book").visible, "bookshelf opens the grimoire")
-	_check(GameState.has_flag("book_read"), "reading the book sets book_read")
+	var shelf_zoom: Control = _game.get("_shelf")
+	_check(shelf_zoom.visible, "bookshelf opens the shelf corner zoom")
+	_check(GameState.has_item("book_page"), "first shelf visit gives the book page")
+	_check(GameState.has_flag("picked_book_page"), "picking up the page sets its flag")
+	_check(_game.get("_book_button").visible, "the page icon appears in the top corner")
+	_check(not GameState.has_flag("book_read"), "picking up the page does not read it yet")
+	_check(not shelf_zoom.get_node("Background/Key").visible, "key hidden while the board is closed")
+	_check(shelf_zoom.get_node("Background/Key").texture_click_mask != null, "the key only clicks on its drawing")
+	shelf_zoom.call("_toggle_board")
+	_check(shelf_zoom.get_node("Background/Key").visible, "opening the board shows the key")
+	shelf_zoom.call("_take_key")
+	await _finish_dialog()
+	_check(GameState.has_item("key"), "key picked up from the shelf corner")
+	_check(GameState.has_flag("picked_key"), "the shelf key sets its pickup flag")
+	shelf_zoom.call("close")
+	await _wait(0.7)
+	_check(not shelf_zoom.visible, "shelf zoom closes")
+	_check(not shelf_zoom.get("_board_open"), "leaving the zoom closes the board")
+
+	await _open_overlay("_book")
+	_check(_game.get("_book").visible, "the page icon opens the page viewer")
+	_check(GameState.has_flag("book_read"), "opening the page sets book_read")
+	_check(_game.get("_book").find_children("*", "Label", true, false).is_empty(), "the page viewer has no text labels")
 	await _close_overlay("_book")
-	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the book")
+	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the page")
 
 	# ------------------------------------------------------ front door clue
 	GameState.clear_selection()
@@ -69,12 +90,6 @@ func _run() -> void:
 	await _finish_dialog()
 	_check(GameState.has_flag("door_clue_seen"), "locked front door writes its clue flag")
 	_check(GameState.current_room == "main", "locked front door does not change rooms")
-	_check(RoomManager.find_interactable("hidden_key") != null, "the loose shelf board appears after the door clue")
-
-	await _interact("hidden_key")
-	await _finish_dialog()
-	_check(GameState.has_item("key"), "hidden key picked up")
-	_check(GameState.has_flag("picked_key"), "hidden key sets its pickup flag")
 
 	# ------------------------------------------------------------ left side
 	await _interact("left_door", 0.7)
@@ -327,7 +342,6 @@ func _check(condition: bool, message: String) -> void:
 
 func _audit_overlays() -> void:
 	for entry in [
-		["_book", "book"],
 		["_diary", "diary"],
 		["_circle", "circle"],
 		["_pause", "pause"],
@@ -338,6 +352,21 @@ func _audit_overlays() -> void:
 		_audit_panel(overlay, String(entry[1]))
 		overlay.call("close")
 		await _wait(0.3)
+
+	var book_viewer: Control = _game.get("_book")
+	book_viewer.call("open")
+	await _wait(0.3)
+	_check(book_viewer.visible, "book page viewer opens")
+	_check(book_viewer.find_children("*", "Label", true, false).is_empty(), "book page viewer shows only the page image")
+	book_viewer.call("close")
+	await _wait(0.3)
+
+	var shelf_zoom: Control = _game.get("_shelf")
+	shelf_zoom.call("open")
+	await _wait(0.3)
+	_check(shelf_zoom.visible, "shelf zoom opens")
+	shelf_zoom.call("close")
+	await _wait(0.7)
 
 	var win_panel: Control = _game.get("_win")
 	win_panel.call("show_win")

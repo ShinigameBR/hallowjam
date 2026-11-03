@@ -8,6 +8,8 @@ const BOOK_PANEL := preload("res://scripts/game/book_panel.gd")
 const CIRCLE_PANEL := preload("res://scripts/game/circle_panel.gd")
 const SAFE_ZOOM := preload("res://scenes/components/safe_zoom.tscn")
 const DRAWERS_ZOOM := preload("res://scenes/components/drawers_zoom.tscn")
+const SHELF_ZOOM := preload("res://scenes/components/shelf_zoom.tscn")
+const PAGE_ICON := preload("res://assets/props/pagina_do_livro.png")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
 const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
 const PAUSE_MENU := preload("res://scripts/game/pause_menu.gd")
@@ -28,9 +30,11 @@ var _objective_label: Label
 var _selection_label: Label
 var _dialog: Control
 var _book: Control
+var _book_button: TextureButton
 var _circle: Control
 var _safe: Control
 var _drawers: Control
+var _shelf: Control
 var _diary: Control
 var _monster_result: Control
 var _pause: Control
@@ -128,12 +132,18 @@ func _build_hud() -> void:
 	_objective_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_row.add_child(_objective_label)
 
-	var book_button := UI.button("LIVRO", "GhostButton")
-	book_button.icon = preload("res://assets/props/pagina_do_livro.jpeg")
-	book_button.add_theme_constant_override("icon_max_width", 18)
-	book_button.custom_minimum_size = Vector2(92, 34)
-	book_button.pressed.connect(func() -> void: _open_overlay(_book))
-	top_row.add_child(book_button)
+	_book_button = TextureButton.new()
+	_book_button.name = "BookPageButton"
+	_book_button.texture_normal = PAGE_ICON
+	_book_button.ignore_texture_size = true
+	_book_button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	_book_button.custom_minimum_size = Vector2(40, 48)
+	_book_button.tooltip_text = "Página do livro"
+	_book_button.focus_mode = Control.FOCUS_NONE
+	_book_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_book_button.visible = false
+	_book_button.pressed.connect(func() -> void: _open_overlay(_book))
+	top_row.add_child(_book_button)
 
 	var menu_button := UI.button("MENU", "IconButton")
 	menu_button.custom_minimum_size = Vector2(76, 34)
@@ -235,6 +245,13 @@ func _build_overlays() -> void:
 	add_child(_drawers)
 	_drawers.closed.connect(func() -> void: _clear_overlay(_drawers))
 
+	_shelf = SHELF_ZOOM.instantiate()
+	add_child(_shelf)
+	_shelf.closed.connect(func() -> void:
+		_clear_overlay(_shelf)
+		_refresh_objective()
+	)
+
 	_diary = DIARY_PANEL.new()
 	add_child(_diary)
 	_diary.closed.connect(func() -> void:
@@ -276,9 +293,11 @@ func _connect_signals() -> void:
 	GameState.dialogue_requested.connect(_on_dialogue_requested)
 	GameState.panel_requested.connect(_on_panel_requested)
 	GameState.action_requested.connect(_on_action)
+	GameState.inventory_changed.connect(_refresh_book_button)
 	RoomManager.room_changed.connect(_on_room_changed)
 	RoomManager.transition_started.connect(_on_transition_started)
 	RoomManager.transition_finished.connect(_on_transition_finished)
+	_refresh_book_button()
 
 
 # ================================================================== ROOMS
@@ -358,6 +377,26 @@ func _open_overlay(node: Control) -> void:
 func _clear_overlay(node: Control) -> void:
 	if _current_overlay == node:
 		_current_overlay = null
+
+
+func _open_shelf() -> void:
+	if _dialog.visible or _changing_room:
+		return
+	_open_overlay(_shelf)
+	if _current_overlay != _shelf:
+		return
+	if not GameState.has_flag("picked_book_page"):
+		if not GameState.has_item("book_page"):
+			GameState.add_item("book_page")
+		GameState.set_flag("picked_book_page", true)
+		GameState.set_flag("shelf_seen", true)
+		GameState.save_game()
+
+
+func _refresh_book_button() -> void:
+	if _book_button == null:
+		return
+	_book_button.visible = GameState.has_item("book_page")
 
 
 func _open_pause() -> void:
@@ -519,6 +558,8 @@ func _on_panel_requested(panel_id: String) -> void:
 	match panel_id:
 		"book":
 			_open_overlay(_book)
+		"shelf":
+			_open_shelf()
 		"circle":
 			_open_overlay(_circle)
 		"safe":
@@ -592,7 +633,7 @@ func _on_objective_changed(text: String) -> void:
 
 
 func _refresh_objective() -> void:
-	var text := "Leia o livro do bruxo."
+	var text := "Pegue a página do livro na estante."
 	if GameState.has_flag("won"):
 		text = "Você está livre."
 	elif GameState.has_flag("carmesim_fed"):
@@ -613,8 +654,10 @@ func _refresh_objective() -> void:
 			text = "Selecione a isca e pesque no mar."
 		else:
 			text = "Alimente o Beija-Flor Carmesim com o peixe."
+	elif not GameState.has_item("book_page"):
+		text = "Pegue a página do livro na estante."
 	elif not GameState.has_flag("book_read"):
-		text = "Leia o livro do bruxo."
+		text = "Abra a página do livro no canto superior."
 	elif not GameState.has_flag("lavender_revived"):
 		text = "Revitalize a lavanda murcha do lado direito com a poção."
 	elif not GameState.has_flag("picked_lavender_revived"):

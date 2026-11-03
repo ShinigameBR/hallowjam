@@ -5,6 +5,8 @@ extends HBoxContainer
 signal item_clicked(id: String)
 
 const ITEM_ICON := preload("res://scripts/game/item_icon.gd")
+## Items that live somewhere else in the HUD (the book page has its own icon).
+const HIDDEN_ITEMS := ["book_page"]
 
 var auto_select := true
 var _borders: Array = []
@@ -25,6 +27,8 @@ func _refresh() -> void:
 	_borders.clear()
 
 	for id in GameState.inventory:
+		if HIDDEN_ITEMS.has(id):
+			continue
 		var slot := Button.new()
 		slot.theme_type_variation = "SlotButton"
 		slot.custom_minimum_size = Vector2(56, 56)

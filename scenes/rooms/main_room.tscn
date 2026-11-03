@@ -2,12 +2,12 @@
 
 [ext_resource type="Texture2D" uid="uid://b0g2hc2r6yqqw" path="res://assets/props/pocao.png" id="7_7q6w2"]
 [ext_resource type="Texture2D" uid="uid://dunlwdcdholay" path="res://assets/backgrounds/sala_principal.png" id="bg"]
+[ext_resource type="Texture2D" uid="uid://cij00ndjj5xwm" path="res://assets/props/monstro_carmesim.png" id="carmesim_tex"]
 [ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
 [ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
 [ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
 [ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
 [ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
-[ext_resource type="Texture2D" uid="uid://cij00ndjj5xwm" path="res://assets/props/monstro_carmesim.png" id="carmesim_tex"]
 
 [sub_resource type="Resource" id="Resource_feed"]
 script = ExtResource("rule")
@@ -63,28 +63,25 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("examine")
 open_panel = "book"
-set_flag = "book_read"
 interaction_id = "bookshelf"
 label = "Estante de livros"
 
-[node name="HiddenKey" type="Control" parent="Interactables" unique_id=1393253985]
+[node name="BookshelfCorner" type="Control" parent="Interactables" unique_id=542250819]
 layout_mode = 1
-anchor_left = 0.061000004
-anchor_top = 0.615
-anchor_right = 0.11100001
-anchor_bottom = 0.71500003
-offset_left = -0.08000183
-offset_top = 0.19998169
-offset_right = -0.07998657
-offset_bottom = 0.19995117
+anchor_left = 0.074
+anchor_top = 0.54200006
+anchor_right = 0.116000004
+anchor_bottom = 0.731
+offset_left = 0.27999878
+offset_top = -0.24005127
+offset_right = 0.519989
+offset_bottom = -0.32000732
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("pickup")
-item_id = "key"
-description = "Você tira uma tábua solta da lateral da estante. Atrás dela, uma chave enferrujada."
-interaction_id = "hidden_key"
-label = "Tábua solta"
-show_when_flags = Array[String](["door_clue_seen"])
+script = ExtResource("examine")
+open_panel = "shelf"
+interaction_id = "bookshelf_corner"
+label = "Canto da Estante de Livros"
 
 [node name="Safe" type="Control" parent="Interactables" unique_id=1260236599]
 layout_mode = 1

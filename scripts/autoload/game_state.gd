@@ -19,7 +19,7 @@ var inventory: Array[String] = []
 var circle: Array[String] = ["", "", "", ""]
 var flags: Dictionary = {}
 var current_room: String = "main"
-var objective: String = "Leia o livro do bruxo."
+var objective: String = "Pegue a página do livro na estante."
 var play_time: float = 0.0
 var monsters_seen: Array[String] = []
 var selected_item: String = ""
@@ -31,7 +31,7 @@ func start_new_game() -> void:
 	circle = ["", "", "", ""]
 	flags.clear()
 	current_room = "main"
-	objective = "Leia o livro do bruxo."
+	objective = "Pegue a página do livro na estante."
 	play_time = 0.0
 	monsters_seen.clear()
 	selected_item = ""

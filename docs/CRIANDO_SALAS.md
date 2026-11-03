@@ -68,12 +68,15 @@ Use esse mesmo formato ao criar uma sala nova para manter a composição.
 | `assets/backgrounds/menu_principal.png` | Fundo do menu principal. |
 | `assets/backgrounds/fim_do_jogo.png` | Ilustração da tela de vitória. |
 | `assets/props/*.png` | Recortes transparentes de objetos e itens. |
-| `assets/props/pagina_do_livro_aberta.jpeg` | Página aberta usada no painel do livro. |
-| `assets/props/pagina_do_livro.jpeg` | Ícone do botão LIVRO no HUD. |
+| `assets/backgrounds/zoom_canto_estante_fechado.png` | Zoom do canto da estante com a tábua fechada. |
+| `assets/backgrounds/zoom_canto_estante_aberto.png` | Zoom do canto da estante com a tábua aberta. |
+| `assets/props/chave.png` | Chave escondida atrás da tábua da estante. |
+| `assets/props/pagina_do_livro.png` | Ícone transparente da página no canto superior do HUD. |
+| `assets/props/pagina_do_livro_aberta.jpeg` | Página aberta exibida sozinha ao abrir o ícone. |
 
-Os arquivos originais enviados ficam em `artifacts/assets/`. Ao adicionar uma
-imagem nova, copie (não mova) o original para `artifacts/assets/` e a versão
-pronta para `assets/`.
+Os arquivos originais de referência ficam em `artifacts/`. Ao integrar uma arte
+nova, mova a versão usada para `assets/` e apague a cópia que ficou em
+`artifacts/assets/`.
 
 Cada sala dos exemplos tem esta ordem de nós:
 
@@ -211,7 +214,7 @@ item. Ele serve para:
 | `Wrong Item Message` | Texto ao clicar com um item selecionado. |
 | `Ignore Selected Item` | Ignora o item selecionado e sempre executa a ação. |
 | `Action Id` | Ação especial tratada em `game.gd`. |
-| `Open Panel` | Abre `book`, `circle`, `keypad` ou `diary`. |
+| `Open Panel` | Abre `book`, `shelf`, `circle`, `safe`, `drawers` ou `diary`. |
 | `Set Flag` | Flag gravada após um clique normal. |
 | `Give Item` | Item adicionado após um clique normal. |
 | `Once Flag` | Efeitos só acontecem uma vez; depois mostra `Repeat Message`. |
@@ -258,9 +261,11 @@ Painéis são identificados por string:
 
 | Id | Painel |
 | --- | --- |
-| `book` | Grimório do bruxo. |
+| `book` | Página do livro: só a arte aberta, sem textos nem botões. |
+| `shelf` | Zoom do canto da estante com a tábua e a chave. |
 | `circle` | Círculo de invocação. |
-| `keypad` | Teclado do cofre. |
+| `safe` | Baú/cofre de números. |
+| `drawers` | Zoom das gavetas. |
 | `diary` | Diário do bruxo. |
 
 Eles são abertos por `Open Panel` no `Examine` ou em uma `ItemUseRule`. Para
@@ -321,7 +326,7 @@ Depois de criar ou editar uma sala, rode o teste de fluxo:
 godot --headless --path . res://tests/flow_test.tscn
 ```
 
-O teste usa os `Interaction Id` atuais (`bookshelf`, `main_door`, `hidden_key`,
+O teste usa os `Interaction Id` atuais (`bookshelf`, `main_door`,
 `lavender_wilted`, `sea`, `dirt`, `carmesim`, `attic_door`, ...). Se você
 renomear esses ids nas salas de exemplo, atualize também `tests/flow_test.gd`.
 

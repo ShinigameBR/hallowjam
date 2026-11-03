@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://uq0pc6rcn5ok"
-path="res://.godot/imported/fim_do_jogo.png-6c24b8cffdaa364ed6d4e75dbbdd8974.ctex"
+uid="uid://dyeueh6ipfd5i"
+path="res://.godot/imported/zoom_canto_estante_fechado.png-c9a704cbc0dcbed548a1a3135e7716ed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://artifacts/assets/fim_do_jogo.png"
-dest_files=["res://.godot/imported/fim_do_jogo.png-6c24b8cffdaa364ed6d4e75dbbdd8974.ctex"]
+source_file="res://assets/backgrounds/zoom_canto_estante_fechado.png"
+dest_files=["res://.godot/imported/zoom_canto_estante_fechado.png-c9a704cbc0dcbed548a1a3135e7716ed.ctex"]
 
 [params]
 

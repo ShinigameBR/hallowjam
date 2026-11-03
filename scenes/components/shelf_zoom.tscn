@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/game/shelf_zoom.gd" id="1_shelf"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/zoom_canto_estante_fechado.png" id="2_closed"]
+[ext_resource type="Texture2D" path="res://assets/props/chave.png" id="3_key"]
+
+[node name="ShelfZoom" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 0
+script = ExtResource("1_shelf")
+metadata/_edit_use_anchors_ = true
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_closed")
+expand_mode = 1
+stretch_mode = 6
+metadata/_edit_use_anchors_ = true
+
+[node name="Corner" type="Button" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.279
+anchor_top = 0.398
+anchor_right = 0.421
+anchor_bottom = 0.805
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+flat = true
+
+[node name="Key" type="TextureButton" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.303
+anchor_top = 0.515
+anchor_right = 0.397
+anchor_bottom = 0.652
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+visible = false
+texture_normal = ExtResource("3_key")
+ignore_texture_size = true
+stretch_mode = 5

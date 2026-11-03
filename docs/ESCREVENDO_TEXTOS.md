@@ -27,12 +27,12 @@ português nos `.tscn` e `.gd`.
 | Final da fatia | `game.gd > _finish_game()` | Porta do sótão após alimentar o Carmesim. |
 | Objetivo do HUD | `game.gd > _refresh_objective()` | Sempre que uma flag muda. |
 | Falas de ação | `game.gd > _action_*` | Ações `safe`, `sea`, `dig`, `attic`. |
-| Livro do bruxo | `scripts/game/book_panel.gd` | Botão LIVRO ou hotspot do livro. |
+| Página do livro | `scripts/game/book_panel.gd` | Ícone no canto superior do HUD. |
 | Diário | `scripts/game/diary_panel.gd` | Item `diary` / hotspot do diário. |
-| Teclado do cofre | `scripts/game/keypad_panel.gd` | Hotspot do cofre. |
+| Estante | `scripts/game/shelf_zoom.gd` | Hotspot da estante. |
 | Círculo | `scripts/game/circle_panel.gd` | Hotspot do círculo. |
 | Cartão de invocação | `scripts/game/monster_result_panel.gd` | Fim de uma invocação. |
-| Nomes/descrições de monstros | `ItemDB.MONSTERS` | Livro e cartão de resultado. |
+| Nomes/descrições de monstros | `ItemDB.MONSTERS` | Cartão de resultado. |
 | Como jogar | `scripts/ui/help_panel.gd` | Menu e pausa. |
 | Tela de vitória | `scripts/game/win_panel.gd` | Fim do protótipo. |
 | Menu principal | `scripts/ui/main_menu.gd` | Tela inicial. |
@@ -108,21 +108,20 @@ elif not GameState.has_flag("lavender_revived"):
 	text = "Revitalize a lavanda murcha do lado direito com a poção."
 ```
 
-O objetivo inicial (`Leia o livro do bruxo.`) também está em
+O objetivo inicial (`Pegue a página do livro na estante.`) também está em
 `GameState.start_new_game()` e em `GameState.objective`.
 
 ## Textos de painéis
 
-### Livro do bruxo
+### Página do livro
 
-`book_panel.gd` mistura texto fixo com dados de `ItemDB`:
+`book_panel.gd` é só um visualizador de imagem: ele exibe
+`assets/props/pagina_do_livro_aberta.jpeg` em tela cheia, sem textos, botões ou
+outros elementos de HUD. Fecha com clique, botão direito ou **Esc**.
 
-- título, subtítulo e introdução do ritual estão no próprio script;
-- as dicas vêm de `ItemDB.MONSTERS["carmesim"]["hints"]`;
-- a pista da estante (cores e quantidades) está em `_color_count(...)`.
-
-Se você mudar o código do cofre, mude **também** as quantidades exibidas no
-livro e a constante `CODE` em `keypad_panel.gd`.
+A página em si é o item `book_page`, obtido na primeira visita ao zoom da
+estante. O ícone dela aparece no canto superior do HUD; a barra inferior não
+mostra esse item.
 
 ### Diário
 
@@ -146,7 +145,7 @@ entre `PARTIR` (vitória) e `RECOLHER OFERENDAS` (fracasso).
   1 a 3 frases.
 - Objetivos aparecem em uma faixa no topo e quebram linha automaticamente; use
   no máximo duas frases curtas.
-- Painéis têm larguras fixas (por exemplo, livro 840 px, círculo 780 px,
+- Painéis têm larguras fixas (por exemplo, diário 824 px, círculo 780 px,
   teclado 470 px). Textos longos devem usar `autowrap_mode`, como já acontece
   nos painéis.
 - Os labels não interpretam BBCode/HTML. Para destaque, use os estilos da UI

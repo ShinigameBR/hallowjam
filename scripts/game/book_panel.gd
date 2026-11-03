@@ -1,96 +1,67 @@
-extends "res://scripts/game/overlay.gd"
-## The wizard's grimoire: the target creature and its qualities.
+extends Control
+## Leitor da página do livro: só a arte da página aberta, sem textos, botões
+## ou qualquer outro elemento de HUD. Fecha com clique, botão direito ou Esc.
+
+signal closed
 
 const PAGE_ART := preload("res://assets/props/pagina_do_livro_aberta.jpeg")
 
-var _seen_label: Label
+var _closing := false
 
 
-func _build() -> void:
-	panel.custom_minimum_size = Vector2(800, 0)
+func _ready() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	visible = false
 
-	body.add_child(UI.label("O LIVRO DO BRUXO", "Eyebrow"))
-	body.add_child(UI.label("A página que ficou aberta.", "H1"))
-	body.add_child(UI.spacer(4))
-	body.add_child(UI.hline(Color(UI.ACCENT, 0.24), 1))
-	body.add_child(UI.spacer(6))
+	var backdrop := ColorRect.new()
+	backdrop.color = UI.BLACK
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(backdrop)
 
-	var columns := HBoxContainer.new()
-	columns.add_theme_constant_override("separation", 28)
-	body.add_child(columns)
-
-	var left := VBoxContainer.new()
-	left.custom_minimum_size = Vector2(215, 0)
-	left.add_theme_constant_override("separation", 4)
-	columns.add_child(left)
-
-	var page_art := TextureRect.new()
-	page_art.texture = PAGE_ART
-	page_art.custom_minimum_size = Vector2(215, 304)
-	page_art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	page_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	page_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	page_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	left.add_child(page_art)
-
-	var name_label := UI.label("O Beija-Flor Carmesim", "H2")
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	left.add_child(name_label)
-
-	var title := UI.label("Mensageiro fiel", "Muted")
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	left.add_child(title)
-
-	var right := VBoxContainer.new()
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.add_theme_constant_override("separation", 6)
-	columns.add_child(right)
-
-	right.add_child(UI.label("PÁGINA DO RITUAL", "EyebrowMuted"))
-	var intro := UI.label("Para abrir a porta do sótão, o bruxo precisava de um mensageiro que atendesse ao chamado e pudesse ser alimentado. O livro descreve o Carmesim e as duas qualidades que o atraem.", "Muted")
-	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	intro.custom_minimum_size = Vector2(460, 0)
-	right.add_child(intro)
-	right.add_child(UI.spacer(4))
-
-	var hints: Array = ItemDB.monster("carmesim").get("hints", [])
-	for i in range(hints.size()):
-		right.add_child(_hint_row("%02d" % (i + 1), String(hints[i])))
-
-	_seen_label = UI.label("", "Tiny")
-	_seen_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.add_child(_seen_label)
-
-	var close_button := UI.button("FECHAR", "PrimaryButton")
-	close_button.custom_minimum_size = Vector2(150, 42)
-	close_button.pressed.connect(close)
-	_add_footer([close_button])
+	var page := TextureRect.new()
+	page.texture = PAGE_ART
+	page.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	page.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	page.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	page.offset_left = 24
+	page.offset_top = 24
+	page.offset_right = -24
+	page.offset_bottom = -24
+	page.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(page)
 
 
-func _hint_row(number: String, text: String) -> HBoxContainer:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-	var num := UI.label(number, "Eyebrow")
-	num.custom_minimum_size = Vector2(28, 0)
-	num.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	row.add_child(num)
-	var body_label := UI.label(text, "BodyLarge")
-	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body_label.custom_minimum_size = Vector2(400, 0)
-	row.add_child(body_label)
-	return row
-
-
-func _on_open() -> void:
-	if not GameState.has_flag("shelf_seen"):
-		GameState.set_flag("shelf_seen", true)
+func open() -> void:
+	if visible:
+		return
+	_closing = false
+	visible = true
+	modulate.a = 0.0
+	if not GameState.has_flag("book_read"):
+		GameState.set_flag("book_read", true)
 		GameState.save_game()
+	var tw := create_tween()
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "modulate:a", 1.0, 0.2)
 
-	if GameState.monsters_seen.is_empty():
-		_seen_label.text = "Nenhuma criatura atendeu ao chamado ainda."
-	else:
-		var names: Array[String] = []
-		for id in GameState.monsters_seen:
-			names.append(String(ItemDB.monster(id).get("name", id)))
-		_seen_label.text = "Já invocados: " + " · ".join(names)
+
+func close() -> void:
+	if not visible or _closing:
+		return
+	_closing = true
+	var tw := create_tween()
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_property(self, "modulate:a", 0.0, 0.14)
+	await tw.finished
+	visible = false
+	_closing = false
+	closed.emit()
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_RIGHT:
+			accept_event()
+			close()

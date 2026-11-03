@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://crkkxh78u2mvp"
-path="res://.godot/imported/flor_roxa_vivida.jpeg-25d4dad52b493d55bda07240fa4fff63.ctex"
+uid="uid://bib3quugvcvqn"
+path="res://.godot/imported/zoom_canto_estante_aberto.png-2eba56b038e5c827b5c2283436cdbd06.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://artifacts/assets/lado_direito_da_sala_principal/flor_roxa_vivida.jpeg"
-dest_files=["res://.godot/imported/flor_roxa_vivida.jpeg-25d4dad52b493d55bda07240fa4fff63.ctex"]
+source_file="res://assets/backgrounds/zoom_canto_estante_aberto.png"
+dest_files=["res://.godot/imported/zoom_canto_estante_aberto.png-2eba56b038e5c827b5c2283436cdbd06.ctex"]
 
 [params]
 

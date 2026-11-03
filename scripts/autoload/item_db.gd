@@ -219,6 +219,15 @@ var ITEMS := {
 		"icon": "diary",
 		"kind": "clue",
 	},
+	"book_page": {
+		"name": "Página do Livro",
+		"desc": "A página que ficou aberta no livro do bruxo.",
+		"tags": ["knowledge", "paper"],
+		"color": Color("#d8cbb4"),
+		"icon": "diary",
+		"kind": "clue",
+		"texture": "res://assets/props/pagina_do_livro.png",
+	},
 	"candle": {
 		"name": "Vela de Sebo",
 		"desc": "Uma chama pequena, mas teimosa. Cheira a cera e a igreja antiga.",
@@ -312,6 +321,7 @@ var ITEMS := {
 		"color": Color("#c3c9cf"),
 		"icon": "stone",
 		"kind": "clue",
+		"texture": "res://assets/props/chave.png",
 	},
 	"pearl": {
 		"name": "Pérola",

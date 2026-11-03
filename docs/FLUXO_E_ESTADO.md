@@ -77,8 +77,8 @@ Use `set_flag`/`clear_flag` sempre que possível; eles emitem
 | --- | --- |
 | `intro_done` | A introdução já foi mostrada. |
 | `picked_<item>` | O item do mundo já foi coletado. |
-| `book_read` | O livro do bruxo foi aberto. |
-| `shelf_seen` | As quantidades dos livros coloridos foram vistas. |
+| `book_read` | A página do livro foi aberta no ícone do topo do HUD. |
+| `shelf_seen` | O zoom do canto da estante foi aberto. |
 | `sun_clock_seen` | O relógio do sol foi examinado. |
 | `door_clue_seen` | A pista na porta da frente foi encontrada. |
 | `front_door_open` | A porta da frente foi destrancada com a chave. |
@@ -104,6 +104,8 @@ tela de vitória.
 - `clear_selection()` é chamada ao usar um item, trocar de sala ou clicar com o
   botão direito.
 - `replace_item(old, new)` remove um e adiciona outro.
+- `book_page` não aparece na barra inferior: o item ganha um ícone próprio no
+  canto superior do HUD e abre o leitor de página.
 
 ## Círculo
 
