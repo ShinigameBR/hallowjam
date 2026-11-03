@@ -9,6 +9,7 @@ const CIRCLE_PANEL := preload("res://scripts/game/circle_panel.gd")
 const SAFE_ZOOM := preload("res://scenes/components/safe_zoom.tscn")
 const DRAWERS_ZOOM := preload("res://scenes/components/drawers_zoom.tscn")
 const SHELF_ZOOM := preload("res://scenes/components/shelf_zoom.tscn")
+const DOOR_HINT := preload("res://scenes/components/door_hint.tscn")
 const PAGE_ICON := preload("res://assets/props/pagina_do_livro.png")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
 const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
@@ -35,6 +36,7 @@ var _circle: Control
 var _safe: Control
 var _drawers: Control
 var _shelf: Control
+var _door_hint: Control
 var _diary: Control
 var _monster_result: Control
 var _pause: Control
@@ -251,6 +253,10 @@ func _build_overlays() -> void:
 		_clear_overlay(_shelf)
 		_refresh_objective()
 	)
+
+	_door_hint = DOOR_HINT.instantiate()
+	add_child(_door_hint)
+	_door_hint.closed.connect(func() -> void: _clear_overlay(_door_hint))
 
 	_diary = DIARY_PANEL.new()
 	add_child(_diary)
@@ -575,6 +581,8 @@ func _on_panel_requested(panel_id: String) -> void:
 			_open_overlay(_safe)
 		"drawers":
 			_open_overlay(_drawers)
+		"door_hint":
+			_open_overlay(_door_hint)
 		"diary":
 			_open_overlay(_diary)
 		_:

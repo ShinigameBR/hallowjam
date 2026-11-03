@@ -70,6 +70,7 @@ Use esse mesmo formato ao criar uma sala nova para manter a composição.
 | `assets/props/*.png` | Recortes transparentes de objetos e itens. |
 | `assets/backgrounds/zoom_canto_estante_fechado.png` | Zoom do canto da estante com a tábua fechada. |
 | `assets/backgrounds/zoom_canto_estante_aberto.png` | Zoom do canto da estante com a tábua aberta. |
+| `assets/backgrounds/dica_da_porta.png` | Dica na porta da frente (`HintDoor`). |
 | `assets/props/chave.png` | Chave escondida atrás da tábua da estante. |
 | `assets/props/pagina_do_livro.png` | Ícone transparente da página no canto superior do HUD. |
 | `assets/props/pagina_do_livro_aberta.jpeg` | Página aberta exibida sozinha ao abrir o ícone. |
@@ -266,6 +267,7 @@ Painéis são identificados por string:
 | `circle` | Círculo de invocação. |
 | `safe` | Baú/cofre de números. |
 | `drawers` | Zoom das gavetas. |
+| `door_hint` | Dica na porta da frente: só a imagem. |
 | `diary` | Diário do bruxo. |
 
 Eles são abertos por `Open Panel` no `Examine` ou em uma `ItemUseRule`. Para

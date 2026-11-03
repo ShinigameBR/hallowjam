@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://oppj5631iiao"]
+
+[ext_resource type="Script" path="res://scripts/game/door_hint.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://booibgt5w0lmd" path="res://assets/backgrounds/dica_da_porta.png" id="1_flby2"]
+
+[node name="DoorHint" type="Control" unique_id=291354776]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1449430684]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_flby2")
+expand_mode = 1
+stretch_mode = 6
