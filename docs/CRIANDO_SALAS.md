@@ -72,7 +72,7 @@ Use esse mesmo formato ao criar uma sala nova para manter a composição.
 | `assets/backgrounds/zoom_canto_estante_aberto.png` | Zoom do canto da estante com a tábua aberta. |
 | `assets/backgrounds/dica_da_porta.png` | Dica na porta da frente (`HintDoor`). |
 | `assets/props/chave.png` | Chave escondida atrás da tábua da estante. |
-| `assets/props/pagina_do_livro.png` | Ícone transparente da página no canto superior do HUD. |
+| `assets/props/pagina_do_livro.png` | Página pegável na estante e ícone transparente no topo do HUD. |
 | `assets/props/pagina_do_livro_aberta.jpeg` | Página aberta exibida sozinha ao abrir o ícone. |
 
 Os arquivos originais de referência ficam em `artifacts/`. Ao integrar uma arte
@@ -262,7 +262,7 @@ Painéis são identificados por string:
 
 | Id | Painel |
 | --- | --- |
-| `book` | Página do livro: só a arte aberta, sem textos nem botões. |
+| `book` | Página do livro: aberta pelo ícone do topo do HUD; só a arte aberta, sem textos nem botões. |
 | `shelf` | Zoom do canto da estante com a tábua e a chave. |
 | `circle` | Círculo de invocação. |
 | `safe` | Baú/cofre de números. |
@@ -328,7 +328,7 @@ Depois de criar ou editar uma sala, rode o teste de fluxo:
 godot --headless --path . res://tests/flow_test.tscn
 ```
 
-O teste usa os `Interaction Id` atuais (`bookshelf`, `bookshelf_corner`,
+O teste usa os `Interaction Id` atuais (`book_page`, `bookshelf_corner`,
 `main_door`, `lavender_wilted`, `sea`, `dirt`, `carmesim`, `attic_door`, ...). Se
 você renomear esses ids nas salas de exemplo, atualize também
 `tests/flow_test.gd`.

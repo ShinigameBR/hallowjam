@@ -119,9 +119,9 @@ O objetivo inicial (`Pegue a página do livro na estante.`) também está em
 `assets/props/pagina_do_livro_aberta.jpeg` em tela cheia, sem textos, botões ou
 outros elementos de HUD. Fecha com clique, botão direito ou **Esc**.
 
-A página em si é o item `book_page`, obtido ao clicar na estante. O ícone dela
-aparece no canto superior do HUD; a barra inferior não mostra esse item. O canto
-da estante tem um hotspot separado que abre o zoom da tábua e da chave.
+A página em si é o item `book_page`, pego como um objeto sobre a estante. O ícone
+dela aparece no canto superior do HUD; a barra inferior não mostra esse item. O
+canto da estante tem um hotspot separado que abre o zoom da tábua e da chave.
 
 ### Diário
 

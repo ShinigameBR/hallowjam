@@ -106,10 +106,13 @@ func _build_hud() -> void:
 	top.theme_type_variation = "HudPanel"
 	top.anchor_right = 1.0
 	top.offset_bottom = 70.0
-	top.mouse_filter = Control.MOUSE_FILTER_STOP
+	# A faixa do topo é só visual: deixar o clique passar evita bloquear
+	# hotspots que ficam atrás dela, como o cofre.
+	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(top)
 
 	var top_margin := MarginContainer.new()
+	top_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top_margin.add_theme_constant_override("margin_left", 20)
 	top_margin.add_theme_constant_override("margin_right", 20)
 	top_margin.add_theme_constant_override("margin_top", 8)
@@ -117,18 +120,24 @@ func _build_hud() -> void:
 	top.add_child(top_margin)
 
 	var top_row := HBoxContainer.new()
+	top_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top_row.add_theme_constant_override("separation", 18)
 	top_margin.add_child(top_row)
 
 	var title_box := VBoxContainer.new()
+	title_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	title_box.custom_minimum_size = Vector2(190, 0)
 	title_box.add_theme_constant_override("separation", 0)
 	top_row.add_child(title_box)
-	title_box.add_child(UI.label("CÍRCULO", "Eyebrow"))
+	var title_eyebrow := UI.label("CÍRCULO", "Eyebrow")
+	title_eyebrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_box.add_child(title_eyebrow)
 	_room_label = UI.label("SALA PRINCIPAL", "H3")
+	_room_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	title_box.add_child(_room_label)
 
 	_objective_label = UI.label(GameState.objective, "Muted")
+	_objective_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_objective_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_objective_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -397,14 +406,8 @@ func _open_shelf() -> void:
 
 
 func _open_book() -> void:
-	if _dialog.visible or _changing_room:
+	if _dialog.visible or _changing_room or not GameState.has_item("book_page"):
 		return
-	# A página fica na estante: o primeiro clique nela já a guarda no HUD.
-	if not GameState.has_item("book_page"):
-		GameState.add_item("book_page")
-	if not GameState.has_flag("picked_book_page"):
-		GameState.set_flag("picked_book_page", true)
-		GameState.save_game()
 	_open_overlay(_book)
 
 
