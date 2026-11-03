@@ -19,7 +19,7 @@ extends "res://scripts/components/interactable.gd"
 @export_group("Effects")
 ## Custom id handled by the game root (`_on_action`).
 @export var action_id: String = ""
-## Panel opened by the game root: book, circle, cofre or diary.
+## Panel opened by the game root: book, circle, safe, drawers or diary.
 @export var open_panel: String = ""
 ## Flag written after a normal (no item) click.
 @export var set_flag: String = ""

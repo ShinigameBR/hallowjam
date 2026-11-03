@@ -10,21 +10,21 @@ signal solved
 signal closed
 
 # ---- A resposta certa. Os nomes são os nomes dos nodes na cena. ----
-const TARGET := {"Vermelho": 2, "Azul": 1, "Amarelo": 2, "Verde": 1}
+const TARGET := {"Red": 2, "Blue": 1, "Yellow": 2, "Green": 1}
 const COLORS := {
-	"Vermelho": Color("#cf5d63"),
-	"Azul": Color("#6d9fd1"),
-	"Amarelo": Color("#d8b63c"),
-	"Verde": Color("#6fbf8a"),
+	"Red": Color("#cf5d63"),
+	"Blue": Color("#6d9fd1"),
+	"Yellow": Color("#d8b63c"),
+	"Green": Color("#6fbf8a"),
 }
 const MAX_NUMBER := 5
 const NUMBER_FONT_SIZE := 24
 
-const BAU_IMG := preload("res://assets/backgrounds/bau.jpeg")
-const BAU_ABERTO_IMG := preload("res://assets/backgrounds/bau_aberto.jpeg")
+const CHEST_IMG := preload("res://assets/backgrounds/bau.jpeg")
+const CHEST_OPEN_IMG := preload("res://assets/backgrounds/bau_aberto.jpeg")
 
-@onready var _fundo: TextureRect = $Fundo
-@onready var _rubi: Button = $Fundo/Rubi
+@onready var _background: TextureRect = $Background
+@onready var _ruby: Button = $Background/Ruby
 
 var _counts := {}
 var _opened := false
@@ -35,12 +35,12 @@ func _ready() -> void:
 	theme = UI.theme
 	visible = false
 	for color_name in TARGET:
-		var button: Button = _fundo.get_node(color_name)
+		var button: Button = _background.get_node(color_name)
 		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 			button.add_theme_color_override(state, COLORS[color_name])
 		button.add_theme_font_size_override("font_size", NUMBER_FONT_SIZE)
 		button.pressed.connect(_on_number_pressed.bind(color_name))
-	_rubi.pressed.connect(_take_ruby)
+	_ruby.pressed.connect(_take_ruby)
 
 
 # ============================================================ NÚMEROS
@@ -48,7 +48,7 @@ func _on_number_pressed(color_name: String) -> void:
 	if _opened or _closing:
 		return
 	_counts[color_name] = (_counts[color_name] + 1) % (MAX_NUMBER + 1)
-	_fundo.get_node(color_name).text = str(_counts[color_name])
+	_background.get_node(color_name).text = str(_counts[color_name])
 	if _is_correct():
 		# Grava no save que o baú foi aberto, mesmo que o rubi não seja pego agora.
 		GameState.set_flag("chest_open", true)
@@ -65,7 +65,7 @@ func _is_correct() -> bool:
 
 func _set_numbers_visible(value: bool) -> void:
 	for color_name in TARGET:
-		_fundo.get_node(color_name).visible = value
+		_background.get_node(color_name).visible = value
 
 
 # ============================================================ BAÚ E RUBI
@@ -74,7 +74,7 @@ func _reveal_chest() -> void:
 	# Pequena pausa para o jogador ver o último número antes de abrir.
 	await get_tree().create_timer(0.35).timeout
 	# Se o jogador fechou durante a pausa, ou reabriu e o baú já aparece aberto, não faz nada.
-	if not visible or _closing or not _opened or _rubi.visible:
+	if not visible or _closing or not _opened or _ruby.visible:
 		return
 	_show_open_state()
 	_zoom(1.05, 0.4)
@@ -83,9 +83,9 @@ func _reveal_chest() -> void:
 # Baú aberto: imagem aberta, números escondidos e rubi clicável.
 func _show_open_state() -> void:
 	_opened = true
-	_fundo.texture = BAU_ABERTO_IMG
+	_background.texture = CHEST_OPEN_IMG
 	_set_numbers_visible(false)
-	_rubi.visible = true
+	_ruby.visible = true
 
 
 func _take_ruby() -> void:
@@ -104,12 +104,12 @@ func _take_ruby() -> void:
 # Volta tudo ao começo: baú fechado e todos os números em 0.
 func _reset() -> void:
 	_opened = false
-	_fundo.texture = BAU_IMG
+	_background.texture = CHEST_IMG
 	for color_name in TARGET:
 		_counts[color_name] = 0
-		_fundo.get_node(color_name).text = "0"
+		_background.get_node(color_name).text = "0"
 	_set_numbers_visible(true)
-	_rubi.visible = false
+	_ruby.visible = false
 
 
 # ============================================================ ABRIR / FECHAR
@@ -150,11 +150,11 @@ func _gui_input(event: InputEvent) -> void:
 
 
 # Começa a imagem maior e encolhe até o normal: parece a câmera chegando.
-# Os números são filhos do Fundo, então acompanham o zoom.
+# Os números são filhos do Background, então acompanham o zoom.
 func _zoom(from_scale: float, time: float) -> void:
 	await get_tree().process_frame
-	_fundo.pivot_offset = _fundo.size * 0.5
-	_fundo.scale = Vector2(from_scale, from_scale)
+	_background.pivot_offset = _background.size * 0.5
+	_background.scale = Vector2(from_scale, from_scale)
 	var tw := create_tween()
 	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(_fundo, "scale", Vector2.ONE, time)
+	tw.tween_property(_background, "scale", Vector2.ONE, time)

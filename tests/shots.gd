@@ -53,7 +53,8 @@ func _capture_game() -> void:
 	await _shot_panel(game, "_book", "05_book")
 	await _shot_panel(game, "_diary", "06_diary")
 	await _shot_panel(game, "_circle", "07_circle")
-	await _shot_panel(game, "_cofre", "08_cofre")
+	await _shot_panel(game, "_safe", "08_safe")
+	await _shot_panel(game, "_drawers", "08_drawers")
 	await _shot_panel(game, "_pause", "09_pause")
 
 	game.call("_apply_room", "main_left")

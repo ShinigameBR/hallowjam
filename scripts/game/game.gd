@@ -6,7 +6,8 @@ const INVENTORY_BAR := preload("res://scripts/game/inventory_bar.gd")
 const DIALOG_BOX := preload("res://scripts/game/dialog_box.gd")
 const BOOK_PANEL := preload("res://scripts/game/book_panel.gd")
 const CIRCLE_PANEL := preload("res://scripts/game/circle_panel.gd")
-const COFRE_ZOOM := preload("res://scenes/components/cofre_zoom.tscn")
+const SAFE_ZOOM := preload("res://scenes/components/safe_zoom.tscn")
+const DRAWERS_ZOOM := preload("res://scenes/components/drawers_zoom.tscn")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
 const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
 const PAUSE_MENU := preload("res://scripts/game/pause_menu.gd")
@@ -27,7 +28,8 @@ var _selection_label: Label
 var _dialog: Control
 var _book: Control
 var _circle: Control
-var _cofre: Control
+var _safe: Control
+var _drawers: Control
 var _diary: Control
 var _monster_result: Control
 var _pause: Control
@@ -221,10 +223,14 @@ func _build_overlays() -> void:
 	_circle.summon_requested.connect(_on_summon_requested)
 	_circle.closed.connect(func() -> void: _clear_overlay(_circle))
 
-	_cofre = COFRE_ZOOM.instantiate()
-	add_child(_cofre)
-	_cofre.solved.connect(_on_safe_solved)
-	_cofre.closed.connect(func() -> void: _clear_overlay(_cofre))
+	_safe = SAFE_ZOOM.instantiate()
+	add_child(_safe)
+	_safe.solved.connect(_on_safe_solved)
+	_safe.closed.connect(func() -> void: _clear_overlay(_safe))
+
+	_drawers = DRAWERS_ZOOM.instantiate()
+	add_child(_drawers)
+	_drawers.closed.connect(func() -> void: _clear_overlay(_drawers))
 
 	_diary = DIARY_PANEL.new()
 	add_child(_diary)
@@ -512,8 +518,10 @@ func _on_panel_requested(panel_id: String) -> void:
 			_open_overlay(_book)
 		"circle":
 			_open_overlay(_circle)
-		"cofre":
-			_open_overlay(_cofre)
+		"safe":
+			_open_overlay(_safe)
+		"drawers":
+			_open_overlay(_drawers)
 		"diary":
 			_open_overlay(_diary)
 		_:
@@ -543,7 +551,7 @@ func _action_safe() -> void:
 	elif GameState.selected_item != "":
 		_say("Não há fechadura para forçar. Só os números coloridos do baú.")
 	else:
-		_open_overlay(_cofre)
+		_open_overlay(_safe)
 
 
 func _action_dig() -> void:

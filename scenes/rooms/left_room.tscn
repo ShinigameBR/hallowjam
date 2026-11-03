@@ -62,25 +62,6 @@ description = "Um balde de madeira, vazio. Serve para carregar água do mar."
 interaction_id = "bucket"
 label = "Balde"
 
-[node name="Screwdriver" type="Control" parent="Interactables" unique_id=1382803942]
-layout_mode = 1
-anchor_left = 0.54
-anchor_top = 0.48100004
-anchor_right = 0.62
-anchor_bottom = 0.551
-offset_left = -0.2000122
-offset_top = -0.32003784
-offset_right = -0.2000122
-offset_bottom = -0.32000732
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("pickup")
-item_id = "screwdriver"
-description = "Uma chave de fenda velha, mas ainda firme. Dá para abrir coisas teimosas."
-interaction_id = "screwdriver"
-label = "Chave de fenda"
-always_show_label = true
-
 [node name="BackDoor" type="Control" parent="Interactables" unique_id=1673865155]
 layout_mode = 1
 anchor_left = 0.92800003
@@ -98,19 +79,22 @@ spawn_point = "main_left"
 interaction_id = "left_back"
 label = "Voltar à sala"
 
-[node name="Crates" type="Control" parent="Interactables" unique_id=1023940634]
-visible = false
+[node name="Drawers" type="Control" parent="Interactables" unique_id=1023940634]
 layout_mode = 1
-anchor_left = 0.7
-anchor_top = 0.58
-anchor_right = 0.84
-anchor_bottom = 0.74
+anchor_left = 0.513
+anchor_top = 0.606
+anchor_right = 0.81100005
+anchor_bottom = 0.67800003
+offset_left = 0.35998535
+offset_top = -0.32000732
+offset_right = -0.080078125
+offset_bottom = -0.16003418
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("examine")
-message = "Caixas vazias, cobertas de sal. Alguém guardou ferramentas aqui um dia."
-interaction_id = "left_crates"
-label = "Caixas"
+open_panel = "drawers"
+interaction_id = "left_drawers"
+label = "Gavetas"
 
 [node name="AtticDoor" type="Control" parent="Interactables" unique_id=674560023]
 layout_mode = 1
