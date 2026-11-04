@@ -64,7 +64,7 @@ Use esse mesmo formato ao criar uma sala nova para manter a composição.
 | `assets/backgrounds/sala_principal.png` | Sala principal. |
 | `assets/backgrounds/sala_esquerda.jpeg` | Lado esquerdo. |
 | `assets/backgrounds/sala_direita.jpeg` | Lado direito. |
-| `assets/backgrounds/cais_buraco_fechado.jpeg` / `cais_buraco_cavado.png` | Cais (antes e depois de cavar). |
+| `assets/backgrounds/cais_buraco_fechado.png` / `cais_buraco_cavado.png` | Cais (antes e depois de cavar). |
 | `assets/backgrounds/zoom_buraco_fechado.png` / `zoom_buraco_cavado.png` | Zoom do buraco na areia do cais. |
 | `assets/backgrounds/menu_principal.png` | Fundo do menu principal. |
 | `assets/backgrounds/fim_do_jogo.png` | Ilustração da tela de vitória. |
@@ -192,7 +192,7 @@ Anexe `scripts/components/item_pickup.gd` a uma imagem de item:
 
 | Campo | Efeito |
 | --- | --- |
-| `Item Id` | Id existente em `ItemDB` (`potion`, `ruby`, `rod`, ...). |
+| `Item Id` | Id existente em `ItemDB` (`potion`, `ruby`, `bucket`, ...). |
 | `Pickup Flag` | Flag gravada ao pegar. Vazio vira `picked_<item_id>`. |
 | `Description` | Texto exibido ao pegar. |
 | `Hide After Pickup` | Esconde o objeto depois de coletado. |
@@ -250,7 +250,7 @@ coisas como:
 
 - poção na lavanda murcha → a flor revive e pode ser colhida;
 - balde com água na lareira → apaga o fogo e revela a safira;
-- minhoca no mar (com a vara no inventário) → pesca um peixe;
+- balde vazio no mar → enche o balde de água;
 - peixe no Beija-Flor Carmesim → ele abre a porta do sótão.
 
 Se uma regra tiver `Item Id` vazio e `Needs Selection = false`, ela combina com
@@ -269,6 +269,8 @@ Painéis são identificados por string:
 | `safe` | Baú/cofre de números. |
 | `drawers` | Zoom das gavetas. |
 | `door_hint` | Dica na porta da frente: só a imagem. |
+| `hole` | Zoom do buraco na areia do cais: cava e mostra maleta + minhoca. |
+| `rod` | Zoom da vara de pescar do cais: ostra no anzol, isca, linha esticada e peixe. |
 | `diary` | Diário do bruxo. |
 
 Eles são abertos por `Open Panel` no `Examine` ou em uma `ItemUseRule`. Para
@@ -281,8 +283,7 @@ Ações que não cabem em uma regra usam `Action Id` e são tratadas em
 | Id | Efeito |
 | --- | --- |
 | `safe` | Abre o teclado ou informa que o cofre já está aberto. |
-| `sea` | Verifica vara, isca e peixe para a pescaria. |
-| `dig` | Revolve a terra do cais e entrega isca + maleta. |
+| `sea` | Lembra que a pescaria é feita na vara do cais. |
 | `attic` | Termina o protótipo se o Carmesim já foi alimentado. |
 
 Para adicionar uma ação:

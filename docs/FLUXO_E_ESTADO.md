@@ -89,7 +89,9 @@ Use `set_flag`/`clear_flag` sempre que possível; eles emitem
 | `summoned_carmesim` | O Beija-Flor Carmesim foi invocado. |
 | `dirt_dug` | O buraco na areia do cais foi cavado. |
 | `picked_bait` / `picked_suitcase` | A minhoca / a maleta foram pegas no buraco. |
-| `fish_caught` | O peixe foi pescado. |
+| `picked_oyster` | A ostra foi tirada do anzol, no zoom da vara. |
+| `rod_cast` | A minhoca foi presa no anzol e a linha foi lançada (vara esticada). |
+| `fish_caught` | O peixe foi tirado da linha da vara. |
 | `carmesim_fed` | O Carmesim comeu e abriu a porta do sótão. |
 | `won` | O jogo foi concluído. |
 

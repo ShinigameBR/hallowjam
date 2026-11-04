@@ -4,11 +4,16 @@ extends Control
 
 var item_id: String = ""
 var glow: bool = false
+## PNG do item, carregada no setup: carregar dentro do _draw deixa a primeira
+## pintura de uma textura nova em branco.
+var _texture: Texture2D
 
 
 func setup(id: String, with_glow: bool = false) -> void:
 	item_id = id
 	glow = with_glow
+	var texture_path := String(ItemDB.item(id).get("texture", ""))
+	_texture = load(texture_path) as Texture2D if texture_path != "" else null
 	queue_redraw()
 
 
@@ -27,18 +32,15 @@ func _draw() -> void:
 		draw_circle(Vector2(size.x * 0.5, size.y * 0.5), minf(size.x, size.y) * 0.42, Color(base, 0.14))
 		draw_circle(Vector2(size.x * 0.5, size.y * 0.5), minf(size.x, size.y) * 0.31, Color(base, 0.08))
 
-	var texture_path := String(data.get("texture", ""))
-	if texture_path != "":
-		var texture := load(texture_path) as Texture2D
-		if texture != null:
-			var tex_size := texture.get_size()
-			if tex_size.x > 0.0 and tex_size.y > 0.0:
-				var fit := minf(size.x / tex_size.x, size.y / tex_size.y) * 0.86
-				var draw_size := tex_size * fit
-				var pos := (size - draw_size) * 0.5
-				draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-				draw_texture_rect(texture, Rect2(pos, draw_size), false)
-			return
+	if _texture != null:
+		var tex_size := _texture.get_size()
+		if tex_size.x > 0.0 and tex_size.y > 0.0:
+			var fit := minf(size.x / tex_size.x, size.y / tex_size.y) * 0.86
+			var draw_size := tex_size * fit
+			var pos := (size - draw_size) * 0.5
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+			draw_texture_rect(_texture, Rect2(pos, draw_size), false)
+		return
 
 	var origin := (size - Vector2(s, s)) * 0.5
 	draw_set_transform(origin, 0.0, Vector2(s / 64.0, s / 64.0))

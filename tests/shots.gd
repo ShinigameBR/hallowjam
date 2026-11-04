@@ -34,7 +34,7 @@ func _capture_menu() -> void:
 
 func _capture_game() -> void:
 	GameState.start_new_game()
-	for id in ["book_page", "bucket", "screwdriver", "potion", "lavender_revived", "ruby", "rod", "oyster", "bait", "suitcase", "fish", "sapphire", "pearl"]:
+	for id in ["book_page", "bucket", "screwdriver", "potion", "lavender_revived", "ruby", "oyster", "bait", "suitcase", "fish", "sapphire", "pearl"]:
 		GameState.add_item(id)
 	GameState.set_flag("book_read", true)
 	GameState.set_flag("door_clue_seen", true)

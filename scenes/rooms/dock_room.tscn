@@ -1,31 +1,17 @@
 [gd_scene format=3 uid="uid://d4xgan412txh"]
 
-[ext_resource type="Texture2D" uid="uid://60i381iw4i1r" path="res://assets/backgrounds/cais_buraco_fechado.jpeg" id="bg"]
+[ext_resource type="Texture2D" uid="uid://druh0jj2xohdi" path="res://assets/backgrounds/cais_buraco_fechado.png" id="bg"]
 [ext_resource type="Texture2D" uid="uid://blat57joy5jbt" path="res://assets/backgrounds/cais_buraco_cavado.png" id="bg_dug"]
 [ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
 [ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
 [ext_resource type="Script" uid="uid://gig1l0v47471" path="res://scripts/components/flag_background.gd" id="flag_bg"]
-[ext_resource type="Texture2D" uid="uid://dw74fwcrr3ups" path="res://assets/props/ostra.png" id="oyster_tex"]
-[ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
-[ext_resource type="Texture2D" uid="uid://br7cjeeawufhs" path="res://assets/props/vara_desativada.png" id="rod_tex"]
 [ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
 [ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
 
-[sub_resource type="Resource" id="Resource_fish"]
+[sub_resource type="Resource" id="Resource_bait"]
 script = ExtResource("rule")
 item_id = "bait"
-required_flags = Array[String](["picked_rod"])
-forbidden_flags = Array[String](["fish_caught"])
-consume_item = "bait"
-give_item = "fish"
-set_flag = "fish_caught"
-message = "Você prende a isca no anzol e lança a linha. Um peixe prateado salta no cais."
-
-[sub_resource type="Resource" id="Resource_no_rod"]
-script = ExtResource("rule")
-item_id = "bait"
-forbidden_flags = Array[String](["picked_rod"])
-message = "Você tem a isca, mas precisa de uma vara de pescar."
+message = "Jogar a minhoca no mar não adianta. Ela precisa ir no anzol da vara."
 
 [sub_resource type="Resource" id="Resource_bucket"]
 script = ExtResource("rule")
@@ -72,64 +58,34 @@ mouse_filter = 2
 
 [node name="Sea" type="Control" parent="Interactables" unique_id=906743792]
 layout_mode = 1
-anchor_left = 0.33
+anchor_left = 0.31800002
 anchor_right = 0.998
-anchor_bottom = 0.48100004
-offset_left = -28.400024
+anchor_bottom = 0.40800002
+offset_left = -0.040039063
 offset_top = -1.0
 offset_right = 0.5599365
-offset_bottom = -0.32003784
+offset_bottom = 0.23999023
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("examine")
 action_id = "sea"
 interaction_id = "sea"
 label = "Mar"
-use_rules = Array[ExtResource("rule")]([SubResource("Resource_fish"), SubResource("Resource_no_rod"), SubResource("Resource_bucket")])
+use_rules = Array[ExtResource("rule")]([SubResource("Resource_bait"), SubResource("Resource_bucket")])
 
-[node name="Rod" type="TextureRect" parent="Interactables" unique_id=1049628999]
+[node name="Rod" type="Control" parent="Interactables"]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.22000001
-anchor_top = 0.078
-anchor_right = 0.32000002
-anchor_bottom = 0.37600002
-offset_left = -0.6000061
-offset_top = -1.1599998
-offset_right = -0.6000366
-offset_bottom = 0.27999878
+anchor_left = 0.255
+anchor_top = 0.05
+anchor_right = 0.345
+anchor_bottom = 0.27
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("rod_tex")
-expand_mode = 1
-stretch_mode = 5
-script = ExtResource("pickup")
-item_id = "rod"
-description = "Uma vara de pescar velha. A linha ainda tem um anzol enferrujado."
+script = ExtResource("examine")
+ignore_selected_item = true
+open_panel = "rod"
 interaction_id = "rod"
 label = "Vara de pescar"
-
-[node name="Oyster" type="TextureRect" parent="Interactables" unique_id=1265163993]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.36
-anchor_top = 0.56
-anchor_right = 0.46
-anchor_bottom = 0.7
-offset_left = -0.24002075
-offset_top = -0.16000366
-offset_right = -0.24005127
-offset_bottom = -0.16000366
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("oyster_tex")
-expand_mode = 1
-stretch_mode = 5
-script = ExtResource("pickup")
-item_id = "oyster"
-description = "Uma ostra presa no anzol da vara. A concha está bem fechada."
-interaction_id = "oyster"
-label = "Ostra"
 
 [node name="Dirt" type="Control" parent="Interactables" unique_id=1799957579]
 layout_mode = 1

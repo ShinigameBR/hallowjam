@@ -29,7 +29,8 @@ pode abrir a passagem para o sótão.
   para os objetos e itens.
 - Página do livro do bruxo, cofre com senha, círculo de invocação e pistas no cenário.
 - Zoom do canto da estante para achar a chave escondida.
-- Lavanda revivida, rubi, vara de pescar, minhoca, ostra, pérola e peixe.
+- Lavanda revivida, rubi, minhoca, ostra, pérola e peixe.
+- Zoom da vara de pescar no cais: ostra no anzol, isca e peixe na linha.
 - Seis monstros possíveis, definidos pelas qualidades dos ingredientes.
 - Salvamento automático em `user://circulo_run.cfg`.
 - Final jogável desta fatia: invocar **O Beija-Flor Carmesim**, alimentá-lo com

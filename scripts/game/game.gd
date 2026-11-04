@@ -11,6 +11,7 @@ const DRAWERS_ZOOM := preload("res://scenes/components/drawers_zoom.tscn")
 const SHELF_ZOOM := preload("res://scenes/components/shelf_zoom.tscn")
 const DOOR_HINT := preload("res://scenes/components/door_hint.tscn")
 const HOLE_ZOOM := preload("res://scenes/components/hole_zoom.tscn")
+const ROD_ZOOM := preload("res://scenes/components/rod_zoom.tscn")
 const PAGE_ICON := preload("res://assets/props/pagina_do_livro.png")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
 const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
@@ -49,6 +50,9 @@ var _drawers: Control
 var _shelf: Control
 var _door_hint: Control
 var _hole: Control
+var _rod: Control
+## Zooms que ficam abaixo do HUD, como uma sala: o inventário continua usável.
+var _hud_zooms: Array[Control] = []
 var _diary: Control
 var _monster_result: Control
 var _pause: Control
@@ -385,6 +389,13 @@ func _build_overlays() -> void:
 		_refresh_objective()
 	)
 
+	_rod = ROD_ZOOM.instantiate()
+	_add_hud_zoom(_rod)
+	_rod.closed.connect(func() -> void:
+		_clear_overlay(_rod)
+		_refresh_objective()
+	)
+
 	_diary = DIARY_PANEL.new()
 	add_child(_diary)
 	_diary.closed.connect(func() -> void:
@@ -512,8 +523,22 @@ func _open_overlay(node: Control) -> void:
 
 
 func _clear_overlay(node: Control) -> void:
-	if _current_overlay == node:
-		_current_overlay = null
+	if _current_overlay != node:
+		return
+	_current_overlay = null
+	# Um painel aberto por cima de um zoom do HUD (ex.: a página do livro)
+	# devolve o foco para o zoom que continua aberto embaixo.
+	for zoom in _hud_zooms:
+		if zoom != node and zoom.visible:
+			_current_overlay = zoom
+
+
+# Coloca o zoom logo acima das salas e abaixo do HUD, para ele receber o mesmo
+# inventário, objetivo e botões que as salas.
+func _add_hud_zoom(node: Control) -> void:
+	add_child(node)
+	move_child(node, _room_host.get_index() + 1)
+	_hud_zooms.append(node)
 
 
 func _open_shelf() -> void:
@@ -725,6 +750,8 @@ func _on_panel_requested(panel_id: String) -> void:
 			_open_overlay(_door_hint)
 		"hole":
 			_open_overlay(_hole)
+		"rod":
+			_open_overlay(_rod)
 		"diary":
 			_open_overlay(_diary)
 		_:
@@ -761,16 +788,10 @@ func _action_attic() -> void:
 
 
 func _action_sea() -> void:
-	if GameState.has_flag("fish_caught"):
+	if GameState.has_flag("rod_cast") or GameState.has_flag("fish_caught"):
 		_say("O mar já te deu o que tinha.")
-	elif not GameState.has_item("rod"):
-		_say("O mar está violento. Sem uma vara, não dá para pescar.")
-	elif not GameState.has_item("bait"):
-		_say("Você tem a vara, mas falta isca. Talvez haja algo no buraco da areia do cais.")
-	elif GameState.selected_item == "":
-		_say("Selecione a isca no inventário para pescar.")
 	else:
-		_say("O mar espera.")
+		_say("O mar está violento. A vara de pescar do cais pode tirar algo dele.")
 
 
 func _on_objective_changed(text: String) -> void:
@@ -799,16 +820,16 @@ func _refresh_objective() -> void:
 				text = "A porta não cede. Algo range perto da estante."
 			else:
 				text = "A chave na porta da frente."
-		elif not GameState.has_flag("picked_rod"):
-			text = "O cais guarda uma vara de pescar."
-		elif not GameState.has_flag("dirt_dug"):
+		elif not GameState.has_flag("picked_oyster"):
+			text = "Algo pende da vara de pescar do cais."
+		elif not GameState.has_flag("rod_cast") and not GameState.has_flag("dirt_dug"):
 			text = "A areia do cais esconde um buraco."
-		elif not GameState.has_item("bait") and not GameState.has_flag("fish_caught"):
+		elif not GameState.has_flag("rod_cast") and not GameState.has_item("bait"):
 			text = "Algo se contorce no fundo do buraco."
-		elif not GameState.has_flag("fish_caught"):
-			text = "O mar está calmo demais."
+		elif not GameState.has_flag("rod_cast"):
+			text = "A vara de pescar espera uma isca."
 		else:
-			text = "O Carmesim ainda espera o peixe."
+			text = "Algo fisgou a linha da vara."
 	elif not GameState.has_item("book_page"):
 		text = "Uma página solta repousa sobre a estante."
 	elif not GameState.has_flag("book_read"):
@@ -843,7 +864,7 @@ func _update_selection_hint() -> void:
 	elif selected == "bucket_water":
 		_selection_label.text = "Balde com água selecionado. Use na lareira."
 	elif selected == "bait":
-		_selection_label.text = "Isca selecionada. Use no mar, com a vara."
+		_selection_label.text = "Isca selecionada. Prenda no anzol da vara, no cais."
 	elif selected == "fish":
 		_selection_label.text = "Peixe selecionado. Ofereça ao Carmesim."
 	elif selected == "ruby" or selected == "lavender_revived":

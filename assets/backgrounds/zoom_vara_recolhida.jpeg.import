@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://60i381iw4i1r"
-path="res://.godot/imported/cais_buraco_fechado.jpeg-b51d9f605ad28180f5571dc7c4469a2c.ctex"
+uid="uid://bqgjep185lqql"
+path="res://.godot/imported/zoom_vara_recolhida.jpeg-a4754528abde1b0a664409980a899905.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/backgrounds/cais_buraco_fechado.jpeg"
-dest_files=["res://.godot/imported/cais_buraco_fechado.jpeg-b51d9f605ad28180f5571dc7c4469a2c.ctex"]
+source_file="res://assets/backgrounds/zoom_vara_recolhida.jpeg"
+dest_files=["res://.godot/imported/zoom_vara_recolhida.jpeg-a4754528abde1b0a664409980a899905.ctex"]
 
 [params]
 

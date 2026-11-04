@@ -112,6 +112,7 @@ var ITEMS := {
 		"color": Color("#7fb3c9"),
 		"icon": "fish",
 		"kind": "ingredient",
+		"texture": "res://assets/props/peixe.png",
 	},
 	"sardines": {
 		"name": "Lata de Sardinha",
@@ -193,15 +194,6 @@ var ITEMS := {
 		"color": Color("#c3c9cf"),
 		"icon": "knife",
 		"kind": "tool",
-	},
-	"rod": {
-		"name": "Vara de Pescar",
-		"desc": "Velha, mas ainda serve para pescar.",
-		"tags": ["tool", "wood"],
-		"color": Color("#b08a5a"),
-		"icon": "rod",
-		"kind": "tool",
-		"texture": "res://assets/props/vara_desativada.png",
 	},
 	"music_box": {
 		"name": "Caixa de Música",
@@ -332,6 +324,7 @@ var ITEMS := {
 		"color": Color("#e8e3d4"),
 		"icon": "stone",
 		"kind": "clue",
+		"texture": "res://assets/props/perola.png",
 	},
 	"oyster": {
 		"name": "Ostra",
