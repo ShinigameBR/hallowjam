@@ -317,6 +317,23 @@ func _hide_inventory_panel() -> void:
 	_inventory_panel.visible = false
 
 
+## Fecha o inventário na hora, sem alternar. Usado quando um diálogo ou uma
+## troca de sala precisa da tela livre.
+func _close_inventory() -> void:
+	if not _inventory_open:
+		return
+	if _inventory_tween and _inventory_tween.is_valid():
+		_inventory_tween.kill()
+	_inventory_open = false
+	if _inventory_toggle != null:
+		_inventory_toggle.text = "INVENTÁRIO"
+	if _inventory_panel != null:
+		_inventory_panel.visible = false
+		_inventory_panel.offset_top = INVENTORY_TOP_CLOSED
+		_inventory_panel.offset_bottom = INVENTORY_TOP_CLOSED + INVENTORY_HEIGHT
+		_inventory_panel.modulate.a = 0.0
+
+
 func _hud_text(label: Label) -> void:
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.58))
@@ -456,6 +473,7 @@ func _connect_signals() -> void:
 
 # ================================================================== ROOMS
 func _apply_room(room_id: String) -> void:
+	_close_inventory()
 	var scene := RoomManager.get_room_scene(room_id)
 	if scene == null:
 		push_warning("No room scene registered for id '%s'." % room_id)
@@ -764,6 +782,7 @@ func _say(text: String, speaker: String = "") -> void:
 
 
 func _show_dialog(lines: Array) -> void:
+	_close_inventory()
 	if _dialog == null or _dialog.visible:
 		return
 	_dialog.open(lines)
@@ -785,6 +804,7 @@ func _on_room_changed(room: Room) -> void:
 
 func _on_transition_started() -> void:
 	_changing_room = true
+	_close_inventory()
 	Audio.play_sfx("door")
 
 
