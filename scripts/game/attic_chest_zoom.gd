@@ -16,6 +16,8 @@ const DIALS: Array[String] = ["Dial1", "Dial2", "Dial3", "Dial4", "Dial5"]
 const MAX_NUMBER := 5
 const NUMBER_FONT_SIZE := 64
 const NUMBER_COLOR := Color("#e8dcc0")
+## A arte é mais larga que a tela; um leve recuo mostra as laterais inteiras.
+const BASE_SCALE := 0.87
 
 @onready var _background: TextureRect = $Background
 
@@ -82,7 +84,7 @@ func open() -> void:
 	modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 1.0, 0.25)
-	_zoom(1.15, 0.7)   # a "aproximação" da câmera
+	_zoom(1.0, 0.7)   # a "aproximação" da câmera
 
 
 func close() -> void:
@@ -112,4 +114,4 @@ func _zoom(from_scale: float, time: float) -> void:
 	_background.scale = Vector2(from_scale, from_scale)
 	var tw := create_tween()
 	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(_background, "scale", Vector2.ONE, time)
+	tw.tween_property(_background, "scale", Vector2(BASE_SCALE, BASE_SCALE), time)
