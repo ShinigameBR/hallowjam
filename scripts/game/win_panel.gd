@@ -28,7 +28,7 @@ func _build() -> void:
 	body.add_child(title)
 
 	var text := UI.label(
-		"O Beija-Flor Carmesim devora o peixe e força a porta do sótão. O escuro lá em cima cheira a poeira, madeira velha e metal molhado.\n\nO sótão, a maleta e a última invocação ficam para o próximo capítulo.",
+		"O Carmesim devora o peixe e força a porta do sótão. O escuro lá em cima cheira a poeira, madeira velha e metal molhado.\n\nO sótão, a maleta e a última invocação ficam para o próximo capítulo.",
 		"BodyLarge"
 	)
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
