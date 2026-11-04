@@ -12,23 +12,23 @@ var _stats: Label
 func _build() -> void:
 	panel.custom_minimum_size = Vector2(680, 0)
 
-	body.add_child(UI.label("FIM DO PROTÓTIPO", "Eyebrow"))
+	body.add_child(UI.label("FIM", "Eyebrow"))
 
 	var art := TextureRect.new()
 	art.texture = ART
-	art.custom_minimum_size = Vector2(600, 295)
+	art.custom_minimum_size = Vector2(600, 270)
 	art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body.add_child(art)
 
-	var title := UI.label("A primeira porta se abre.", "H1")
+	var title := UI.label("O mar te reconhece.", "H1")
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	body.add_child(title)
 
 	var text := UI.label(
-		"O Carmesim devora o peixe e força a porta do sótão. O escuro lá em cima cheira a poeira, madeira velha e metal molhado.\n\nO sótão, a maleta e a última invocação ficam para o próximo capítulo.",
+		"O Cego das Profundezas sobe do círculo e o mar sobe com ele. A cabana, o sótão e a escama azul afundam devagar, sem pressa.\n\nQuando a água fecha sobre a sua cabeça, você não sente medo. Só o peso de finalmente estar em casa.",
 		"BodyLarge"
 	)
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

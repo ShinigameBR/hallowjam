@@ -395,8 +395,14 @@ func _run() -> void:
 	_check(result.visible, "the branco summon shows its result card")
 	_check(GameState.has_flag("summoned_branco"), "music box + pearl summons A Luz que Escuta")
 	_check(not GameState.has_item("music_box"), "the white light consumes the offerings")
+	_check(result.get("_action").text == "SEGUIR A LUZ", "the branco result invites the player to follow the light")
 	result.call("dismiss")
 	await _wait(0.4)
+	var branco_dialog: Control = _game.get("_dialog")
+	branco_dialog.call("advance")
+	await get_tree().process_frame
+	_check(branco_dialog.get("_text").text.contains("esquerdo"), "the branco summon points the player to the left")
+	_check(branco_dialog.get("_text").text.contains("sótão"), "the branco summon points the player to the attic")
 	await _finish_dialog()
 
 	# ---------------------------------------------------------- lit attic
@@ -448,6 +454,31 @@ func _run() -> void:
 	await _finish_dialog()
 
 	await _audit_menu()
+
+	# ---------------------------------------------------------- azul ending
+	# O azul precisa de oceano + cheiro forte + solidão. A concha não aparece
+	# na rota ativa, então é injetada aqui só para exercitar o final.
+	GameState.clear_selection()
+	GameState.add_item("shell")
+	GameState.add_item("mushroom")
+	await _open_circle()
+	await _place("shell", 0)
+	await _place("mushroom", 1)
+	_check(GameState.circle == ["shell", "mushroom", "", ""], "shell + mushroom placed for the azul summon")
+	_game.call("_on_summon_requested")
+	await _wait(0.8)
+	result = _game.get("_monster_result")
+	_check(result.visible, "the azul summon shows its result card")
+	_check(result.get("_name").text == "O Cego das Profundezas", "shell + mushroom summons the azul")
+	_check(result.get("_action").text == "ENFRENTAR", "the azul result offers the final confrontation")
+	result.call("dismiss")
+	await _wait(0.4)
+	await _finish_dialog()
+	await _wait(0.3)
+	_check(GameState.has_flag("azul_ending"), "the azul summon marks the azul ending")
+	_check(GameState.has_flag("won"), "the azul summon ends the game")
+	_check(_game.get("_win").visible, "the azul summon opens the ending screen")
+	_check(not GameState.has_save(), "the ending removes the save file")
 
 
 func _audit_menu() -> void:

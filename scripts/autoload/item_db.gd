@@ -425,7 +425,7 @@ var MONSTERS := {
 			"Algo ligado ao oceano.",
 		],
 		"desc": "Uma forma branca, quase sem contorno. Ela não fala: você simplesmente entende.",
-		"ability": "Brilha forte e enxerga o que você tenta esconder. Não luta.",
+		"ability": "Brilha forte e enxerga o que você tenta esconder. Assustada, correu para o lado esquerdo da casa — gosta de se esconder no escuro.",
 		"victory": false,
 	},
 	"none": {

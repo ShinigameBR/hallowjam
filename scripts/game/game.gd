@@ -665,13 +665,15 @@ func _on_summon_requested() -> void:
 func _on_monster_result_finished(victory: bool) -> void:
 	_resolving_summon = false
 	_current_overlay = null
-	if victory:
+	if _last_summon_id == "azul":
+		await _finish_azul_ending()
+	elif victory:
 		_refresh_objective()
 		_rebuild_hotspots()
 		_say("O Carmesim paira sobre o círculo. Ele espera ser alimentado.")
 	elif _last_summon_id == "branco":
 		_refresh_objective()
-		_say("A forma branca se dispersa em uma luz morna. Lá em cima, o sótão já não está escuro.")
+		_say("A forma branca dispara para o lado esquerdo da casa. Ela gosta de lugares escuros — siga a luz até o sótão.")
 	else:
 		GameState.clear_circle()
 		_say("A fumaça se desfaz. As oferendas voltam para as suas mãos.")
@@ -696,15 +698,17 @@ func _on_attic_chest_solved() -> void:
 
 
 # ================================================================== ENDING
-func _finish_game() -> void:
+func _finish_azul_ending() -> void:
 	if _dialog.visible:
 		return
+	GameState.consume_circle()
 	_show_dialog([
-		{"speaker": "O CARMESIM", "text": "Ele devora o peixe e sobe até a porta do sótão. Um estalo seco, e a passagem cede."},
-		{"text": "Você sobe. O escuro lá em cima cheira a poeira, madeira velha e metal molhado."},
-		{"text": "Alguma coisa espera no sótão. A história continua."},
+		{"speaker": "O CEGO DAS PROFUNDEZAS", "text": "A coisa azul se ergue do círculo. As garras encontram as paredes, o teto, o chão."},
+		{"text": "A água sobe pela madeira. O mar entra por baixo da porta e não para de subir."},
+		{"text": "Quando o azul cobre tudo, você entende: era para isso que o mar te chamava."},
 	])
 	await _dialog.finished
+	GameState.set_flag("azul_ending", true)
 	GameState.set_flag("won", true)
 	GameState.save_game()
 	_refresh_objective()
@@ -874,7 +878,9 @@ func _on_objective_changed(text: String) -> void:
 
 func _refresh_objective() -> void:
 	var text := "Uma página solta repousa sobre a estante."
-	if GameState.has_flag("won"):
+	if GameState.has_flag("azul_ending"):
+		text = "O mar te levou."
+	elif GameState.has_flag("won"):
 		text = "Você está livre."
 	elif GameState.has_flag("picked_escama_azul"):
 		text = "A escama azul está com você."
@@ -906,6 +912,8 @@ func _refresh_objective() -> void:
 			text = "A vara de pescar espera uma isca."
 		else:
 			text = "Algo fisgou a linha da vara."
+	elif GameState.has_flag("summoned_branco"):
+		text = "A luz correu para o lado esquerdo da casa."
 	elif not GameState.has_item("book_page"):
 		text = "Uma página solta repousa sobre a estante."
 	elif not GameState.has_flag("book_read"):

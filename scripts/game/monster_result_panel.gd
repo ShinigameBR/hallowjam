@@ -101,6 +101,10 @@ func show_result(monster_id: String) -> void:
 	_ability.text = String(data.get("ability", ""))
 	_eyebrow.text = "O CÍRCULO RESPONDE" if monster_id != "none" else "SILÊNCIO"
 	_action.text = "PARTIR" if _victory else "RECOLHER OFERENDAS"
+	if monster_id == "branco":
+		_action.text = "SEGUIR A LUZ"
+	elif monster_id == "azul":
+		_action.text = "ENFRENTAR"
 	open()
 
 
