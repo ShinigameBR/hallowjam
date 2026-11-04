@@ -14,7 +14,7 @@ config/name="Círculo"
 config/description="Um point and click de mistério e ocultismo. Um ritual para escapar."
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://assets/props/pagina_do_livro.png"
 
 [autoload]
 
