@@ -67,6 +67,7 @@ var _toast_tween: Tween
 var _current_overlay: Control
 var _changing_room := false
 var _resolving_summon := false
+var _attic_cutscene_running := false
 var _save_clock := 0.0
 
 
@@ -92,6 +93,7 @@ func _ready() -> void:
 
 	await get_tree().process_frame
 	_maybe_intro()
+	_maybe_open_attic_door()
 
 
 func _process(delta: float) -> void:
@@ -708,6 +710,33 @@ func _maybe_intro() -> void:
 	])
 
 
+## Depois de alimentado, o Carmesim espera no lado esquerdo e força a porta
+## do sótão na primeira vez que o jogador entra lá.
+func _maybe_open_attic_door() -> void:
+	if _attic_cutscene_running or not _can_open_attic_door():
+		return
+	_attic_cutscene_running = true
+	await get_tree().create_timer(0.4).timeout
+	# Espera falas, painéis ou a troca de sala que o jogador abriu nesse meio-tempo.
+	while _dialog.visible or _current_overlay != null or _changing_room:
+		await get_tree().process_frame
+	if not _can_open_attic_door():
+		_attic_cutscene_running = false
+		return
+	_show_dialog([
+		{"text": "O Carmesim chegou antes de você. Ele crava os chifres na porta do sótão e força a madeira."},
+	])
+	await _dialog.finished
+	GameState.set_flag("attic_door_open", true)
+	GameState.save_game()
+	_say("Um estalo seco, e a porta cede. O Carmesim se afasta e olha para você, satisfeito: o caminho está livre.")
+	_attic_cutscene_running = false
+
+
+func _can_open_attic_door() -> bool:
+	return GameState.current_room == "main_left" 		and GameState.has_flag("carmesim_fed") 		and not GameState.has_flag("attic_door_open")
+
+
 func _say(text: String, speaker: String = "") -> void:
 	_show_dialog([{"speaker": speaker, "text": text}])
 
@@ -738,6 +767,7 @@ func _on_transition_started() -> void:
 
 func _on_transition_finished() -> void:
 	_changing_room = false
+	_maybe_open_attic_door()
 
 
 func _on_flags_changed() -> void:
@@ -782,8 +812,6 @@ func _on_action(action_id: String, _source: Node = null) -> void:
 			_action_safe()
 		"sea":
 			_action_sea()
-		"attic":
-			_action_attic()
 		_:
 			push_warning("Unknown action id '%s'." % action_id)
 
@@ -796,11 +824,6 @@ func _action_safe() -> void:
 		_say("Não há fechadura para forçar. Só os números coloridos do baú.")
 	else:
 		_open_overlay(_safe)
-
-
-func _action_attic() -> void:
-	if GameState.has_flag("carmesim_fed"):
-		_finish_game()
 
 
 func _action_sea() -> void:
@@ -826,8 +849,12 @@ func _refresh_objective() -> void:
 	var text := "Uma página solta repousa sobre a estante."
 	if GameState.has_flag("won"):
 		text = "Você está livre."
+	elif GameState.current_room == "attic":
+		text = "O sótão guarda o resto da história."
+	elif GameState.has_flag("attic_door_open"):
+		text = "A porta do sótão está aberta."
 	elif GameState.has_flag("carmesim_fed"):
-		text = "O sótão espera."
+		text = "O Carmesim seguiu para o lado esquerdo da casa."
 	elif GameState.has_flag("summoned_carmesim"):
 		if GameState.has_flag("fish_caught"):
 			text = "O Carmesim ainda espera o peixe."

@@ -3,7 +3,7 @@ extends Node
 ##
 ## It drives the same entry points as real clicks (through RoomManager and the
 ## game controller) and checks the full Carmesim route:
-##   book page -> shelf corner/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic.
+##   book page -> shelf corner/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic door -> attic.
 
 var _failures: Array[String] = []
 var _game: Control
@@ -350,16 +350,22 @@ func _run() -> void:
 	_check(GameState.has_flag("carmesim_fed"), "feeding the Carmesim sets carmesim_fed")
 	_check(not GameState.has_item("fish"), "feeding consumes the fish")
 
-	# --------------------------------------------------------------- ending
-	# The attic stair is on the left side of the main room.
+	# ------------------------------------------------------ attic door
+	# The Carmesim leaves the main room and forces the attic door on the left.
+	_check(RoomManager.find_interactable("carmesim") == null, "the fed Carmesim leaves the main room")
 	await _interact("left_door", 0.7)
 	_check(GameState.current_room == "main_left", "the attic stair is reached from the left room")
-	await _interact("attic_door")
+	var guard := 0
+	while not GameState.has_flag("attic_door_open") and guard < 300:
+		await _finish_dialog()
+		await get_tree().process_frame
+		guard += 1
 	await _finish_dialog()
-	await _wait(0.4)
-	_check(GameState.has_flag("won"), "the attic door completes the slice")
-	_check(_game.get("_win").visible, "win panel is visible")
-	_check(not GameState.has_save(), "winning deletes the run save")
+	_check(GameState.has_flag("attic_door_open"), "the Carmesim opens the attic door")
+	await _interact("attic_door", 0.7)
+	_check(GameState.current_room == "attic", "the open attic door leads to the attic")
+	_check(not GameState.has_flag("won"), "reaching the attic does not end the game")
+	_check(not _game.get("_win").visible, "win panel stays hidden")
 
 	await _audit_menu()
 

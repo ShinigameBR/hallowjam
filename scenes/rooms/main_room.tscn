@@ -17,7 +17,7 @@ script = ExtResource("rule")
 item_id = "fish"
 consume_selected = true
 set_flag = "carmesim_fed"
-message = "O Carmesim devora o peixe em um piscar. Depois sobe até a porta do sótão e a destranca com o bico."
+message = "O Carmesim devora o peixe em um piscar. Depois encosta a cabeça na sua mão e solta um trinado baixo: está muito agradecido, e feliz. Em seguida, sai da sala rumo ao lado esquerdo da casa."
 
 [node name="MainRoom" type="Control" unique_id=945607992]
 layout_mode = 3

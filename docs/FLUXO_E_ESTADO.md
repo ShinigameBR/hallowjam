@@ -93,8 +93,9 @@ Use `set_flag`/`clear_flag` sempre que possível; eles emitem
 | `suitcase_open` | A maleta foi destrancada (sol no 3, lua no 11) e deu a caixa de música. |
 | `rod_cast` | A minhoca foi presa no anzol e a linha foi lançada (vara esticada). |
 | `fish_caught` | O peixe foi tirado da linha da vara. |
-| `carmesim_fed` | O Carmesim comeu e abriu a porta do sótão. |
-| `won` | O jogo foi concluído. |
+| `carmesim_fed` | O Carmesim comeu, agradeceu e saiu da sala principal para o lado esquerdo. |
+| `attic_door_open` | O Carmesim forçou a porta do sótão no lado esquerdo; a porta leva ao sótão. |
+| `won` | O jogo foi concluído (ainda sem gatilho: o fim vem depois do sótão). |
 
 `monsters_seen` não é uma flag: é uma lista separada, usada pelo menu de pausa
 e pela tela de vitória.

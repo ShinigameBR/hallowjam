@@ -97,6 +97,13 @@ func _is_locked(selected_item: String) -> bool:
 		GameState.save_game()
 		return false
 
+	if required_flag != "":
+		if unlock_flag != "":
+			GameState.set_flag(unlock_flag)
+			_just_unlocked = true
+			GameState.save_game()
+		return false
+
 	# `locked` without a key/flag condition is a permanently sealed door.
 	say(locked_message)
 	return true

@@ -24,9 +24,10 @@ português nos `.tscn` e `.gd`.
 | Porta trancada | `Door > Locked Message` | Tentativa de abrir sem condição. |
 | Porta destrancada | `Door > Unlock Message` | Aviso opcional ao abrir. |
 | Introdução | `game.gd > _maybe_intro()` | Primeiro acesso à partida. |
-| Final da fatia | `game.gd > _finish_game()` | Porta do sótão após alimentar o Carmesim. |
+| Porta do sótão | `game.gd > _maybe_open_attic_door()` | Primeira entrada no lado esquerdo após alimentar o Carmesim. |
+| Final do jogo | `game.gd > _finish_game()` | Ainda sem gatilho: o fim vem depois do sótão. |
 | Objetivo do HUD | `game.gd > _refresh_objective()` | Sempre que uma flag muda. |
-| Falas de ação | `game.gd > _action_*` | Ações `safe`, `sea`, `dig`, `attic`. |
+| Falas de ação | `game.gd > _action_*` | Ações `safe`, `sea`, `dig`. |
 | Página do livro | `scripts/game/book_panel.gd` | Hotspot da estante ou ícone no topo do HUD. |
 | Diário | `scripts/game/diary_panel.gd` | Item `diary` / hotspot do diário. |
 | Estante | `scripts/game/shelf_zoom.gd` | Hotspot do canto da estante. |

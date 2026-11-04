@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://b8munkmqh80u5"]
 
 [ext_resource type="Texture2D" uid="uid://dhnwfjm0kv2ti" path="res://assets/backgrounds/sala_esquerda.jpeg" id="bg"]
+[ext_resource type="Texture2D" uid="uid://bhsfnvw5gguyj" path="res://assets/backgrounds/sala_esquerda_carmesim_abrindo.png" id="bg_opening"]
+[ext_resource type="Texture2D" uid="uid://dcgncjihksuux" path="res://assets/backgrounds/sala_esquerda_porta_aberta.png" id="bg_open"]
 [ext_resource type="Texture2D" uid="uid://ld56mfyk01hs" path="res://assets/props/balde.png" id="bucket_tex"]
 [ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
 [ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
+[ext_resource type="Script" uid="uid://gig1l0v47471" path="res://scripts/components/flag_background.gd" id="flag_bg"]
 [ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
 [ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
 
@@ -30,6 +33,23 @@ mouse_filter = 2
 texture = ExtResource("bg")
 expand_mode = 1
 stretch_mode = 6
+script = ExtResource("flag_bg")
+flag = "carmesim_fed"
+texture_when_flag = ExtResource("bg_opening")
+
+[node name="BackgroundDoorOpen" type="TextureRect" parent="." unique_id=1460283917]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("flag_bg")
+flag = "attic_door_open"
+texture_when_flag = ExtResource("bg_open")
 
 [node name="Interactables" type="Control" parent="." unique_id=1038475910]
 layout_mode = 1
@@ -108,12 +128,10 @@ offset_right = 0.15997314
 offset_bottom = 0.11999512
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("examine")
-message = "A porta do sótão se abre para um escuro quente."
-ignore_selected_item = true
-action_id = "attic"
-required_flag = "carmesim_fed"
-blocked_message = "A porta do sótão está selada. Algo do outro lado a mantém fechada."
+script = ExtResource("door")
+target_scene = "res://scenes/rooms/attic_room.tscn"
+required_flag = "attic_door_open"
+locked_message = "A porta do sótão está selada. Algo do outro lado a mantém fechada."
 interaction_id = "attic_door"
 label = "Porta do sótão"
 

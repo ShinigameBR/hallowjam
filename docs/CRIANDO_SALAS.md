@@ -63,6 +63,7 @@ Use esse mesmo formato ao criar uma sala nova para manter a composição.
 | --- | --- |
 | `assets/backgrounds/sala_principal.png` | Sala principal. |
 | `assets/backgrounds/sala_esquerda.jpeg` | Lado esquerdo. |
+| `assets/backgrounds/sala_esquerda_carmesim_abrindo.png` / `sala_esquerda_porta_aberta.png` | Lado esquerdo com o Carmesim forçando a porta do sótão / com a porta já aberta. |
 | `assets/backgrounds/sala_direita.jpeg` | Lado direito. |
 | `assets/backgrounds/cais_buraco_fechado.png` / `cais_buraco_cavado.png` | Cais (antes e depois de cavar). |
 | `assets/backgrounds/zoom_buraco_fechado.png` / `zoom_buraco_cavado.png` | Zoom do buraco na areia do cais. |
@@ -251,7 +252,7 @@ coisas como:
 - poção na lavanda murcha → a flor revive e pode ser colhida;
 - balde com água na lareira → apaga o fogo e revela a safira;
 - balde vazio no mar → enche o balde de água;
-- peixe no Carmesim → ele abre a porta do sótão.
+- peixe no Carmesim → ele agradece e vai abrir a porta do sótão no lado esquerdo.
 
 Se uma regra tiver `Item Id` vazio e `Needs Selection = false`, ela combina com
 qualquer clique e funciona como reação padrão. Use isso com cuidado: ela pode
@@ -285,7 +286,6 @@ Ações que não cabem em uma regra usam `Action Id` e são tratadas em
 | --- | --- |
 | `safe` | Abre o teclado ou informa que o cofre já está aberto. |
 | `sea` | Lembra que a pescaria é feita na vara do cais. |
-| `attic` | Termina o protótipo se o Carmesim já foi alimentado. |
 
 Para adicionar uma ação:
 
