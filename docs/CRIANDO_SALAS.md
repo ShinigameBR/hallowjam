@@ -37,12 +37,13 @@ scripts/
     item_use_rule.gd
 ```
 
-As salas são descobertas automaticamente pelo `room_id`. Não existe uma lista
-fixa de salas no código.
+As salas são registradas em `RoomManager.ROOM_SCENES`, no topo de
+`scripts/rooms/room_manager.gd`. O `preload` de cada cena garante que ela
+também entre no build exportado — listar a pasta em tempo de execução não é
+confiável dentro do PCK.
 
-**Importante:** o `RoomManager` varre apenas os arquivos `.tscn` que estão
-diretamente em `scenes/rooms/`. Salas dentro de subpastas (como `legacy/`) não
-entram na rotação automática.
+Ao criar uma sala, adicione uma entrada com o `room_id` e o `preload` do
+`.tscn`. Salas dentro de subpastas (como `legacy/`) ficam fora do registro.
 
 ## Antes de começar: tamanho e camadas
 
@@ -303,17 +304,17 @@ outros dados do objeto.
 
 ## Descoberta de salas e save
 
-- O `RoomManager` registra toda cena de `scenes/rooms/` cujo nó raiz use
-  `room.gd` e tenha `room_id` não vazio.
+- O `RoomManager` registra as cenas listadas em `ROOM_SCENES`, usando o
+  `room_id` do nó raiz (que precisa usar `room.gd`).
 - `GameState.current_room` guarda o id da sala atual no save.
 - Ao carregar um save, se a sala não existir mais, o jogo volta para `main`.
-- Adicionar ou renomear uma sala não exige alterar listas fixas.
+- Adicionar ou renomear uma sala exige atualizar `ROOM_SCENES`.
 - Se você renomear um `room_id`, saves antigos que apontavam para o id anterior
   caem na sala `main`.
 
 ## Checklist de uma sala nova
 
-1. O `.tscn` está diretamente em `scenes/rooms/`?
+1. A sala foi adicionada a `ROOM_SCENES` em `room_manager.gd`?
 2. O nó raiz usa `room.gd` e tem `Room Id` + `Display Name`?
 3. O fundo cobre a tela sem distorcer e tem `mouse_filter = Ignore`?
 4. Existe um `Spawn_default` (e marcadores extras, se necessário)?

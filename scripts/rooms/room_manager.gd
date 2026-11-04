@@ -1,20 +1,28 @@
 extends Node
 ## Autoload that swaps room scenes inside the running game, with a fade.
 ##
-## Rooms are discovered from `res://scenes/rooms/` on first use. A room scene
-## only needs a root with `room.gd` and a non-empty `room_id`. Add a new
-## `.tscn` there and it is immediately available to doors (by path) and to the
-## save system (by id).
-##
-## Doors normally call `go_to_path()` with the scene chosen in the inspector.
+## Every room is registered in `ROOM_SCENES` so its scene is included in
+## exported builds. A room scene only needs a root with `room.gd` and a
+## non-empty `room_id`. Doors normally call `go_to_path()` with the scene
+## chosen in the inspector.
 
 signal room_changed(room: Room)
 signal transition_started
 signal transition_finished
 
-const ROOMS_DIR := "res://scenes/rooms/"
 const FADE_OUT_TIME := 0.16
 const FADE_IN_TIME := 0.22
+
+## Every room is preloaded here so the scenes are packed into exported builds.
+## Listing `res://scenes/rooms/` at runtime is not reliable inside a PCK, so
+## this dictionary is the source of truth. Add each new room to it.
+const ROOM_SCENES := {
+	"main": preload("res://scenes/rooms/main_room.tscn"),
+	"main_left": preload("res://scenes/rooms/left_room.tscn"),
+	"main_right": preload("res://scenes/rooms/right_room.tscn"),
+	"outside": preload("res://scenes/rooms/dock_room.tscn"),
+	"attic": preload("res://scenes/rooms/attic_room.tscn"),
+}
 
 var _host: Control
 var _fade: ColorRect
@@ -82,23 +90,8 @@ func list_room_ids() -> Array:
 func _scan_rooms() -> void:
 	_scanned = true
 	_registry.clear()
-
-	var files := DirAccess.get_files_at(ROOMS_DIR)
-	for file in files:
-		if not file.ends_with(".tscn"):
-			continue
-		var path := ROOMS_DIR + file
-		var scene := load(path) as PackedScene
-		if scene == null:
-			continue
-		var probe := scene.instantiate()
-		if probe == null:
-			continue
-		if probe.has_method("get_room_id"):
-			var id := String(probe.get_room_id())
-			if id != "":
-				_registry[id] = scene
-		probe.free()
+	for id in ROOM_SCENES:
+		_registry[id] = ROOM_SCENES[id]
 	print("RoomManager: %d room scene(s) registered: %s" % [_registry.size(), _registry.keys()])
 
 
