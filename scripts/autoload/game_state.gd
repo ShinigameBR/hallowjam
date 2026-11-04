@@ -7,7 +7,7 @@ signal circle_changed
 signal selection_changed
 signal flags_changed
 signal objective_changed(text: String)
-signal toast(text: String)
+signal toast(text: String, large: bool)
 signal dialogue_requested(lines: Array)
 signal panel_requested(panel_id: String)
 signal action_requested(action_id: String, source: Node)
@@ -178,8 +178,8 @@ func track_monster(monster_id: String) -> void:
 		monsters_seen.append(monster_id)
 
 
-func notify(text: String) -> void:
-	toast.emit(text)
+func notify(text: String, large: bool = false) -> void:
+	toast.emit(text, large)
 
 
 ## Convenience helpers used by room components.

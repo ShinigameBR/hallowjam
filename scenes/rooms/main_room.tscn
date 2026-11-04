@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://b0g2hc2r6yqqw" path="res://assets/props/pocao.png" id="7_7q6w2"]
 [ext_resource type="Texture2D" uid="uid://dunlwdcdholay" path="res://assets/backgrounds/sala_principal.png" id="bg"]
+[ext_resource type="Texture2D" uid="uid://cqbh3tgyatncx" path="res://assets/backgrounds/sala_principal_com_porta_aberta.png" id="bg_open"]
 [ext_resource type="Texture2D" uid="uid://cij00ndjj5xwm" path="res://assets/props/monstro_carmesim.png" id="carmesim_tex"]
 [ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="door"]
 [ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="examine"]
@@ -9,6 +10,7 @@
 [ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="pickup"]
 [ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="room"]
 [ext_resource type="Script" uid="uid://dgd3pbd4bpucx" path="res://scripts/components/item_use_rule.gd" id="rule"]
+[ext_resource type="Script" uid="uid://gig1l0v47471" path="res://scripts/components/flag_background.gd" id="flag_bg"]
 
 [sub_resource type="Resource" id="Resource_feed"]
 script = ExtResource("rule")
@@ -40,6 +42,9 @@ mouse_filter = 2
 texture = ExtResource("bg")
 expand_mode = 1
 stretch_mode = 6
+script = ExtResource("flag_bg")
+flag = "front_door_open"
+texture_when_flag = ExtResource("bg_open")
 
 [node name="Interactables" type="Control" parent="." unique_id=1578444654]
 layout_mode = 1
@@ -261,7 +266,7 @@ expand_mode = 1
 stretch_mode = 5
 script = ExtResource("pickup")
 item_id = "book_page"
-description = "Você pega a página solta sobre a estante. A letra fala do Beija-Flor Carmesim."
+description = "Você pega a página solta sobre a estante. A letra fala do Carmesim."
 interaction_id = "book_page"
 label = "Página do Livro"
 

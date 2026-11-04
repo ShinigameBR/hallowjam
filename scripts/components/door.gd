@@ -38,13 +38,16 @@ extends "res://scripts/components/interactable.gd"
 @export_multiline var locked_message: String = "Está trancada."
 @export_multiline var unlock_message: String = ""
 
+var _just_unlocked := false
+
 
 func _on_interact(selected_item: String) -> void:
+	_just_unlocked = false
 	if _is_locked(selected_item):
 		return
 
-	if unlock_message != "":
-		GameState.notify(unlock_message)
+	if unlock_message != "" and _just_unlocked:
+		GameState.notify(unlock_message, true)
 
 	GameState.clear_selection()
 
@@ -89,6 +92,7 @@ func _is_locked(selected_item: String) -> bool:
 			GameState.remove_item(required_item)
 		if unlock_flag != "":
 			GameState.set_flag(unlock_flag)
+		_just_unlocked = true
 		GameState.clear_selection()
 		GameState.save_game()
 		return false

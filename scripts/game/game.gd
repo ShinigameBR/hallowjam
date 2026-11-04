@@ -650,7 +650,7 @@ func _on_monster_result_finished(victory: bool) -> void:
 	if victory:
 		_refresh_objective()
 		_rebuild_hotspots()
-		_say("O Beija-Flor Carmesim paira sobre o círculo. Ele espera ser alimentado.")
+		_say("O Carmesim paira sobre o círculo. Ele espera ser alimentado.")
 	else:
 		GameState.clear_circle()
 		_say("A fumaça se desfaz. As oferendas voltam para as suas mãos.")
@@ -673,7 +673,7 @@ func _finish_game() -> void:
 	if _dialog.visible:
 		return
 	_show_dialog([
-		{"speaker": "O BEIJA-FLOR CARMESIM", "text": "Ele devora o peixe e sobe até a porta do sótão. Um estalo seco, e a passagem cede."},
+		{"speaker": "O CARMESIM", "text": "Ele devora o peixe e sobe até a porta do sótão. Um estalo seco, e a passagem cede."},
 		{"text": "Você sobe. O escuro lá em cima cheira a poeira, madeira velha e metal molhado."},
 		{"text": "Alguma coisa espera no sótão. A história continua."},
 	])
@@ -889,12 +889,19 @@ func _update_selection_hint() -> void:
 		_selection_label.text = "Usando: %s." % ItemDB.item_name(selected)
 
 
-func _show_toast(text: String) -> void:
+func _show_toast(text: String, large: bool = false) -> void:
 	if _toast_panel == null:
 		return
 	if _toast_tween and _toast_tween.is_valid():
 		_toast_tween.kill()
 	_toast_label.text = text
+	_toast_label.add_theme_font_size_override("font_size", 16 if large else 12)
+	_toast_label.add_theme_color_override("font_color", UI.TEXT if large else UI.MUTED)
+	var half_width := 280.0 if large else 230.0
+	_toast_panel.offset_left = -half_width
+	_toast_panel.offset_right = half_width
+	_toast_panel.offset_top = 88.0 if large else 96.0
+	_toast_panel.offset_bottom = 156.0 if large else 136.0
 	_toast_panel.visible = true
 	_toast_panel.modulate.a = 0.0
 	_toast_tween = create_tween()

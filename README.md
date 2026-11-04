@@ -33,7 +33,7 @@ pode abrir a passagem para o sótão.
 - Zoom da vara de pescar no cais: ostra no anzol, isca e peixe na linha.
 - Seis monstros possíveis, definidos pelas qualidades dos ingredientes.
 - Salvamento automático em `user://circulo_run.cfg`.
-- Final jogável desta fatia: invocar **O Beija-Flor Carmesim**, alimentá-lo com
+- Final jogável desta fatia: invocar **O Carmesim**, alimentá-lo com
   o peixe e abrir a porta do sótão.
 
 ## Executar

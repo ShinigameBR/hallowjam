@@ -251,7 +251,7 @@ coisas como:
 - poção na lavanda murcha → a flor revive e pode ser colhida;
 - balde com água na lareira → apaga o fogo e revela a safira;
 - balde vazio no mar → enche o balde de água;
-- peixe no Beija-Flor Carmesim → ele abre a porta do sótão.
+- peixe no Carmesim → ele abre a porta do sótão.
 
 Se uma regra tiver `Item Id` vazio e `Needs Selection = false`, ela combina com
 qualquer clique e funciona como reação padrão. Use isso com cuidado: ela pode

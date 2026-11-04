@@ -381,7 +381,7 @@ var MONSTERS := {
 		"victory": false,
 	},
 	"carmesim": {
-		"name": "O Beija-Flor Carmesim",
+		"name": "O Carmesim",
 		"title": "Mensageiro fiel",
 		"color": Color("#c2445f"),
 		"recipe": ["red", "floral"],

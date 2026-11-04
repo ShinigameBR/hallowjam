@@ -61,7 +61,7 @@ Use `show_dialog()` com uma lista de dicionários:
 
 ```gdscript
 _show_dialog([
-	{"speaker": "O BEIJA-FLOR CARMESIM", "text": "Ele bate as asas e espera."},
+	{"speaker": "O CARMESIM", "text": "Ele bate as asas e espera."},
 	{"text": "Você sente o cheiro de maresia e poeira."},
 	{"text": "A passagem range, mas cede."},
 ])
