@@ -158,6 +158,7 @@ func interact() -> void:
 	if RoomManager.is_changing():
 		return
 
+	Audio.play_sfx("click", -10.0)
 	var selected := GameState.selected_item
 	if _try_use_rules(selected):
 		return

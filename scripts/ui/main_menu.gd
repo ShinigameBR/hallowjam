@@ -18,6 +18,7 @@ var _overlay: Control
 
 func _ready() -> void:
 	theme = UI.theme
+	Audio.play_music("menu")
 	_build()
 	_build_options()
 	_build_help()

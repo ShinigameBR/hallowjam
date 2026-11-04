@@ -24,6 +24,7 @@ Settings="*res://scripts/autoload/settings.gd"
 GameState="*res://scripts/autoload/game_state.gd"
 RoomManager="*res://scripts/rooms/room_manager.gd"
 SceneTransition="*res://scripts/autoload/scene_transition.gd"
+Audio="*res://scripts/autoload/audio.gd"
 
 [display]
 

@@ -44,7 +44,11 @@ var _just_unlocked := false
 func _on_interact(selected_item: String) -> void:
 	_just_unlocked = false
 	if _is_locked(selected_item):
+		Audio.play_sfx("error")
 		return
+
+	if _just_unlocked:
+		Audio.play_sfx("unlock")
 
 	if unlock_message != "" and _just_unlocked:
 		GameState.notify(unlock_message, true)

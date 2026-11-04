@@ -76,6 +76,7 @@ var _save_clock := 0.0
 
 func _ready() -> void:
 	theme = UI.theme
+	Audio.play_music("game")
 	if not GameState.run_started:
 		GameState.start_new_game()
 
@@ -535,6 +536,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _open_overlay(node: Control) -> void:
 	if node == null or _dialog.visible or _changing_room:
 		return
+	Audio.play_sfx("page", -2.0)
 	_current_overlay = node
 	node.open()
 
@@ -639,6 +641,7 @@ func _on_summon_requested() -> void:
 	var result := ItemDB.resolve_summon(ids)
 	_last_summon_id = result
 	GameState.track_monster(result)
+	Audio.play_sfx("summon")
 
 	if result == ItemDB.TARGET:
 		GameState.consume_circle()
@@ -681,18 +684,21 @@ func _on_monster_result_finished(victory: bool) -> void:
 
 func _on_safe_solved() -> void:
 	_refresh_objective()
+	Audio.play_sfx("unlock")
 	await get_tree().create_timer(0.22).timeout
 	_say("Você tira o rubi do baú e fecha a tampa do cofre. A pedra pulsa, quente, na palma da mão.")
 
 
 func _on_suitcase_solved() -> void:
 	_refresh_objective()
+	Audio.play_sfx("unlock")
 	await get_tree().create_timer(0.22).timeout
 	_say("Os ponteiros se encaixam e a maleta destrava com um clique. Dentro, uma caixa de música: um item raro, de valor sentimental. Algo que contém sentimentos.")
 
 
 func _on_attic_chest_solved() -> void:
 	_refresh_objective()
+	Audio.play_sfx("unlock")
 	await get_tree().create_timer(0.22).timeout
 	_say("Os cinco discos se alinham. A tampa do baú cede, e uma escama azul brilha no fundo.")
 
@@ -712,6 +718,8 @@ func _finish_azul_ending() -> void:
 	GameState.set_flag("won", true)
 	GameState.save_game()
 	_refresh_objective()
+	Audio.stop_music(1.2)
+	Audio.play_sfx("ending", 2.0)
 	_win.show_win()
 	GameState.delete_save()
 
@@ -758,6 +766,7 @@ func _maybe_open_attic_door() -> void:
 	await _dialog.finished
 	GameState.set_flag("attic_door_open", true)
 	GameState.save_game()
+	Audio.play_sfx("unlock")
 	_say("Um estalo seco, e a porta cede. O Carmesim se afasta e olha para você, satisfeito: o caminho está livre.")
 	_attic_cutscene_running = false
 
@@ -792,6 +801,7 @@ func _on_room_changed(room: Room) -> void:
 
 func _on_transition_started() -> void:
 	_changing_room = true
+	Audio.play_sfx("door")
 
 
 func _on_transition_finished() -> void:
