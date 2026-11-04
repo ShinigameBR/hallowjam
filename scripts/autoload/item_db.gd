@@ -486,7 +486,20 @@ func has_all_tags(tags: Dictionary, required: Array) -> bool:
 
 
 func resolve_summon(item_ids: Array) -> String:
-	var tags := collect_tags(item_ids)
+	var filled: Array[String] = []
+	for raw in item_ids:
+		var id := String(raw)
+		if id != "":
+			filled.append(id)
+	if filled.is_empty():
+		return "none"
+
+	# A música da caixa sozinha já chama A Luz que Escuta: ela reconhece o
+	# sentimento e não precisa de mais nenhuma oferenda.
+	if filled.size() == 1 and filled[0] == "music_box":
+		return "branco"
+
+	var tags := collect_tags(filled)
 	if tags.is_empty():
 		return "none"
 

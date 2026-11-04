@@ -164,10 +164,11 @@ As criaturas ficam em `MONSTERS`, no mesmo arquivo. Cada entrada tem:
 
 `ItemDB.resolve_summon()` junta as tags de todos os itens no círculo e testa:
 
-1. a receita de `TARGET` (`carmesim`) primeiro — se bater, ela sempre vence;
-2. depois a ordem de prioridade `roxo`, `carmesim`, `azul`, `vermelho`,
+1. a caixa de música sozinha chama `branco` (uma exceção de receita);
+2. a receita de `TARGET` (`carmesim`) primeiro — se bater, ela sempre vence;
+3. depois a ordem de prioridade `roxo`, `carmesim`, `azul`, `vermelho`,
    `branco`;
-3. se nada bater, retorna `none`.
+4. se nada bater, retorna `none`.
 
 Como as receitas são por tag, um item com muitas tags pode ativar mais de uma
 criatura. A prioridade acima decide o empate.
