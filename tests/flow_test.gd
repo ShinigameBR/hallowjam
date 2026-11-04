@@ -476,6 +476,16 @@ func _run() -> void:
 	_check(_game.get("_win").visible, "the azul summon opens the ending screen")
 	_check(not GameState.has_save(), "the ending removes the save file")
 
+	var ending_screen: Control = _game.get("_win")
+	ending_screen.call("close")
+	await _wait(0.3)
+	var menu: Control = load("res://scenes/main_menu.tscn").instantiate()
+	add_child(menu)
+	await _wait(0.3)
+	var continue_button: Button = menu.get("_continue_button")
+	_check(continue_button.disabled, "continue is disabled after the ending")
+	menu.queue_free()
+
 
 func _audit_menu() -> void:
 	var menu: Control = load("res://scenes/main_menu.tscn").instantiate()
@@ -589,6 +599,11 @@ func _audit_overlays() -> void:
 	win_panel.call("show_win")
 	await _wait(0.3)
 	_audit_panel(win_panel, "win")
+	var win_buttons: Array = []
+	for button in win_panel.find_children("*", "Button", true, false):
+		win_buttons.append(button.text)
+	_check(win_buttons.has("JOGAR NOVAMENTE"), "the ending offers a new run")
+	_check(win_buttons.has("SAIR"), "the ending offers a way back to the menu")
 	win_panel.call("close")
 	await _wait(0.3)
 

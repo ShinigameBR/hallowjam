@@ -726,7 +726,12 @@ func _finish_azul_ending() -> void:
 
 
 func _go_menu() -> void:
-	GameState.save_game()
+	if GameState.has_flag("won"):
+		# Depois do final o save já foi apagado; salvar de novo reativaria
+		# CONTINUAR no menu.
+		GameState.delete_save()
+	else:
+		GameState.save_game()
 	SceneTransition.change_scene("res://scenes/main_menu.tscn")
 
 
