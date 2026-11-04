@@ -87,8 +87,19 @@ func _run() -> void:
 	_check(GameState.objective.contains("lavanda"), "objective points at the lavender after the page")
 
 	GameState.clear_selection()
+	_check(RoomManager.find_interactable("bookshelf_corner") == null, "shelf corner is hidden before the door hint")
 	await _interact("bookshelf_corner")
 	var shelf_zoom: Control = _game.get("_shelf")
+	_check(not shelf_zoom.visible, "shelf corner stays closed before the door hint")
+
+	# ------------------------------------------------------ front door hint
+	await _interact("hint_door")
+	_check(_game.get("_door_hint").visible, "first click on the front door opens the hint")
+	_check(GameState.has_flag("door_clue_seen"), "the door hint writes its clue flag")
+	_check(RoomManager.find_interactable("hint_door") == null, "the hint hotspot hides after the first look")
+	await _close_overlay("_door_hint")
+
+	await _interact("bookshelf_corner")
 	_check(shelf_zoom.visible, "shelf corner opens the shelf corner zoom")
 	_check(not shelf_zoom.get_node("Background/Key").visible, "key hidden while the board is closed")
 	_check(shelf_zoom.get_node("Background/Key").texture_click_mask != null, "the key only clicks on its drawing")
@@ -107,7 +118,6 @@ func _run() -> void:
 	GameState.clear_selection()
 	await _interact("main_door")
 	await _finish_dialog()
-	_check(GameState.has_flag("door_clue_seen"), "locked front door writes its clue flag")
 	_check(GameState.current_room == "main", "locked front door does not change rooms")
 
 	# ------------------------------------------------------------ left side

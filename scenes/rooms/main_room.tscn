@@ -66,6 +66,7 @@ script = ExtResource("examine")
 open_panel = "shelf"
 interaction_id = "bookshelf_corner"
 label = "Canto da Estante de Livros"
+show_when_flags = Array[String](["door_clue_seen"])
 
 [node name="Safe" type="Control" parent="Interactables" unique_id=1260236599]
 layout_mode = 1
@@ -161,19 +162,22 @@ label = "Porta da frente"
 
 [node name="HintDoor" type="Control" parent="Interactables" unique_id=531246111]
 layout_mode = 1
-anchor_left = 0.47800002
-anchor_top = 0.522
-anchor_right = 0.49500003
-anchor_bottom = 0.56200004
-offset_left = 0.15997314
-offset_top = 0.16000366
-offset_right = 0.39996338
-offset_bottom = 0.35998535
+anchor_left = 0.45400003
+anchor_top = 0.22500001
+anchor_right = 0.58400005
+anchor_bottom = 0.679
+offset_left = -0.12005615
+offset_right = -0.52008057
+offset_bottom = 0.11999512
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("examine")
 ignore_selected_item = true
 open_panel = "door_hint"
+set_flag = "door_clue_seen"
 interaction_id = "hint_door"
-label = "Entalhe da porta"
+label = "Porta da frente"
+hide_when_flags = Array[String](["door_clue_seen"])
 
 [node name="Carmesim" type="TextureRect" parent="Interactables" unique_id=514719002]
 layout_mode = 1
