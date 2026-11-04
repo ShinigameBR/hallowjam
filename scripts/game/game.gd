@@ -16,7 +16,6 @@ const SUITCASE_ZOOM := preload("res://scenes/components/suitcase_zoom.tscn")
 const ATTIC_CHEST_ZOOM := preload("res://scenes/components/attic_chest_zoom.tscn")
 const PAGE_ICON := preload("res://assets/props/pagina_do_livro.png")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
-const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
 const PAUSE_MENU := preload("res://scripts/game/pause_menu.gd")
 const WIN_PANEL := preload("res://scripts/game/win_panel.gd")
 
@@ -58,7 +57,6 @@ var _attic_chest: Control
 ## Zooms que ficam abaixo do HUD, como uma sala: o inventário continua usável.
 var _hud_zooms: Array[Control] = []
 var _diary: Control
-var _monster_result: Control
 var _pause: Control
 var _win: Control
 var _fade: ColorRect
@@ -70,7 +68,6 @@ var _current_overlay: Control
 var _changing_room := false
 var _resolving_summon := false
 var _attic_cutscene_running := false
-var _last_summon_id := "none"
 var _save_clock := 0.0
 
 
@@ -421,11 +418,6 @@ func _build_overlays() -> void:
 		_refresh_objective()
 	)
 
-	_monster_result = MONSTER_RESULT_PANEL.new()
-	add_child(_monster_result)
-	_monster_result.finished.connect(_on_monster_result_finished)
-	_monster_result.closed.connect(func() -> void: _clear_overlay(_monster_result))
-
 
 func _build_dialog() -> void:
 	_dialog = DIALOG_BOX.new()
@@ -519,10 +511,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 			return
 		if _current_overlay != null:
-			if _current_overlay == _monster_result:
-				_monster_result.dismiss()
-			else:
-				_current_overlay.close()
+			_current_overlay.close()
 			get_viewport().set_input_as_handled()
 			return
 		if _dialog.visible:
@@ -624,6 +613,7 @@ func _on_item_clicked(id: String) -> void:
 func _combine_oyster() -> void:
 	if not GameState.has_item("screwdriver") or not GameState.has_item("oyster"):
 		return
+	Audio.play_sfx("water", -3.0)
 	GameState.remove_item("oyster")
 	GameState.add_item("pearl")
 	GameState.clear_selection()
@@ -639,42 +629,35 @@ func _on_summon_requested() -> void:
 	_resolving_summon = true
 	var ids: Array = GameState.circle.duplicate()
 	var result := ItemDB.resolve_summon(ids)
-	_last_summon_id = result
 	GameState.track_monster(result)
 	Audio.play_sfx("summon")
+	Audio.summon_sfx(result)
 
 	if result == ItemDB.TARGET:
 		GameState.consume_circle()
 		GameState.set_flag("summoned_carmesim", true)
 		GameState.save_game()
-		_refresh_objective()
 	elif result == "branco":
 		# A Luz que Escuta não é o Carmesim, mas também atende: a oferenda some
 		# e a luz dela passa a iluminar o sótão pelo resto da partida.
 		GameState.consume_circle()
 		GameState.set_flag("summoned_branco", true)
 		GameState.save_game()
-		_refresh_objective()
 	else:
 		GameState.save_game()
 
 	await _circle.close()
 	_current_overlay = null
-	await get_tree().create_timer(0.16).timeout
-	_current_overlay = _monster_result
-	_monster_result.show_result(result)
-
-
-func _on_monster_result_finished(victory: bool) -> void:
 	_resolving_summon = false
-	_current_overlay = null
-	if _last_summon_id == "azul":
+	await get_tree().create_timer(0.16).timeout
+
+	if result == "azul":
 		await _finish_azul_ending()
-	elif victory:
+	elif result == ItemDB.TARGET:
 		_refresh_objective()
 		_rebuild_hotspots()
 		_say("O Carmesim paira sobre o círculo. Ele espera ser alimentado.")
-	elif _last_summon_id == "branco":
+	elif result == "branco":
 		_refresh_objective()
 		_say("A forma branca dispara para o lado esquerdo da casa. Ela gosta de lugares escuros — siga a luz até o sótão.")
 	else:
@@ -766,7 +749,8 @@ func _maybe_open_attic_door() -> void:
 	await _dialog.finished
 	GameState.set_flag("attic_door_open", true)
 	GameState.save_game()
-	Audio.play_sfx("unlock")
+	Audio.play_sfx("wood", 1.0)
+	Audio.play_sfx("door", -4.0)
 	_say("Um estalo seco, e a porta cede. O Carmesim se afasta e olha para você, satisfeito: o caminho está livre.")
 	_attic_cutscene_running = false
 

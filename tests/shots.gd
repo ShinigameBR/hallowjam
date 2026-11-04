@@ -68,14 +68,6 @@ func _capture_game() -> void:
 	await _frames(2)
 	await _shot("14_room_dock")
 
-	var result: Control = load("res://scripts/game/monster_result_panel.gd").new()
-	add_child(result)
-	result.call("show_result", "carmesim")
-	await _wait(0.4)
-	await _shot("15_monster_result")
-	result.queue_free()
-	await _frames(2)
-
 	game.get("_win").call("show_win")
 	await _wait(0.4)
 	await _shot("16_win")

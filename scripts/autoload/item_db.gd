@@ -499,6 +499,10 @@ func resolve_summon(item_ids: Array) -> String:
 	if filled.size() == 1 and filled[0] == "music_box":
 		return "branco"
 
+	# A tríade do fundo do mar: escama, safira e pérola chamam o Cego.
+	if _same_items(filled, ["escama_azul", "sapphire", "pearl"]):
+		return "azul"
+
 	var tags := collect_tags(filled)
 	if tags.is_empty():
 		return "none"
@@ -512,6 +516,16 @@ func resolve_summon(item_ids: Array) -> String:
 		if has_all_tags(tags, MONSTERS[id]["recipe"]):
 			return id
 	return "none"
+
+
+func _same_items(a: Array, b: Array) -> bool:
+	if a.size() != b.size():
+		return false
+	var left: Array = a.duplicate()
+	var right: Array = b.duplicate()
+	left.sort()
+	right.sort()
+	return left == right
 
 
 func recipe_text(monster_id: String) -> String:
