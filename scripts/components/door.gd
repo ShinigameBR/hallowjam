@@ -41,6 +41,12 @@ extends "res://scripts/components/interactable.gd"
 var _just_unlocked := false
 
 
+## Portas mostram o rótulo e o contorno mesmo em builds de release, para o
+## jogador encontrar as passagens. Os outros objetos seguem só com o cursor.
+func _debug_hover_enabled() -> bool:
+	return Settings.debug_hover or not OS.is_debug_build()
+
+
 func _on_interact(selected_item: String) -> void:
 	_just_unlocked = false
 	if _is_locked(selected_item):
