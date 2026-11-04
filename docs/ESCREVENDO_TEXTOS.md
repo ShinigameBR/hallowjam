@@ -25,15 +25,14 @@ português nos `.tscn` e `.gd`.
 | Porta destrancada | `Door > Unlock Message` | Aviso opcional ao abrir. |
 | Introdução | `game.gd > _maybe_intro()` | Primeiro acesso à partida. |
 | Porta do sótão | `game.gd > _maybe_open_attic_door()` | Primeira entrada no lado esquerdo após alimentar o Carmesim. |
-| Final do jogo | `game.gd > _finish_game()` | Ainda sem gatilho: o fim vem depois do sótão. |
+| Final do jogo | `game.gd > _finish_azul_ending()` | Invocação do azul com escama, safira e pérola. |
 | Objetivo do HUD | `game.gd > _refresh_objective()` | Sempre que uma flag muda. |
 | Falas de ação | `game.gd > _action_*` | Ações `safe`, `sea`, `dig`. |
 | Página do livro | `scripts/game/book_panel.gd` | Hotspot da estante ou ícone no topo do HUD. |
 | Diário | `scripts/game/diary_panel.gd` | Item `diary` / hotspot do diário. |
 | Estante | `scripts/game/shelf_zoom.gd` | Hotspot do canto da estante. |
 | Círculo | `scripts/game/circle_panel.gd` | Hotspot do círculo. |
-| Cartão de invocação | `scripts/game/monster_result_panel.gd` | Fim de uma invocação. |
-| Nomes/descrições de monstros | `ItemDB.MONSTERS` | Cartão de resultado. |
+| Nomes/descrições de monstros | `ItemDB.MONSTERS` | Falas e fichas de invocação. |
 | Como jogar | `scripts/ui/help_panel.gd` | Menu e pausa. |
 | Tela de vitória | `scripts/game/win_panel.gd` | Fim do protótipo. |
 | Menu principal | `scripts/ui/main_menu.gd` | Tela inicial. |
@@ -135,10 +134,12 @@ o papel claro, então evite markup: os labels são `Label`, não `RichTextLabel`
 Além do código (`CODE = "3142"`), o painel mostra a ordem das cores e mensagens
 como `"Faltam números."`, `"O cofre cede..."` e `"O cofre não cede."`.
 
-### Cartão de invocação
+### Falas de invocação
 
-Nome, título, descrição e habilidade vêm de `ItemDB.MONSTERS`. O botão muda
-entre `PARTIR` (vitória) e `RECOLHER OFERENDAS` (fracasso).
+Nome, título, descrição e habilidade das criaturas vêm de `ItemDB.MONSTERS`.
+A invocação não abre mais um cartão: o resultado aparece como fala do jogo
+(`game.gd > _on_summon_requested()`), e a criatura fica registrada em
+`GameState.monsters_seen`.
 
 ## Limites e estilo
 

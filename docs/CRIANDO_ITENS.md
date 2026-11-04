@@ -151,13 +151,13 @@ As criaturas ficam em `MONSTERS`, no mesmo arquivo. Cada entrada tem:
 
 | Campo | Para que serve |
 | --- | --- |
-| `name` | Nome exibido no cartão de resultado. |
+| `name` | Nome da criatura, usado em falas e no bestiário. |
 | `title` | Subtítulo curto. |
-| `color` | Cor do glifo e do cartão. |
+| `color` | Cor temática da criatura. |
 | `recipe` | Lista de tags necessárias (todas). |
 | `hints` | Reservado para dicas extras (o leitor da página mostra só a arte). |
-| `desc` | Descrição no cartão de resultado. |
-| `ability` | Habilidade mostrada no cartão. |
+| `desc` | Descrição da criatura. |
+| `ability` | Habilidade registrada na ficha. |
 | `victory` | `true` se essa invocação vence a fatia. |
 
 ### Como a invocação é resolvida
@@ -165,10 +165,12 @@ As criaturas ficam em `MONSTERS`, no mesmo arquivo. Cada entrada tem:
 `ItemDB.resolve_summon()` junta as tags de todos os itens no círculo e testa:
 
 1. a caixa de música sozinha chama `branco` (uma exceção de receita);
-2. a receita de `TARGET` (`carmesim`) primeiro — se bater, ela sempre vence;
-3. depois a ordem de prioridade `roxo`, `carmesim`, `azul`, `vermelho`,
+2. a tríade `escama_azul` + `sapphire` + `pearl` chama `azul`
+   (outra exceção, usada para abrir o final);
+3. a receita de `TARGET` (`carmesim`) primeiro — se bater, ela sempre vence;
+4. depois a ordem de prioridade `roxo`, `carmesim`, `azul`, `vermelho`,
    `branco`;
-4. se nada bater, retorna `none`.
+5. se nada bater, retorna `none`.
 
 Como as receitas são por tag, um item com muitas tags pode ativar mais de uma
 criatura. A prioridade acima decide o empate.
@@ -179,9 +181,10 @@ criatura. A prioridade acima decide o empate.
 2. Defina a `recipe` usando tags já existentes em `TAG_NAMES`.
 3. Adicione o id à ordem de prioridade em `resolve_summon()` (se ele puder
    empatar com outros).
-4. Se quiser um glifo próprio, adicione um `case` em `monster_glyph.gd`.
-5. Lembre que o leitor da página do livro mostra só a arte; os outros monstros
-   aparecem no cartão de resultado.
+4. Se a invocação tiver um som próprio, adicione o arquivo e o mapeamento em
+   `scripts/autoload/audio.gd` (`summon_sfx`).
+5. Lembre que o leitor da página do livro mostra só a arte; a invocação agora
+   é contada por diálogo, sem cartão de resultado.
 
 ## Checklist de item
 
@@ -193,6 +196,20 @@ criatura. A prioridade acima decide o empate.
 6. Se o item participa de receita, as tags estão em `TAG_NAMES`?
 7. Se o item é consumido, a regra/combinação remove o item certo?
 8. O save antigo continua carregando (ids removidos são descartados)?
+
+## Sons de item e de uso
+
+`scripts/autoload/audio.gd` escolhe o som de um item assim:
+
+1. o id exato em `ITEM_SFX` (por exemplo `music_box` ou `ruby`);
+2. senão, a primeira tag conhecida em `TAG_SFX` (gema, água, metal, planta,
+   papel, madeira...);
+3. senão, o som genérico de coleta.
+
+Para dar som a uma ação de uso, preencha `Sound` em `ItemUseRule` (ou em
+`Examine`) com um id do `Audio`. Os sons são gerados por
+`tools/generate_audio.py`; rode o script e depois importe o projeto para
+atualizar os WAVs.
 
 ## Onde testar
 
