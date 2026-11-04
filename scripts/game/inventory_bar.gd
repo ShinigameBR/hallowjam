@@ -33,6 +33,7 @@ func _refresh() -> void:
 		slot.theme_type_variation = "SlotButton"
 		slot.custom_minimum_size = Vector2(62, 62)
 		slot.tooltip_text = ItemDB.item_name(id) + "\n" + ItemDB.tags_text(ItemDB.item_tags(id))
+		slot.set_meta("audio_click_mute", true)
 		slot.pressed.connect(_on_slot_pressed.bind(id))
 		add_child(slot)
 
@@ -70,6 +71,7 @@ func _refresh_selection() -> void:
 
 
 func _on_slot_pressed(id: String) -> void:
+	Audio.play_item(id, -4.0)
 	item_clicked.emit(id)
 	if auto_select:
 		GameState.select_item(id)

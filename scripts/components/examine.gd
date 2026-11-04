@@ -19,6 +19,8 @@ extends "res://scripts/components/interactable.gd"
 @export_group("Effects")
 ## Custom id handled by the game root (`_on_action`).
 @export var action_id: String = ""
+## Optional sfx id from the Audio autoload (fire, water, wood...).
+@export var sound: String = ""
 ## Panel opened by the game root: book, circle, safe, drawers, door_hint, hole, rod or diary.
 @export var open_panel: String = ""
 ## Flag written after a normal (no item) click.
@@ -52,6 +54,8 @@ func _on_interact(selected_item: String) -> void:
 		GameState.action_requested.emit(action_id, self)
 	if open_panel != "":
 		GameState.panel_requested.emit(open_panel)
+	if sound != "":
+		Audio.play_sfx(sound)
 	if set_flag != "":
 		GameState.set_flag(set_flag)
 	if give_item != "":

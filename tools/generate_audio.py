@@ -108,11 +108,11 @@ def menu_theme() -> np.ndarray:
 
     # Low, slow organ-like drone in D minor.
     voices = [
-        (73.42, 0.20, 1, 0.0),
-        (146.83, 0.10, 2, 0.4),
-        (174.61, 0.060, 1, 1.2),
-        (220.00, 0.045, 2, 2.1),
-        (293.66, 0.020, 3, 0.7),
+        (73.42, 0.24, 1, 0.0),
+        (146.83, 0.13, 2, 0.4),
+        (174.61, 0.080, 1, 1.2),
+        (220.00, 0.060, 2, 2.1),
+        (293.66, 0.030, 3, 0.7),
     ]
     for freq, amp, lfo_cycles, phase in voices:
         f = aligned(freq, duration)
@@ -122,13 +122,16 @@ def menu_theme() -> np.ndarray:
     # A distant tide, breathing four times across the loop.
     wash = periodic_noise(n, 71, 90.0, 1500.0, 1.0)
     wash_env = 0.45 + 0.45 * np.cos(2.0 * math.pi * (4.0 / duration) * t - 0.8)
-    mix += 0.030 * wash * wash_env
+    mix += 0.035 * wash * wash_env
 
-    # Four sparse bell notes, one every ten seconds.
+    # Sparse bell notes, one every ten seconds, doubled an octave down so the
+    # melody still reads on small laptop speakers.
     for index, freq in enumerate((293.66, 349.23, 440.00, 523.25)):
-        place_at(mix, bell(freq, 6.0, 1.5, 0.045), index * 10.0)
+        at = index * 10.0
+        place_at(mix, bell(freq, 7.0, 1.8, 0.075), at)
+        place_at(mix, bell(freq * 0.5, 7.5, 2.1, 0.040), at + 0.02)
 
-    return mix
+    return mix * 1.35
 
 
 def game_ambience() -> np.ndarray:
@@ -139,11 +142,11 @@ def game_ambience() -> np.ndarray:
 
     # Deeper drone, with a slow pulse like something breathing under the floor.
     voices = [
-        (36.71, 0.085, 1, 0.0),
-        (73.42, 0.150, 2, 0.5),
-        (110.00, 0.060, 1, 1.4),
-        (146.83, 0.045, 2, 2.2),
-        (174.61, 0.025, 3, 0.3),
+        (36.71, 0.090, 1, 0.0),
+        (73.42, 0.160, 2, 0.5),
+        (110.00, 0.070, 1, 1.4),
+        (146.83, 0.055, 2, 2.2),
+        (174.61, 0.030, 3, 0.3),
     ]
     for freq, amp, lfo_cycles, phase in voices:
         f = aligned(freq, duration)
@@ -154,7 +157,7 @@ def game_ambience() -> np.ndarray:
     wash = periodic_noise(n, 913, 60.0, 2600.0, 0.95)
     wash_env = 0.34 + 0.34 * np.cos(2.0 * math.pi * (4.0 / duration) * t - 0.4)
     wash_env += 0.14 * np.cos(2.0 * math.pi * (13.0 / duration) * t + 1.1)
-    mix += 0.070 * wash * np.maximum(wash_env, 0.0)
+    mix += 0.075 * wash * np.maximum(wash_env, 0.0)
 
     # A very quiet pulse every twelve seconds, like a heartbeat in the walls.
     for index in range(4):
@@ -162,10 +165,17 @@ def game_ambience() -> np.ndarray:
         length = 2.2
         tt = t_axis(length)
         env = (1.0 - np.exp(-tt / 0.05)) * np.exp(-tt / 0.35)
-        thump = 0.030 * tone(49.0, tt) * env
+        thump = 0.032 * tone(49.0, tt) * env
         place_at(mix, thump, at)
 
-    return mix
+    # A slow, low motif in the middle register, one note every eight seconds.
+    motif = ((196.00, 0.0), (174.61, 8.0), (146.83, 16.0),
+             (164.81, 24.0), (130.81, 32.0), (146.83, 40.0))
+    for freq, at in motif:
+        place_at(mix, bell(freq, 6.5, 2.0, 0.060), at)
+        place_at(mix, bell(freq * 2.0, 5.0, 1.4, 0.026), at + 0.04)
+
+    return mix * 1.35
 
 
 # ------------------------------------------------------------------ effects
@@ -293,6 +303,155 @@ def sfx_door() -> np.ndarray:
     return 0.55 * creak * wobble * env + low
 
 
+def sfx_gem() -> np.ndarray:
+    duration = 0.75
+    out = np.zeros(int(duration * SR))
+    place_at(out, bell(1046.50, 0.70, 0.28, 0.46), 0.00)
+    place_at(out, bell(1567.98, 0.62, 0.26, 0.28), 0.06)
+    place_at(out, bell(2093.00, 0.50, 0.20, 0.15), 0.12)
+    return out
+
+
+def sfx_metal() -> np.ndarray:
+    duration = 0.34
+    t = t_axis(duration)
+    env = (1.0 - np.exp(-t / 0.002)) * np.exp(-t / 0.11)
+    noise = np.random.default_rng(11).normal(size=t.size) * np.exp(-t / 0.008)
+    partials = (
+        0.46 * tone(618.0, t)
+        + 0.30 * tone(1183.0, t, 0.4)
+        + 0.20 * tone(1737.0, t, 1.1)
+        + 0.14 * tone(2411.0, t, 2.0)
+    )
+    return (partials + 0.30 * noise) * env
+
+
+def sfx_water() -> np.ndarray:
+    duration = 0.80
+    t = t_axis(duration)
+    noise = np.random.default_rng(12).normal(size=t.size)
+    splash = bandpass(noise, 220.0, 4200.0)
+    env = (
+        0.9 * np.exp(-((t - 0.08) / 0.055) ** 2)
+        + 0.55 * np.exp(-((t - 0.24) / 0.10) ** 2)
+        + 0.30 * np.exp(-((t - 0.48) / 0.14) ** 2)
+    )
+    freq = 150.0 - 60.0 * np.clip(t / duration, 0.0, 1.0)
+    phase = 2.0 * math.pi * np.cumsum(freq) / SR
+    body = 0.16 * np.sin(phase) * np.exp(-t / 0.25)
+    out = 0.52 * splash * env + body
+    place_at(out, bell(720.0, 0.28, 0.09, 0.10), 0.05)
+    place_at(out, bell(980.0, 0.24, 0.08, 0.08), 0.20)
+    return out
+
+
+def sfx_wood() -> np.ndarray:
+    duration = 0.52
+    t = t_axis(duration)
+    freq = 96.0 - 34.0 * np.clip(t / duration, 0.0, 1.0)
+    phase = 2.0 * math.pi * np.cumsum(freq) / SR
+    thump = 0.62 * np.sin(phase) * np.exp(-t / 0.14)
+    noise = np.random.default_rng(13).normal(size=t.size)
+    creak = bandpass(noise, 140.0, 1200.0)
+    wobble = 0.55 + 0.45 * np.sin(2.0 * math.pi * 11.0 * t + 0.7)
+    return thump + 0.30 * creak * wobble * np.exp(-t / 0.18)
+
+
+def sfx_leaf() -> np.ndarray:
+    duration = 0.46
+    t = t_axis(duration)
+    noise = np.random.default_rng(14).normal(size=t.size)
+    rustle = bandpass(noise, 1600.0, 6800.0)
+    env = np.exp(-((t - 0.12) / 0.09) ** 2) + 0.6 * np.exp(-((t - 0.28) / 0.08) ** 2)
+    return 0.50 * rustle * env
+
+
+def sfx_music_box() -> np.ndarray:
+    duration = 3.45
+    out = np.zeros(int(duration * SR))
+    melody = (
+        (659.25, 0.00), (783.99, 0.22), (987.77, 0.44),
+        (880.00, 0.77), (783.99, 0.99), (659.25, 1.21),
+        (587.33, 1.54), (659.25, 1.76), (783.99, 1.98),
+        (523.25, 2.31), (587.33, 2.53), (659.25, 2.75),
+    )
+    for freq, at in melody:
+        place_at(out, bell(freq, 0.85, 0.34, 0.30), at)
+        place_at(out, bell(freq * 0.5, 1.0, 0.45, 0.13), at + 0.01)
+    return out
+
+
+def sfx_summon_carmesim() -> np.ndarray:
+    duration = 1.55
+    t = t_axis(duration)
+    noise = np.random.default_rng(15).normal(size=t.size)
+    wings = bandpass(noise, 700.0, 4800.0)
+    flap = 0.35 + 0.65 * (0.5 + 0.5 * np.sin(2.0 * math.pi * 17.0 * t))
+    env = np.sin(np.pi * np.clip(t / duration, 0.0, 1.0)) ** 0.8
+    out = 0.38 * wings * flap * env
+    place_at(out, bell(1320.0, 0.45, 0.12, 0.16), 0.18)
+    place_at(out, bell(1760.0, 0.40, 0.10, 0.12), 0.55)
+    return out
+
+
+def sfx_summon_branco() -> np.ndarray:
+    duration = 2.1
+    t = t_axis(duration)
+    u = t / duration
+    freq = 330.0 + 660.0 * u ** 1.3
+    phase = 2.0 * math.pi * np.cumsum(freq) / SR
+    swell = np.sin(np.pi * np.clip(u * 1.15, 0.0, 1.0)) ** 1.2
+    shimmer = 0.24 * np.sin(phase) + 0.10 * np.sin(phase * 1.5 + 0.8)
+    noise = np.random.default_rng(16).normal(size=t.size)
+    air = bandpass(noise, 900.0, 7000.0) * 0.16
+    out = (shimmer + air) * swell
+    place_at(out, bell(880.0, 1.5, 0.55, 0.18), 0.25)
+    place_at(out, bell(1320.0, 1.4, 0.50, 0.12), 0.62)
+    return out
+
+
+def sfx_summon_azul() -> np.ndarray:
+    duration = 2.7
+    t = t_axis(duration)
+    u = t / duration
+    freq = 88.0 - 48.0 * u ** 0.8
+    phase = 2.0 * math.pi * np.cumsum(freq) / SR
+    growl = np.tanh(2.0 * (np.sin(phase) + 0.55 * np.sin(phase * 1.49 + 0.6)))
+    env = (1.0 - np.exp(-t / 0.10)) * np.exp(-t / 1.3)
+    noise = np.random.default_rng(17).normal(size=t.size)
+    deep = bandpass(noise, 70.0, 900.0)
+    out = 0.55 * growl * env + 0.24 * deep * env
+    place_at(out, bell(196.0, 1.6, 0.70, 0.10), 0.45)
+    return out
+
+
+def sfx_summon_none() -> np.ndarray:
+    duration = 1.45
+    t = t_axis(duration)
+    u = t / duration
+    noise = np.random.default_rng(18).normal(size=t.size)
+    smoke = bandpass(noise, 120.0, 2200.0)
+    env = np.exp(-t / 0.42) * (0.5 + 0.5 * u)
+    freq = 72.0 - 22.0 * u
+    phase = 2.0 * math.pi * np.cumsum(freq) / SR
+    return 0.34 * smoke * env + 0.18 * np.sin(phase) * np.exp(-t / 0.30)
+
+
+def sfx_fire() -> np.ndarray:
+    duration = 0.90
+    t = t_axis(duration)
+    rng = np.random.default_rng(19)
+    noise = rng.normal(size=t.size)
+    roar = bandpass(noise, 90.0, 1600.0)
+    env = (0.5 + 0.5 * np.sin(2.0 * math.pi * 5.0 * t)) * np.exp(-t / 0.55)
+    out = 0.26 * roar * env
+    for at in (0.05, 0.19, 0.33, 0.52, 0.71):
+        crack = np.zeros(t.size)
+        place_at(crack, bandpass(rng.normal(size=int(0.05 * SR)), 900.0, 6000.0), at)
+        out += 0.22 * crack
+    return out
+
+
 # ------------------------------------------------------------------ main
 def main() -> None:
     write_wav("menu_theme.wav", menu_theme())
@@ -308,6 +467,17 @@ def main() -> None:
     write_wav("error.wav", sfx_error())
     write_wav("dialog.wav", sfx_dialog())
     write_wav("door.wav", sfx_door())
+    write_wav("gem.wav", sfx_gem())
+    write_wav("metal.wav", sfx_metal())
+    write_wav("water.wav", sfx_water())
+    write_wav("wood.wav", sfx_wood())
+    write_wav("leaf.wav", sfx_leaf())
+    write_wav("music_box.wav", sfx_music_box())
+    write_wav("summon_carmesim.wav", sfx_summon_carmesim())
+    write_wav("summon_branco.wav", sfx_summon_branco())
+    write_wav("summon_azul.wav", sfx_summon_azul())
+    write_wav("summon_none.wav", sfx_summon_none())
+    write_wav("fire.wav", sfx_fire())
 
 
 if __name__ == "__main__":

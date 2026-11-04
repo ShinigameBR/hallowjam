@@ -224,6 +224,8 @@ func _apply_rule(rule: ItemUseRule, selected_item: String) -> void:
 	GameState.clear_selection()
 	GameState.save_game()
 
+	if rule.sound != "":
+		Audio.play_sfx(rule.sound)
 	if rule.message != "":
 		say(rule.message, rule.speaker)
 	if rule.open_panel != "":

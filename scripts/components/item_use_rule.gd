@@ -44,6 +44,8 @@ extends Resource
 @export_group("Feedback")
 @export_multiline var message: String = ""
 @export var speaker: String = ""
+## Optional sfx id from the Audio autoload (water, leaf, fire, metal, wood...).
+@export var sound: String = ""
 @export_multiline var repeat_message: String = ""
 ## Optional panel id handled by the game root: book, circle, safe, drawers, door_hint, hole, diary.
 @export var open_panel: String = ""

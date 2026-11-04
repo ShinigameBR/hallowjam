@@ -5,11 +5,12 @@ extends Node
 ## players handles short effects. Every sound is synthesized by
 ## tools/generate_audio.py; there are no external samples.
 ##
-## Music loops are configured at runtime so the WAV files stay simple assets.
+## Music loops are patched at runtime because the WAV importer ignores the
+## loop settings in this project.
 
-const MUSIC_DB := -17.0
+const MUSIC_DB := -9.0
 const SFX_DB := -7.0
-const SFX_VOICES := 18
+const SFX_VOICES := 20
 
 const TRACKS := {
 	"menu": preload("res://assets/audio/menu_theme.wav"),
@@ -28,7 +29,63 @@ const SFX := {
 	"error": preload("res://assets/audio/error.wav"),
 	"dialog": preload("res://assets/audio/dialog.wav"),
 	"door": preload("res://assets/audio/door.wav"),
+	"gem": preload("res://assets/audio/gem.wav"),
+	"metal": preload("res://assets/audio/metal.wav"),
+	"water": preload("res://assets/audio/water.wav"),
+	"wood": preload("res://assets/audio/wood.wav"),
+	"leaf": preload("res://assets/audio/leaf.wav"),
+	"music_box": preload("res://assets/audio/music_box.wav"),
+	"summon_carmesim": preload("res://assets/audio/summon_carmesim.wav"),
+	"summon_branco": preload("res://assets/audio/summon_branco.wav"),
+	"summon_azul": preload("res://assets/audio/summon_azul.wav"),
+	"summon_none": preload("res://assets/audio/summon_none.wav"),
+	"fire": preload("res://assets/audio/fire.wav"),
 }
+
+## Item-specific sounds. Anything missing falls back to the item's tags.
+const ITEM_SFX := {
+	"music_box": "music_box",
+	"ruby": "gem",
+	"sapphire": "gem",
+	"pearl": "gem",
+	"escama_azul": "gem",
+	"oyster": "water",
+	"fish": "water",
+	"water": "water",
+	"water_syringe": "water",
+	"bucket_water": "water",
+	"potion": "water",
+	"key": "metal",
+	"screwdriver": "metal",
+	"knife": "metal",
+	"sardines": "metal",
+	"bucket": "metal",
+	"stone": "metal",
+	"lavender": "leaf",
+	"lavender_revived": "leaf",
+	"mushroom": "leaf",
+	"bait": "leaf",
+	"diary": "page",
+	"book_page": "page",
+	"suitcase": "wood",
+	"fish_bone": "wood",
+}
+
+const TAG_SFX := [
+	["music", "music_box"],
+	["gem", "gem"],
+	["valuable", "gem"],
+	["water", "water"],
+	["liquid", "water"],
+	["ocean", "water"],
+	["metal", "metal"],
+	["sharp", "metal"],
+	["plant", "leaf"],
+	["floral", "leaf"],
+	["paper", "page"],
+	["knowledge", "page"],
+	["wood", "wood"],
+]
 
 const DIAL_BUTTONS := ["Red", "Blue", "Yellow", "Green", "SunDial", "MoonDial"]
 
@@ -38,7 +95,7 @@ var _active_music: AudioStreamPlayer
 var _current_track := ""
 var _sfx_players: Array[AudioStreamPlayer] = []
 var _next_sfx := 0
-var _last_inventory_size := 0
+var _last_inventory: Array[String] = []
 var _last_dialog_ms := 0
 
 
@@ -50,7 +107,7 @@ func _ready() -> void:
 	for index in SFX_VOICES:
 		_sfx_players.append(_make_player())
 
-	_last_inventory_size = GameState.inventory.size()
+	_last_inventory = _inventory_ids()
 	GameState.inventory_changed.connect(_on_inventory_changed)
 	GameState.dialogue_requested.connect(_on_dialogue_requested)
 	get_tree().node_added.connect(_on_node_added)
@@ -108,9 +165,11 @@ func stop_music(fade: float = 1.0) -> void:
 	tween.tween_callback(player.stop)
 
 
+## Wraps a music stream so it loops forever, even when the import left the
+## loop disabled. Returns the source untouched when it already loops.
 func _looped(source: AudioStream) -> AudioStream:
 	var wav := source as AudioStreamWAV
-	if wav == null:
+	if wav == null or wav.loop_mode != AudioStreamWAV.LOOP_DISABLED:
 		return source
 	var copy: AudioStreamWAV = wav.duplicate()
 	copy.loop_mode = AudioStreamWAV.LOOP_FORWARD
@@ -130,6 +189,33 @@ func play_sfx(sfx_id: String, volume_offset: float = 0.0) -> void:
 	player.play()
 
 
+## Plays the sound that fits an item: its own entry first, then its tags.
+func play_item(item_id: String, volume_offset: float = 0.0) -> void:
+	play_sfx(item_sfx(item_id), volume_offset)
+
+
+func item_sfx(item_id: String) -> String:
+	if ITEM_SFX.has(item_id):
+		return String(ITEM_SFX[item_id])
+	var tags := ItemDB.item_tags(item_id)
+	for entry in TAG_SFX:
+		if tags.has(entry[0]):
+			return String(entry[1])
+	return "pickup"
+
+
+func summon_sfx(monster_id: String) -> void:
+	match monster_id:
+		"carmesim":
+			play_sfx("summon_carmesim", 1.0)
+		"branco":
+			play_sfx("summon_branco", 1.0)
+		"azul":
+			play_sfx("summon_azul", 1.0)
+		_:
+			play_sfx("summon_none", -1.0)
+
+
 func _take_player() -> AudioStreamPlayer:
 	for player in _sfx_players:
 		if not player.playing:
@@ -141,13 +227,28 @@ func _take_player() -> AudioStreamPlayer:
 
 
 # ------------------------------------------------------------------- hooks
+func _inventory_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for id in GameState.inventory:
+		ids.append(String(id))
+	return ids
+
+
 func _on_inventory_changed() -> void:
-	var size := GameState.inventory.size()
-	if size > _last_inventory_size:
-		play_sfx("pickup", 1.0)
-	elif size < _last_inventory_size:
+	var current := _inventory_ids()
+	var added: Array[String] = []
+	for id in current:
+		if not _last_inventory.has(id):
+			added.append(id)
+
+	if added.size() == 1:
+		play_item(added[0], -1.0)
+	elif added.size() > 1:
 		play_sfx("place", 1.0)
-	_last_inventory_size = size
+	elif current.size() < _last_inventory.size():
+		play_sfx("place", 1.0)
+
+	_last_inventory = current
 
 
 func _on_dialogue_requested(_lines: Array) -> void:
@@ -161,7 +262,7 @@ func _on_dialogue_requested(_lines: Array) -> void:
 func _on_node_added(node: Node) -> void:
 	if not (node is BaseButton):
 		return
-	if node.has_meta("audio_click"):
+	if node.has_meta("audio_click") or node.has_meta("audio_click_mute"):
 		return
 	node.set_meta("audio_click", true)
 	var button := node as BaseButton

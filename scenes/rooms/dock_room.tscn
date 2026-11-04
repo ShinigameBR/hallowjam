@@ -19,6 +19,7 @@ item_id = "bucket"
 consume_selected = true
 give_item = "bucket_water"
 message = "Você enche o balde até a borda com água do mar."
+sound = "water"
 
 [node name="DockRoom" type="Control" unique_id=1087959578]
 layout_mode = 3

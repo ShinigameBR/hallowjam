@@ -17,6 +17,7 @@ consume_selected = true
 give_item = "sapphire"
 set_flag = "fire_out"
 message = "A água apaga a lareira com um chiado. Entre as cinzas, uma safira azul espera."
+sound = "water"
 
 [sub_resource type="Resource" id="Resource_revive"]
 script = ExtResource("rule")
@@ -24,6 +25,7 @@ item_id = "potion"
 consume_selected = true
 set_flag = "lavender_revived"
 message = "A poção escorre entre as folhas secas. A lavanda estremece, abre-se em violeta e exala um aroma floral."
+sound = "leaf"
 
 [node name="RightRoom" type="Control" unique_id=1746896425]
 layout_mode = 3
@@ -76,6 +78,7 @@ stretch_mode = 5
 script = ExtResource("examine")
 message = "A lareira queima alta. Algo azul brilha entre as chamas, mas o calor não deixa chegar perto."
 wrong_item_message = "O fogo não se importa com isso."
+sound = "fire"
 interaction_id = "fireplace"
 label = "Lareira"
 hide_when_flags = Array[String](["fire_out"])
