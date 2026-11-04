@@ -322,6 +322,31 @@ func full_rect(c: Control) -> void:
 	c.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
+## Small bottom-center hint used by the zoom overlays so the player knows how
+## to leave them. Kept as a helper so every zoom shows the same text and style.
+func add_close_hint(parent: Control, text_value: String = "ESC ou botão direito para sair") -> void:
+	var panel := PanelContainer.new()
+	panel.theme_type_variation = "HudPanel"
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.anchor_left = 0.5
+	panel.anchor_right = 0.5
+	panel.anchor_top = 1.0
+	panel.anchor_bottom = 1.0
+	panel.offset_left = -190.0
+	panel.offset_right = 190.0
+	panel.offset_top = -72.0
+	panel.offset_bottom = -28.0
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+
+	var hint := label(text_value, "Small")
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(hint)
+	parent.add_child(panel)
+
+
 func format_time(seconds: float) -> String:
 	var total := int(seconds)
 	return "%02d:%02d" % [total / 60, total % 60]

@@ -9,6 +9,10 @@ extends TextureRect
 @export var flag: String = ""
 ## Imagem usada enquanto a flag estiver verdadeira.
 @export var texture_when_flag: Texture2D
+## Flag mais forte, verificada antes da flag normal (ex.: um segundo estado).
+@export var override_flag: String = ""
+## Imagem usada enquanto a override flag estiver verdadeira.
+@export var texture_when_override_flag: Texture2D
 
 var _default_texture: Texture2D
 
@@ -20,7 +24,9 @@ func _ready() -> void:
 
 
 func _refresh() -> void:
-	if flag != "" and texture_when_flag != null and GameState.has_flag(flag):
+	if override_flag != "" and texture_when_override_flag != null and GameState.has_flag(override_flag):
+		texture = texture_when_override_flag
+	elif flag != "" and texture_when_flag != null and GameState.has_flag(flag):
 		texture = texture_when_flag
 	else:
 		texture = _default_texture

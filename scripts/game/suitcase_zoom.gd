@@ -49,6 +49,7 @@ func _ready() -> void:
 		dial.draw.connect(_draw_numbers.bind(dial))
 	_sun_dial.pressed.connect(_on_sun_pressed)
 	_moon_dial.pressed.connect(_on_moon_pressed)
+	UI.add_close_hint(self)
 
 
 # Põe o centro do sol/da lua bem no meio do relógio e gira em volta dele.

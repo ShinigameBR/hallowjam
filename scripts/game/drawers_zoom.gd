@@ -32,6 +32,7 @@ func _ready() -> void:
 	_left_drawer.pressed.connect(_toggle_drawer)
 	_screwdriver.pressed.connect(_take_screwdriver)
 	_build_click_mask(_screwdriver, SCREWDRIVER_CLICK_MARGIN)
+	UI.add_close_hint(self)
 
 
 # O clique só vale em cima do desenho (pixels não transparentes da PNG),

@@ -1,8 +1,14 @@
-[gd_scene format=3 uid="uid://n0nf47vv8csq"]
+[gd_scene load_steps=10 format=3 uid="uid://n0nf47vv8csq"]
 
-[ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="1_7aatv"]
-[ext_resource type="Texture2D" uid="uid://dgj1crut1gm7k" path="res://assets/backgrounds/sotao.jpeg" id="2_b4a6u"]
-[ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="3_d0aeu"]
+[ext_resource type="Script" uid="uid://bgckhk5d3bivb" path="res://scripts/rooms/room.gd" id="1_room"]
+[ext_resource type="Texture2D" uid="uid://dgj1crut1gm7k" path="res://assets/backgrounds/sotao.jpeg" id="2_dark"]
+[ext_resource type="Texture2D" uid="uid://emykormknboy" path="res://assets/backgrounds/sotao_iluminado_pela_invocacao_branco.png" id="3_lit"]
+[ext_resource type="Texture2D" uid="uid://dh3dm7mq2bncq" path="res://assets/backgrounds/sotao_pela_invocacao_branco_bau_ja_aberto.png" id="4_open"]
+[ext_resource type="Texture2D" uid="uid://btwp8n0bfri8f" path="res://assets/props/escama_azul.png" id="5_scale"]
+[ext_resource type="Script" uid="uid://gig1l0v47471" path="res://scripts/components/flag_background.gd" id="6_flag_bg"]
+[ext_resource type="Script" uid="uid://dmck2cdh724jn" path="res://scripts/components/door.gd" id="7_door"]
+[ext_resource type="Script" uid="uid://b7ikobomatqs2" path="res://scripts/components/examine.gd" id="8_examine"]
+[ext_resource type="Script" uid="uid://fpmjkm5epm13" path="res://scripts/components/item_pickup.gd" id="9_pickup"]
 
 [node name="AtticRoom" type="Control" unique_id=2065341818]
 layout_mode = 3
@@ -11,7 +17,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_7aatv")
+script = ExtResource("1_room")
 room_id = "attic"
 display_name = "SOTÃO"
 
@@ -23,8 +29,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("2_b4a6u")
+texture = ExtResource("2_dark")
 expand_mode = 1
+stretch_mode = 6
+script = ExtResource("6_flag_bg")
+flag = "summoned_branco"
+texture_when_flag = ExtResource("3_lit")
+override_flag = "attic_chest_open"
+texture_when_override_flag = ExtResource("4_open")
 
 [node name="Interactables" type="Control" parent="." unique_id=1721004583]
 layout_mode = 1
@@ -34,6 +46,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Darkness" type="Control" parent="Interactables" unique_id=1888445420]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_examine")
+message = "Está escuro demais para enxergar qualquer coisa. Só a porta de volta é visível."
+ignore_selected_item = true
+hide_when_flags = Array[String](["summoned_branco"])
+interaction_id = "attic_darkness"
+label = "Escuridão"
 
 [node name="AtticDoor" type="Control" parent="Interactables" unique_id=1798216026]
 layout_mode = 1
@@ -47,10 +73,43 @@ offset_right = 0.35998535
 offset_bottom = 0.19995117
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("3_d0aeu")
+script = ExtResource("7_door")
 target_room_id = "main_left"
 interaction_id = "attic_door"
 label = "Porta do sótão"
+
+[node name="Chest" type="Control" parent="Interactables" unique_id=633525727]
+layout_mode = 1
+anchor_left = 0.396
+anchor_top = 0.259
+anchor_right = 0.604
+anchor_bottom = 0.556
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_examine")
+open_panel = "attic_chest"
+show_when_flags = Array[String](["summoned_branco"])
+hide_when_flags = Array[String](["attic_chest_open"])
+interaction_id = "attic_chest"
+label = "Baú do sótão"
+
+[node name="BlueScale" type="TextureRect" parent="Interactables" unique_id=1586150769]
+layout_mode = 1
+anchor_left = 0.43
+anchor_top = 0.3
+anchor_right = 0.59
+anchor_bottom = 0.51
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_scale")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("9_pickup")
+item_id = "escama_azul"
+description = "Dentro do baú, uma escama azul brilha como vidro molhado. Você a guarda."
+show_when_flags = Array[String](["attic_chest_open"])
+interaction_id = "escama_azul"
+label = "Escama Azul"
 
 [node name="Spawn_default" type="Control" parent="." unique_id=885832328]
 anchors_preset = 0

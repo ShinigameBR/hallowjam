@@ -18,6 +18,7 @@ const TAG_NAMES := {
 	"lazy": "preguiçoso",
 	"fish": "peixe",
 	"red": "vermelho",
+	"blue": "azul",
 	"floral": "floral",
 	"solitary": "solitário",
 	"feelings": "sentimentos",
@@ -45,7 +46,6 @@ const TAG_NAMES := {
 	"shell": "concha",
 	"worm": "verme",
 	"valuable": "valioso",
-	"blue": "azul",
 }
 
 var ITEMS := {
@@ -336,6 +336,15 @@ var ITEMS := {
 		"icon": "shell",
 		"kind": "ingredient",
 		"texture": "res://assets/props/ostra.png",
+	},
+	"escama_azul": {
+		"name": "Escama Azul",
+		"desc": "Uma escama azul, lisa como vidro molhado. Ainda está fria, como se tivesse acabado de sair do mar.",
+		"tags": ["ocean", "blue", "shell", "valuable"],
+		"color": Color("#6d9fd1"),
+		"icon": "shell",
+		"kind": "clue",
+		"texture": "res://assets/props/escama_azul.png",
 	},
 }
 

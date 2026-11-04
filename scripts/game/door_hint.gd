@@ -13,6 +13,7 @@ var _closing := false
 func _ready() -> void:
 	theme = UI.theme
 	visible = false
+	UI.add_close_hint(self)
 
 
 # ============================================================ ABRIR / FECHAR

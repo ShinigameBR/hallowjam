@@ -135,6 +135,22 @@ locked_message = "A porta do sótão está selada. Algo do outro lado a mantém 
 interaction_id = "attic_door"
 label = "Porta do sótão"
 
+[node name="Carmesim" type="Control" parent="Interactables" unique_id=1964738215]
+layout_mode = 1
+anchor_left = 0.065
+anchor_top = 0.316
+anchor_right = 0.165
+anchor_bottom = 0.768
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("examine")
+message = "Ele sorri para você."
+speaker = "O CARMESIM"
+ignore_selected_item = true
+show_when_flags = Array[String](["attic_door_open"])
+interaction_id = "carmesim_left"
+label = "Carmesim"
+
 [node name="Spawn_default" type="Control" parent="." unique_id=1282982282]
 layout_mode = 1
 anchors_preset = 0

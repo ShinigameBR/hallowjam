@@ -13,6 +13,7 @@ const DOOR_HINT := preload("res://scenes/components/door_hint.tscn")
 const HOLE_ZOOM := preload("res://scenes/components/hole_zoom.tscn")
 const ROD_ZOOM := preload("res://scenes/components/rod_zoom.tscn")
 const SUITCASE_ZOOM := preload("res://scenes/components/suitcase_zoom.tscn")
+const ATTIC_CHEST_ZOOM := preload("res://scenes/components/attic_chest_zoom.tscn")
 const PAGE_ICON := preload("res://assets/props/pagina_do_livro.png")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
 const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
@@ -53,6 +54,7 @@ var _door_hint: Control
 var _hole: Control
 var _rod: Control
 var _suitcase: Control
+var _attic_chest: Control
 ## Zooms que ficam abaixo do HUD, como uma sala: o inventário continua usável.
 var _hud_zooms: Array[Control] = []
 var _diary: Control
@@ -68,6 +70,7 @@ var _current_overlay: Control
 var _changing_room := false
 var _resolving_summon := false
 var _attic_cutscene_running := false
+var _last_summon_id := "none"
 var _save_clock := 0.0
 
 
@@ -405,6 +408,11 @@ func _build_overlays() -> void:
 	_suitcase.solved.connect(_on_suitcase_solved)
 	_suitcase.closed.connect(func() -> void: _clear_overlay(_suitcase))
 
+	_attic_chest = ATTIC_CHEST_ZOOM.instantiate()
+	add_child(_attic_chest)
+	_attic_chest.solved.connect(_on_attic_chest_solved)
+	_attic_chest.closed.connect(func() -> void: _clear_overlay(_attic_chest))
+
 	_diary = DIARY_PANEL.new()
 	add_child(_diary)
 	_diary.closed.connect(func() -> void:
@@ -629,11 +637,19 @@ func _on_summon_requested() -> void:
 	_resolving_summon = true
 	var ids: Array = GameState.circle.duplicate()
 	var result := ItemDB.resolve_summon(ids)
+	_last_summon_id = result
 	GameState.track_monster(result)
 
 	if result == ItemDB.TARGET:
 		GameState.consume_circle()
 		GameState.set_flag("summoned_carmesim", true)
+		GameState.save_game()
+		_refresh_objective()
+	elif result == "branco":
+		# A Luz que Escuta não é o Carmesim, mas também atende: a oferenda some
+		# e a luz dela passa a iluminar o sótão pelo resto da partida.
+		GameState.consume_circle()
+		GameState.set_flag("summoned_branco", true)
 		GameState.save_game()
 		_refresh_objective()
 	else:
@@ -653,6 +669,9 @@ func _on_monster_result_finished(victory: bool) -> void:
 		_refresh_objective()
 		_rebuild_hotspots()
 		_say("O Carmesim paira sobre o círculo. Ele espera ser alimentado.")
+	elif _last_summon_id == "branco":
+		_refresh_objective()
+		_say("A forma branca se dispersa em uma luz morna. Lá em cima, o sótão já não está escuro.")
 	else:
 		GameState.clear_circle()
 		_say("A fumaça se desfaz. As oferendas voltam para as suas mãos.")
@@ -668,6 +687,12 @@ func _on_suitcase_solved() -> void:
 	_refresh_objective()
 	await get_tree().create_timer(0.22).timeout
 	_say("Os ponteiros se encaixam e a maleta destrava com um clique. Dentro, uma caixa de música: um item raro, de valor sentimental. Algo que contém sentimentos.")
+
+
+func _on_attic_chest_solved() -> void:
+	_refresh_objective()
+	await get_tree().create_timer(0.22).timeout
+	_say("Os cinco discos se alinham. A tampa do baú cede, e uma escama azul brilha no fundo.")
 
 
 # ================================================================== ENDING
@@ -798,6 +823,8 @@ func _on_panel_requested(panel_id: String) -> void:
 			_open_overlay(_rod)
 		"suitcase":
 			_open_overlay(_suitcase)
+		"attic_chest":
+			_open_overlay(_attic_chest)
 		"diary":
 			_open_overlay(_diary)
 		_:
@@ -849,6 +876,12 @@ func _refresh_objective() -> void:
 	var text := "Uma página solta repousa sobre a estante."
 	if GameState.has_flag("won"):
 		text = "Você está livre."
+	elif GameState.has_flag("picked_escama_azul"):
+		text = "A escama azul está com você."
+	elif GameState.has_flag("attic_chest_open"):
+		text = "A escama azul brilha dentro do baú."
+	elif GameState.has_flag("carmesim_fed") and GameState.has_flag("summoned_branco"):
+		text = "O sótão está iluminado."
 	elif GameState.current_room == "attic":
 		text = "O sótão guarda o resto da história."
 	elif GameState.has_flag("attic_door_open"):

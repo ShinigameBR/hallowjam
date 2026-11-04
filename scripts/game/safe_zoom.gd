@@ -41,6 +41,7 @@ func _ready() -> void:
 		button.add_theme_font_size_override("font_size", NUMBER_FONT_SIZE)
 		button.pressed.connect(_on_number_pressed.bind(color_name))
 	_ruby.pressed.connect(_take_ruby)
+	UI.add_close_hint(self)
 
 
 # ============================================================ NÚMEROS

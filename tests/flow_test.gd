@@ -3,7 +3,8 @@ extends Node
 ##
 ## It drives the same entry points as real clicks (through RoomManager and the
 ## game controller) and checks the full Carmesim route:
-##   book page -> shelf corner/key -> lavender -> safe/ruby -> summon -> dock -> fish -> attic door -> attic.
+##   book page -> shelf corner/key -> lavender -> safe/ruby -> summon -> dock -> fish
+##   -> attic door -> attic dark -> branco light -> chest 31542 -> blue scale.
 
 var _failures: Array[String] = []
 var _game: Control
@@ -363,9 +364,88 @@ func _run() -> void:
 	await _finish_dialog()
 	_check(GameState.has_flag("attic_door_open"), "the Carmesim opens the attic door")
 	await _interact("attic_door", 0.7)
+	await _wait(0.5)
 	_check(GameState.current_room == "attic", "the open attic door leads to the attic")
 	_check(not GameState.has_flag("won"), "reaching the attic does not end the game")
 	_check(not _game.get("_win").visible, "win panel stays hidden")
+	var attic_room := RoomManager.current_room_node()
+	var attic_bg: TextureRect = attic_room.get_node("Background")
+	_check(attic_bg.texture.resource_path.ends_with("sotao.jpeg"), "the attic starts dark")
+
+	# No escuro, tudo responde com a mesma desculpa; só a porta de volta funciona.
+	_check(RoomManager.find_interactable("attic_darkness") != null, "the dark attic is clickable")
+	_check(RoomManager.find_interactable("attic_chest") == null, "the chest is hidden in the dark")
+	await _interact("attic_darkness")
+	await _finish_dialog()
+	_check(GameState.current_room == "attic", "the dark attic keeps the player in the room")
+	_check(RoomManager.find_interactable("attic_door") != null, "the attic door stays clickable in the dark")
+
+	# Back to the circle: music box + pearl (feelings + ocean) summons the white light.
+	await _interact("attic_door", 0.7)
+	_check(GameState.current_room == "main_left", "the attic door returns to the left room")
+	await _interact("left_back", 0.7)
+	_check(GameState.current_room == "main", "the left room returns to the main room")
+	await _open_circle()
+	await _place("music_box", 0)
+	await _place("pearl", 1)
+	_check(GameState.circle == ["music_box", "pearl", "", ""], "music box + pearl placed in the circle")
+	_game.call("_on_summon_requested")
+	await _wait(0.8)
+	result = _game.get("_monster_result")
+	_check(result.visible, "the branco summon shows its result card")
+	_check(GameState.has_flag("summoned_branco"), "music box + pearl summons A Luz que Escuta")
+	_check(not GameState.has_item("music_box"), "the white light consumes the offerings")
+	result.call("dismiss")
+	await _wait(0.4)
+	await _finish_dialog()
+
+	# ---------------------------------------------------------- lit attic
+	await _interact("left_door", 0.7)
+	await _interact("attic_door")
+	await _finish_dialog()
+	await _wait(0.5)
+	attic_bg = RoomManager.current_room_node().get_node("Background")
+	_check(attic_bg.texture.resource_path.ends_with("sotao_iluminado_pela_invocacao_branco.png"), "the white summon lights the attic")
+
+	await _interact("attic_chest")
+	await _wait(0.4)
+	var chest_zoom: Control = _game.get("_attic_chest")
+	_check(chest_zoom.visible, "the attic chest opens its zoom")
+	for i in 3:
+		chest_zoom.get_node("Background/Dial1").pressed.emit()
+	for i in 1:
+		chest_zoom.get_node("Background/Dial2").pressed.emit()
+	for i in 5:
+		chest_zoom.get_node("Background/Dial3").pressed.emit()
+	for i in 4:
+		chest_zoom.get_node("Background/Dial4").pressed.emit()
+	for i in 2:
+		chest_zoom.get_node("Background/Dial5").pressed.emit()
+	await _wait(0.8)
+	await _finish_dialog()
+	_check(GameState.has_flag("attic_chest_open"), "3 1 5 4 2 opens the attic chest")
+	_check(not chest_zoom.visible, "solving the chest closes its zoom")
+	attic_bg = RoomManager.current_room_node().get_node("Background")
+	_check(attic_bg.texture.resource_path.ends_with("sotao_pela_invocacao_branco_bau_ja_aberto.png"), "the open chest swaps the attic background")
+	_check(RoomManager.find_interactable("escama_azul") != null, "the blue scale waits inside the open chest")
+
+	await _interact("escama_azul")
+	await _finish_dialog()
+	_check(GameState.has_item("escama_azul"), "the blue scale can be collected")
+	_check(GameState.has_flag("picked_escama_azul"), "picking the scale sets its flag")
+	_check(RoomManager.find_interactable("escama_azul") == null, "the picked scale leaves the chest")
+	_check(GameState.objective.contains("escama"), "objective follows the blue scale")
+
+	# O Carmesim continua no lado esquerdo depois de abrir a porta e sorri.
+	await _interact("attic_door", 0.7)
+	_check(GameState.current_room == "main_left", "the attic door returns to the left room")
+	_check(RoomManager.find_interactable("carmesim_left") != null, "the Carmesim waits in the left room")
+	await _interact("carmesim_left")
+	var dialog: Control = _game.get("_dialog")
+	dialog.call("advance")
+	await get_tree().process_frame
+	_check(dialog.get("_text").text.contains("sorri"), "clicking the Carmesim after the door shows its smile")
+	await _finish_dialog()
 
 	await _audit_menu()
 

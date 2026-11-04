@@ -97,6 +97,7 @@ func _is_locked(selected_item: String) -> bool:
 		GameState.save_game()
 		return false
 
+	# The only condition was a flag, and it is set: the door opens.
 	if required_flag != "":
 		if unlock_flag != "":
 			GameState.set_flag(unlock_flag)

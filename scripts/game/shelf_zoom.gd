@@ -37,6 +37,7 @@ func _ready() -> void:
 	_build_click_mask(_key, KEY_CLICK_MARGIN)
 	GameState.flags_changed.connect(_refresh_key)
 	_refresh_key()
+	UI.add_close_hint(self)
 
 
 # O clique só vale em cima do desenho (pixels não transparentes da PNG),
