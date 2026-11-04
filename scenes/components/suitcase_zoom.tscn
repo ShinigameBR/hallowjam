@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/game/suitcase_zoom.gd" id="1_suitcase"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/zoom_maleta.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/props/ponteiro_sol_horas.png" id="3_sun"]
+[ext_resource type="Texture2D" path="res://assets/props/ponteiro_lua_minutos.png" id="4_moon"]
+
+[node name="SuitcaseZoom" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+mouse_filter = 0
+script = ExtResource("1_suitcase")
+metadata/_edit_use_anchors_ = true
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+metadata/_edit_use_anchors_ = true
+
+[node name="SunDial" type="Button" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.442
+anchor_top = 0.572
+anchor_right = 0.442
+anchor_bottom = 0.572
+offset_left = -110.0
+offset_top = -110.0
+offset_right = 110.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+flat = true
+
+[node name="Hand" type="TextureRect" parent="Background/SunDial"]
+layout_mode = 1
+anchors_preset = -1
+mouse_filter = 2
+texture = ExtResource("3_sun")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="MoonDial" type="Button" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.628
+anchor_top = 0.572
+anchor_right = 0.628
+anchor_bottom = 0.572
+offset_left = -110.0
+offset_top = -110.0
+offset_right = 110.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+flat = true
+
+[node name="Hand" type="TextureRect" parent="Background/MoonDial"]
+layout_mode = 1
+anchors_preset = -1
+mouse_filter = 2
+texture = ExtResource("4_moon")
+expand_mode = 1
+stretch_mode = 0

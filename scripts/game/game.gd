@@ -12,6 +12,7 @@ const SHELF_ZOOM := preload("res://scenes/components/shelf_zoom.tscn")
 const DOOR_HINT := preload("res://scenes/components/door_hint.tscn")
 const HOLE_ZOOM := preload("res://scenes/components/hole_zoom.tscn")
 const ROD_ZOOM := preload("res://scenes/components/rod_zoom.tscn")
+const SUITCASE_ZOOM := preload("res://scenes/components/suitcase_zoom.tscn")
 const PAGE_ICON := preload("res://assets/props/pagina_do_livro.png")
 const DIARY_PANEL := preload("res://scripts/game/diary_panel.gd")
 const MONSTER_RESULT_PANEL := preload("res://scripts/game/monster_result_panel.gd")
@@ -51,6 +52,7 @@ var _shelf: Control
 var _door_hint: Control
 var _hole: Control
 var _rod: Control
+var _suitcase: Control
 ## Zooms que ficam abaixo do HUD, como uma sala: o inventário continua usável.
 var _hud_zooms: Array[Control] = []
 var _diary: Control
@@ -396,6 +398,11 @@ func _build_overlays() -> void:
 		_refresh_objective()
 	)
 
+	_suitcase = SUITCASE_ZOOM.instantiate()
+	add_child(_suitcase)
+	_suitcase.solved.connect(_on_suitcase_solved)
+	_suitcase.closed.connect(func() -> void: _clear_overlay(_suitcase))
+
 	_diary = DIARY_PANEL.new()
 	add_child(_diary)
 	_diary.closed.connect(func() -> void:
@@ -593,7 +600,8 @@ func _on_item_clicked(id: String) -> void:
 		_open_overlay(_diary)
 		return
 	if id == "suitcase":
-		_say("A maleta está trancada. Dois encaixes esperam por ponteiros: um marcado com o sol, outro com a lua.")
+		GameState.clear_selection()
+		_open_overlay(_suitcase)
 		return
 	if GameState.selected_item == "screwdriver" and id == "oyster":
 		_combine_oyster()
@@ -652,6 +660,12 @@ func _on_safe_solved() -> void:
 	_refresh_objective()
 	await get_tree().create_timer(0.22).timeout
 	_say("Você tira o rubi do baú e fecha a tampa do cofre. A pedra pulsa, quente, na palma da mão.")
+
+
+func _on_suitcase_solved() -> void:
+	_refresh_objective()
+	await get_tree().create_timer(0.22).timeout
+	_say("Os ponteiros se encaixam e a maleta destrava com um clique. Dentro, uma caixa de música: um item raro, de valor sentimental. Algo que contém sentimentos.")
 
 
 # ================================================================== ENDING
@@ -752,6 +766,8 @@ func _on_panel_requested(panel_id: String) -> void:
 			_open_overlay(_hole)
 		"rod":
 			_open_overlay(_rod)
+		"suitcase":
+			_open_overlay(_suitcase)
 		"diary":
 			_open_overlay(_diary)
 		_:

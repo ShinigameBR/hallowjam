@@ -90,6 +90,7 @@ Use `set_flag`/`clear_flag` sempre que possível; eles emitem
 | `dirt_dug` | O buraco na areia do cais foi cavado. |
 | `picked_bait` / `picked_suitcase` | A minhoca / a maleta foram pegas no buraco. |
 | `picked_oyster` | A ostra foi tirada do anzol, no zoom da vara. |
+| `suitcase_open` | A maleta foi destrancada (sol no 3, lua no 11) e deu a caixa de música. |
 | `rod_cast` | A minhoca foi presa no anzol e a linha foi lançada (vara esticada). |
 | `fish_caught` | O peixe foi tirado da linha da vara. |
 | `carmesim_fed` | O Carmesim comeu e abriu a porta do sótão. |

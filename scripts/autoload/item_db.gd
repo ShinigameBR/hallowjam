@@ -197,11 +197,12 @@ var ITEMS := {
 	},
 	"music_box": {
 		"name": "Caixa de Música",
-		"desc": "Toca uma valsa que você conhece de algum lugar. O ar fica mais leve perto dela.",
+		"desc": "Um item raro, de valor sentimental. Toca uma valsa que você conhece de algum lugar.",
 		"tags": ["music", "wind", "feelings"],
 		"color": Color("#c9a35e"),
 		"icon": "music_box",
 		"kind": "ingredient",
+		"texture": "res://assets/props/caixa_de_musica.png",
 	},
 	"diary": {
 		"name": "Diário do Bruxo",
@@ -302,7 +303,7 @@ var ITEMS := {
 	},
 	"suitcase": {
 		"name": "Maleta",
-		"desc": "Uma maleta de couro trancada. Dois encaixes esperam por ponteiros: um marcado com o sol, outro com a lua.",
+		"desc": "Uma maleta de couro trancada. Na tampa, dois relógios: um ponteiro de sol e um ponteiro de lua.",
 		"tags": ["tool", "wood", "key"],
 		"color": Color("#8a6a4a"),
 		"icon": "diary",

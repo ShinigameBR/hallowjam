@@ -271,6 +271,7 @@ Painéis são identificados por string:
 | `door_hint` | Dica na porta da frente: só a imagem. |
 | `hole` | Zoom do buraco na areia do cais: cava e mostra maleta + minhoca. |
 | `rod` | Zoom da vara de pescar do cais: ostra no anzol, isca, linha esticada e peixe. |
+| `suitcase` | Zoom da maleta (aberto pelo inventário): relógios do sol e da lua; sol no 3 + lua no 11 dá a caixa de música. |
 | `diary` | Diário do bruxo. |
 
 Eles são abertos por `Open Panel` no `Examine` ou em uma `ItemUseRule`. Para

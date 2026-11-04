@@ -259,8 +259,32 @@ func _run() -> void:
 	await _wait(0.3)
 
 	_game.call("_on_item_clicked", "suitcase")
+	await _wait(0.3)
+	var suitcase_zoom: Control = _game.get("_suitcase")
+	_check(suitcase_zoom.visible, "clicking the suitcase opens its zoom")
+	_check(GameState.selected_item == "", "opening the suitcase does not select it")
+	# Ponteiro errado não abre: só o sol no 3.
+	for i in 3:
+		suitcase_zoom.get_node("Background/SunDial").pressed.emit()
+	await _wait(0.3)
+	_check(suitcase_zoom.visible and not GameState.has_item("music_box"), "only the sun hand right keeps the suitcase locked")
+	suitcase_zoom.call("close")
+	await _wait(0.3)
+	_check(not suitcase_zoom.visible, "suitcase zoom closes")
+
+	# Os ponteiros ficam onde estavam: falta só a lua no 11.
+	_game.call("_on_item_clicked", "suitcase")
+	await _wait(0.3)
+	for i in 11:
+		suitcase_zoom.get_node("Background/MoonDial").pressed.emit()
+	await _wait(1.0)
+	_check(not suitcase_zoom.visible, "solving the suitcase closes its zoom")
+	_check(GameState.has_item("music_box"), "sun on 3 + moon on 11 gives the music box")
+	_check(not GameState.has_item("suitcase"), "the opened suitcase leaves the inventory")
+	_check(ItemDB.item_tags("music_box").has("feelings"), "the music box counts as something with feelings")
+	_check(ItemDB.resolve_summon(["music_box", "shell"]) == "branco", "music box + ocean item summons A Luz que Escuta")
+	_check(load(String(ItemDB.item("music_box").get("texture", ""))) is Texture2D, "the music box has its own art")
 	await _finish_dialog()
-	_check(GameState.selected_item == "", "inspecting the suitcase does not select it")
 
 	GameState.clear_selection()
 	_game.call("_on_item_clicked", "screwdriver")
