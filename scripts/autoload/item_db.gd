@@ -244,6 +244,7 @@ var ITEMS := {
 		"color": Color("#6fa8c9"),
 		"icon": "bucket",
 		"kind": "tool",
+		"texture": "res://assets/props/balde.png",
 	},
 	"screwdriver": {
 		"name": "Chave de Fenda",
