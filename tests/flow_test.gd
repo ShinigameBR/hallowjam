@@ -419,6 +419,11 @@ func _run() -> void:
 	await _wait(0.4)
 	var chest_zoom: Control = _game.get("_attic_chest")
 	_check(chest_zoom.visible, "the attic chest opens its zoom")
+	await get_tree().process_frame
+	var chest_bg: TextureRect = chest_zoom.get_node("Background")
+	var chest_art := chest_bg.texture.get_size()
+	_check(is_equal_approx(chest_bg.size.x / chest_bg.size.y, chest_art.x / chest_art.y), "the chest art keeps its aspect ratio")
+	_check(chest_bg.position.x >= -0.5 and chest_bg.position.y >= -0.5 and chest_bg.position.x + chest_bg.size.x <= chest_zoom.size.x + 0.5 and chest_bg.position.y + chest_bg.size.y <= chest_zoom.size.y + 0.5, "the chest art fits on screen without cropping")
 	for i in 3:
 		chest_zoom.get_node("Background/Dial1").pressed.emit()
 	for i in 1:

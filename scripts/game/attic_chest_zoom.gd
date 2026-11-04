@@ -16,8 +16,6 @@ const DIALS: Array[String] = ["Dial1", "Dial2", "Dial3", "Dial4", "Dial5"]
 const MAX_NUMBER := 5
 const NUMBER_FONT_SIZE := 64
 const NUMBER_COLOR := Color("#e8dcc0")
-## A arte é mais larga que a tela; um leve recuo mostra as laterais inteiras.
-const BASE_SCALE := 0.87
 
 @onready var _background: TextureRect = $Background
 
@@ -29,6 +27,7 @@ var _closing := false
 func _ready() -> void:
 	theme = UI.theme
 	visible = false
+	resized.connect(_fit_background)
 	for index in DIALS.size():
 		var button: Button = _background.get_node(DIALS[index])
 		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
@@ -81,10 +80,11 @@ func open() -> void:
 	_closing = false
 	visible = true
 	_reset()
+	_fit_background()
 	modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 1.0, 0.25)
-	_zoom(1.0, 0.7)   # a "aproximação" da câmera
+	_zoom(1.12, 0.7)   # a "aproximação" da câmera
 
 
 func close() -> void:
@@ -114,4 +114,30 @@ func _zoom(from_scale: float, time: float) -> void:
 	_background.scale = Vector2(from_scale, from_scale)
 	var tw := create_tween()
 	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(_background, "scale", Vector2(BASE_SCALE, BASE_SCALE), time)
+	tw.tween_property(_background, "scale", Vector2.ONE, time)
+
+
+# Ajusta o Background para caber inteiro na tela, sem cortar as laterais.
+# Em telas mais largas que a arte sobram faixas escuras nas bordas; em telas
+# mais estreitas (ou em tela cheia) sobram faixas em cima e embaixo.
+func _fit_background() -> void:
+	var texture := _background.texture
+	if texture == null:
+		return
+	var art := texture.get_size()
+	var available := size
+	if art.x <= 0.0 or art.y <= 0.0 or available.x <= 0.0 or available.y <= 0.0:
+		return
+
+	var fit := minf(available.x / art.x, available.y / art.y)
+	var target := art * fit
+
+	_background.anchor_left = 0.0
+	_background.anchor_top = 0.0
+	_background.anchor_right = 0.0
+	_background.anchor_bottom = 0.0
+	_background.offset_left = (available.x - target.x) * 0.5
+	_background.offset_top = (available.y - target.y) * 0.5
+	_background.offset_right = _background.offset_left + target.x
+	_background.offset_bottom = _background.offset_top + target.y
+	_background.pivot_offset = target * 0.5
