@@ -31,7 +31,7 @@ extends "res://scripts/components/interactable.gd"
 ## Optional world flag that must be true before the door opens.
 @export var required_flag: String = ""
 ## Optional clue flag written the first time the player finds this door
-## locked. Use it to unlock hints elsewhere (for example, the hidden key).
+## locked. Use it to unlock hints elsewhere (for example, the objective text).
 @export var clue_flag: String = ""
 ## Flag written when the door is unlocked. Keeps it open after a reload.
 @export var unlock_flag: String = ""

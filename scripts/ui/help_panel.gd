@@ -50,7 +50,7 @@ func _ready() -> void:
 	_add_rule(box, "01", "Explore", "Clique nos objetos do cenário para examinar. Alguns podem ser guardados no inventário.")
 	_add_rule(box, "02", "Use", "Selecione um item na barra inferior e clique no cenário para usá-lo. Clique com o botão direito para soltar o item.")
 	_add_rule(box, "03", "Invoque", "O círculo mágico aceita quatro oferendas. O monstro resultante nasce das qualidades dos ingredientes, não dos nomes.")
-	_add_rule(box, "04", "Leia", "O livro mostra o monstro necessário. O diário do bruxo revela a receita completa.")
+	_add_rule(box, "04", "Leia", "A página do livro mostra o monstro necessário. O diário do bruxo revela a receita completa.")
 	_add_rule(box, "05", "Respire", "ESC fecha janelas e abre o menu. Não há como perder: só caminhos que ainda não foram encontrados.")
 
 	box.add_child(UI.spacer(10))

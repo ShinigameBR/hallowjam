@@ -19,7 +19,7 @@ var inventory: Array[String] = []
 var circle: Array[String] = ["", "", "", ""]
 var flags: Dictionary = {}
 var current_room: String = "main"
-var objective: String = "Pegue a página do livro na estante."
+var objective: String = "Uma página solta repousa sobre a estante."
 var play_time: float = 0.0
 var monsters_seen: Array[String] = []
 var selected_item: String = ""
@@ -31,7 +31,7 @@ func start_new_game() -> void:
 	circle = ["", "", "", ""]
 	flags.clear()
 	current_room = "main"
-	objective = "Pegue a página do livro na estante."
+	objective = "Uma página solta repousa sobre a estante."
 	play_time = 0.0
 	monsters_seen.clear()
 	selected_item = ""
@@ -251,7 +251,7 @@ func load_game() -> bool:
 	current_room = String(cfg.get_value("run", "current_room", "main"))
 	if RoomManager.get_room_scene(current_room) == null:
 		current_room = "main"
-	objective = String(cfg.get_value("run", "objective", "Leia o livro do bruxo."))
+	objective = String(cfg.get_value("run", "objective", "Uma página solta repousa sobre a estante."))
 	play_time = float(cfg.get_value("run", "play_time", 0.0))
 
 	monsters_seen.clear()
