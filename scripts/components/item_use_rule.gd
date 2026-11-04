@@ -45,7 +45,7 @@ extends Resource
 @export_multiline var message: String = ""
 @export var speaker: String = ""
 @export_multiline var repeat_message: String = ""
-## Optional panel id handled by the game root: book, circle, safe, drawers, diary.
+## Optional panel id handled by the game root: book, circle, safe, drawers, door_hint, hole, diary.
 @export var open_panel: String = ""
 ## Optional custom action id handled by the game root.
 @export var action_id: String = ""
